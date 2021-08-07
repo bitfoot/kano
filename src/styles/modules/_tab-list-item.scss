@@ -260,6 +260,7 @@
     // z-index: 1000;
     cursor: grabbing;
     transform: translateY(var(--y-offset)) scale(1.01);
+    // transform: translateY(var(--y-offset));
     // transition: transform 30ms ease-in-out;
     // transition: transform 0 ease-in-out;
     transition: none;;

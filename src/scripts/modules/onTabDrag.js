@@ -8,64 +8,80 @@ const dragTab = require("./dragTab");
 
 function onTabDrag(event) {
   const dragState = this.dragState;
+  if (!dragState) return;
+  // pointer position is updated on every mouse move, even if animation is running
+  console.log(`pointer position inside onTabDrag: ${event.pageY}`);
   dragState.pointerPosition = event.pageY;
-  const initialTabPos = dragState.initialPosition;
+  const pointerDifference =
+    dragState.pointerPosition - dragState.lastPointerPos;
+
+  dragState.lastPointerPos = dragState.pointerPosition;
+
+  // get
 
   if (dragState.shouldScroll() == "down") {
     // function to run every frame while scrolling down and tabListOffset has not reached maximum
-    // const step = () => {
-    //   if (dragState.shouldScroll() == "down") {
-    //     // dragState.tabOffset += 1;
-    //     dragState.tabListOffset += 1;
-    //     dragTab.call(this, { distance: 1 });
-    //     dragState.lastTabPos += 1;
-    //     scroll.call(this, { distance: dragState.tabListOffset });
-    //     window.requestAnimationFrame(step);
-    //   } else {
-    //     cancelAnimationFrame(dragState.animation);
-    //     dragState.animation = null;
-    //   }
-    // };
-    // get the scroll / tabMove speed based on how far the pointer is from the tab
     const step = () => {
-      // console.log(dragState.maxTabOffsetBelow, dragState.tabOffset);
+      // dragState.getTabPos();
       const adjustedTabPos =
-        initialTabPos + dragState.tabOffset - dragState.tabListOffset;
+        dragState.initialPosition +
+        dragState.tabOffset -
+        dragState.tabListOffset;
       const adjustedPointerPos =
         dragState.pointerPosition - dragState.headerHeight - dragState.shiftY;
+
+      // console.log(
+      //   `adjustedTabPos: ${adjustedTabPos}, adjustedPointerPos: ${adjustedPointerPos}`
+      // );
+
       const distance = (adjustedPointerPos - adjustedTabPos) / 10;
       if (dragState.shouldScroll() == "down") {
+        console.log("%cshould scroll down", "color: skyblue");
         dragState.tabListOffset += distance;
+        dragState.tabListOffset = Math.min(
+          dragState.tabListOffset,
+          dragState.maxTabListOffset
+        );
         scroll.call(this, { distance: dragState.tabListOffset });
         dragTab.call(this, { distance: distance });
-        dragState.lastTabPos += distance;
+        console.log(
+          `currentTabPos: ${dragState.getUpdatedTabPos()}, lastTabPos: ${dragState.lastTabPos
+          }, pointerPos: ${dragState.pointerPosition}`
+        );
+        dragState.lastTabPos = dragState.getUpdatedTabPos();
         window.requestAnimationFrame(step);
       } else if (adjustedTabPos < adjustedPointerPos) {
         dragTab.call(this, { distance: distance });
-        dragState.lastTabPos += distance;
-        window.requestAnimationFrame(step);
+        if (
+          adjustedTabPos <
+          dragState.maxTabPosition - dragState.tabListOffset
+        ) {
+          console.log("cancelling animation");
+          cancelAnimationFrame(dragState.animation);
+          dragState.animation = null;
+        } else {
+          window.requestAnimationFrame(step);
+        }
+        console.log(
+          `currentTabPos: ${dragState.getUpdatedTabPos()}, lastTabPos: ${dragState.lastTabPos
+          }`
+        );
+        dragState.lastTabPos = dragState.getUpdatedTabPos();
       } else {
         cancelAnimationFrame(dragState.animation);
         dragState.animation = null;
       }
-
-      // console.log(
-      //   `tabOffset: ${initialTabPos +
-      //   dragState.tabOffset -
-      //   dragState.tabListOffset}, pointerPos: ${dragState.pointerPosition -
-      //   dragState.headerHeight -
-      //   dragState.shiftY}, shiftY: ${dragState.shiftY}`
-      // );
     };
 
     if (dragState.animation == null) {
       dragState.animation = window.requestAnimationFrame(step);
     }
   } else if (dragState.shouldScroll() == "up") {
+    console.log("%cshould scroll up", "color: salmon");
+    dragState.getTabPos();
   } else {
-    // the issue here is that distance between pointer and tab can grow while it's being scrolled.
-    // we need to divorce pointer position from tab position.
-    // or, kep track of the distance between pointer and top of tab, updating it (shiftY?)
+    console.log("%cshould not scroll", "color: grey");
+    dragState.getTabPos();
 
     /*
     while (dragState.pointerPosition > tabPosOnScreen + shiftY) {
@@ -74,9 +90,21 @@ function onTabDrag(event) {
     */
     if (dragState.animation == null) {
       const currentTabPos = dragState.getUpdatedTabPos();
+      // console.log(
+      //   `currentTabPos: ${currentTabPos}, lastTabPos: ${dragState.lastTabPos}`
+      // );
+      // console.log(
+      //   `currentTabPos: ${currentTabPos}, lastTabPos: ${dragState.lastTabPos}`
+      // );
       const distanceToMove = currentTabPos - dragState.lastTabPos;
+      console.log(`distance to move: ${distanceToMove}`);
       // console.log(currentTabPos, dragState.lastTabPos);
+      // console.log(
+      //   `current tab pos: ${currentTabPos}, last tab pos: ${dragState.lastTabPos
+      //   }`
+      // );
       dragState.lastTabPos = currentTabPos;
+      // console.log(`distance to move: ${distanceToMove}`);
       dragTab.call(this, { distance: distanceToMove });
       // console.log(
       //   `max offset: ${dragState.maxTabOffsetBelow}, current offset: ${dragState.tabOffset
@@ -84,23 +112,6 @@ function onTabDrag(event) {
       // );
     }
   }
-
-  // // dragState.draggedTabPosition = event.pageY - dragState.shiftY;
-  // const yOffset =
-  //   dragState.draggedTabPosition -
-  //   dragState.initialTabPositions[dragState.draggedTab.id] +
-  //   dragState.tabListScrollTop -
-  //   dragState.tabListOffset;
-
-  // // const distanceToDrag = Math.max(
-  // //   dragState.maxTabOffsetAbove,
-  // //   Math.min(yOffset, dragState.maxTabOffsetBelow)
-  // // );
-
-  // console.log(`yOffset: ${yOffset}`);
-
-  // change dragged tab's position
-  // dragTab.call(this, { distance: distanceToMove });
 }
 
 module.exports = onTabDrag;

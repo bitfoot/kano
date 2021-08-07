@@ -5,6 +5,7 @@
 function dragTab(options = {}) {
   const { distance = 0, speed = 0 } = options;
   const dragState = this.dragState;
+  console.log(`distance inside dragTab: ${distance}`);
 
   if (dragState) {
     const initialTabPosition =
@@ -17,6 +18,11 @@ function dragTab(options = {}) {
     // if (dragState.tabListOffset == 0) {
     // dragState.tabOffset += distance;
     dragState.tabOffset += distance;
+    dragState.tabOffset = Math.min(
+      dragState.tabOffset,
+      dragState.maxTabOffsetBelow
+    );
+    // console.log(`max tab offset below: ${dragState.maxTabOffsetBelow}`);
     // }
 
     // console.log(dragState.tabOffset);
@@ -25,7 +31,7 @@ function dragTab(options = {}) {
 
     dragState.draggedTab.style.setProperty(
       "--y-offset",
-      Math.min(dragState.tabOffset, dragState.maxTabOffsetBelow) + "px"
+      dragState.tabOffset + "px"
     );
 
     dragState.tabsAbove.forEach(tab => {

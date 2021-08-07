@@ -110,6 +110,7 @@ button {
 // }
 
 .scrollbar-track {
+  // z-index: -1;
   position: fixed;
   top: var(--header-height);
   right: 0;
