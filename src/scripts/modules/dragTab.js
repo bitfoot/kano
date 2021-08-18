@@ -18,9 +18,10 @@ function dragTab(options = {}) {
     // if (dragState.tabListOffset == 0) {
     // dragState.tabOffset += distance;
     dragState.tabOffset += distance;
-    dragState.tabOffset = Math.min(
-      dragState.tabOffset,
-      dragState.maxTabOffsetBelow
+    console.log(`maxTabOffsetAbove: ${dragState.maxTabOffsetAbove}`);
+    dragState.tabOffset = Math.max(
+      dragState.maxTabOffsetAbove,
+      Math.min(dragState.tabOffset, dragState.maxTabOffsetBelow)
     );
     // console.log(`max tab offset below: ${dragState.maxTabOffsetBelow}`);
     // }
@@ -63,13 +64,19 @@ function dragTab(options = {}) {
       );
     });
 
+    // this breaks down when drag starts after list is scrolled down a bit
+
     dragState.tabsBelow.forEach(tab => {
       const totalDifference =
         dragState.initialTabPositions[tab.id] -
         initialTabPosition -
         dragState.tabOffset -
         this.scrollTop;
-      // dragState.tabListOffset;
+      // const totalDifference =
+      //   dragState.initialTabPositions[tab.id] -
+      //   initialTabPosition -
+      //   dragState.tabOffset -
+      //   dragState.tabListOffset;
       const difference = totalDifference - dragState.tabHeight;
       const offset = Math.min(
         Math.max(

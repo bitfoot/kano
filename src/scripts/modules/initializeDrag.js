@@ -80,9 +80,13 @@ function initializeDrag(event) {
     tabPositionInTheList: 0,
     minTabPosition,
     maxTabPosition,
-    maxTabOffsetAbove: headerHeight - initialTabPositions[draggedTab.id],
+    maxTabOffsetAbove: initialTabPositions[draggedTab.id] * -1,
     maxTabOffsetBelow: maxTabPosition - initialTabPositions[draggedTab.id],
     lastTabPos,
+    // updatePointerPos(pos) {
+    //   this.pointerPosition = pos;
+    //   this.lastPointerPos = dragState.pointerPosition;
+    // }
     getTabOffset() {
       const maxOffsetBelowNow = this.maxTabOffsetBelow - this.tabListOffset;
       console.log(
@@ -98,8 +102,6 @@ function initializeDrag(event) {
       //   `Intial offsetTop: ${this.initialPosition}, newOffsetTop: ${this
       //     .initialPosition + this.tabOffset}`
       // );
-
-      // I think discrepancy has something to do with tabListOffset, but not sure what yet.
 
       console.log(
         `pointer position: ${this.pointerPosition -
@@ -141,7 +143,7 @@ function initializeDrag(event) {
     shouldScroll() {
       const tabTopPosInViewport = this.pointerPosition - this.shiftY;
       const tabBottomPosInViewport = tabTopPosInViewport + this.tabHeight;
-      if (tabTopPosInViewport < 184) {
+      if (tabTopPosInViewport < 184 && this.tabListOffset > 0) {
         return "up";
       } else if (
         tabBottomPosInViewport > 420 &&

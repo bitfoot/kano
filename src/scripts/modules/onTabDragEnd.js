@@ -2,6 +2,10 @@
 
 function onTabDragEnd(event) {
   const dragState = this.dragState;
+  if (dragState.animation) {
+    cancelAnimationFrame(dragState.animation);
+    dragState.animation = null;
+  }
   // get tabList offset value, and scroll by that amount
   // remember to hide system scrollbar and add custom one that scrolls with the offset
   const tabListOffset = Number.parseFloat(
