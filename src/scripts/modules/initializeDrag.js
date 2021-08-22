@@ -162,11 +162,6 @@ function initializeDrag(event) {
         // console.log(
         //   `tabBottomPosInViewport: ${tabBottomPosInViewport}, tabTopPosInViewport: ${tabTopPosInViewport}`
         // );
-        console.log(
-          `scrolling down for some fucking reason, even though tabListOffset is ${this.tabListOffset
-          } and maxTabListOffset - scrollTop is ${this.maxTabListOffset -
-          this.tabListScrollTop}`
-        );
         return "down";
       } else return false;
     }
