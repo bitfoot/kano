@@ -121,56 +121,47 @@ function onTabDrag(event) {
     const adjustedTabPos =
       dragState.initialPosition + dragState.tabOffset - dragState.tabListOffset;
     const adjustedPointerPos =
-      dragState.pointerPosition - dragState.headerHeight - dragState.shiftY;
+      dragState.pointerPosition -
+      dragState.headerHeight -
+      dragState.shiftY +
+      dragState.tabListScrollTop;
 
-    console.log(
-      `adjustedTabPos: ${adjustedTabPos}, adjustedPointerPos: ${adjustedPointerPos}`
-    );
+    // console.log(
+    //   `adjustedTabPos: ${adjustedTabPos}, adjustedPointerPos: ${adjustedPointerPos}`
+    // );
 
     const distance = (adjustedPointerPos - adjustedTabPos) / 10;
 
     if (dragState.shouldScroll() == "down") {
       console.log("%cshould scroll down", "color: skyblue");
       dragState.tabListOffset += distance;
+      console.log(
+        `tabListOffset: ${dragState.tabListOffset
+        }, maxTabListOffset: ${dragState.maxTabListOffset -
+        dragState.tabListScrollTop}`
+      );
       dragState.tabListOffset = Math.min(
         dragState.tabListOffset,
         dragState.maxTabListOffset
       );
       scroll.call(this, { distance: dragState.tabListOffset });
       dragTab.call(this, { distance: distance });
-      console.log(
-        `currentTabPos: ${dragState.getUpdatedTabPos()}, lastTabPos: ${dragState.lastTabPos
-        }, pointerPos: ${dragState.pointerPosition}`
-      );
+      // console.log(
+      //   `currentTabPos: ${dragState.getUpdatedTabPos()}, lastTabPos: ${dragState.lastTabPos
+      //   }, pointerPos: ${dragState.pointerPosition}`
+      // );
       dragState.lastTabPos = dragState.getUpdatedTabPos();
       window.requestAnimationFrame(step);
     } else if (
       Math.round(adjustedTabPos) < adjustedPointerPos &&
       dragState.animation
     ) {
-      console.log(
-        `adjustedTabPos: ${adjustedTabPos}, adjustedPointerPos: ${adjustedPointerPos}`
-      );
       dragTab.call(this, { distance: distance });
-      // if (adjustedTabPos < dragState.maxTabPosition - dragState.tabListOffset) {
       dragState.lastTabPos = dragState.getUpdatedTabPos();
       window.requestAnimationFrame(step);
-      //   console.log("cancelling animation");
-      //   cancelAnimationFrame(dragState.animation);
-      //   dragState.animation = null;
-      // } else {
-      //   window.requestAnimationFrame(step);
-      // }
-      // console.log(
-      //   `currentTabPos: ${dragState.getUpdatedTabPos()}, lastTabPos: ${dragState.lastTabPos
-      //   }`
-      // );
       dragState.lastTabPos = dragState.getUpdatedTabPos();
     } else {
       console.log("cancelling animation");
-      console.log(
-        `adjustedTabPos: ${adjustedTabPos}, adjustedPointerPos: ${adjustedPointerPos}`
-      );
       cancelAnimationFrame(dragState.animation);
       dragState.animation = null;
     }
@@ -182,10 +173,10 @@ function onTabDrag(event) {
     }
   } else if (dragState.shouldScroll() == "up") {
     console.log("%cshould scroll up", "color: salmon");
-    dragState.getTabPos();
+    // dragState.getTabPos();
   } else {
     console.log("%cshould not scroll", "color: grey");
-    dragState.getTabPos();
+    // dragState.getTabPos();
 
     /*
     while (dragState.pointerPosition > tabPosOnScreen + shiftY) {

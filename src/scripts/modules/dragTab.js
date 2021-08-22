@@ -18,7 +18,7 @@ function dragTab(options = {}) {
     // if (dragState.tabListOffset == 0) {
     // dragState.tabOffset += distance;
     dragState.tabOffset += distance;
-    console.log(`maxTabOffsetAbove: ${dragState.maxTabOffsetAbove}`);
+    console.log(`scrollTop: ${this.scrollTop}`);
     dragState.tabOffset = Math.max(
       dragState.maxTabOffsetAbove,
       Math.min(dragState.tabOffset, dragState.maxTabOffsetBelow)
@@ -70,8 +70,8 @@ function dragTab(options = {}) {
       const totalDifference =
         dragState.initialTabPositions[tab.id] -
         initialTabPosition -
-        dragState.tabOffset -
-        this.scrollTop;
+        dragState.tabOffset;
+      // this.scrollTop;
       // const totalDifference =
       //   dragState.initialTabPositions[tab.id] -
       //   initialTabPosition -

@@ -138,31 +138,48 @@ function initializeDrag(event) {
         Math.max(this.minTabPosition, position)
       );
 
-      return position;
+      return correctedPosition;
     },
     shouldScroll() {
       const tabTopPosInViewport = this.pointerPosition - this.shiftY;
       const tabBottomPosInViewport = tabTopPosInViewport + this.tabHeight;
+      const initialTabBottomPos =
+        this.initialPosition + this.tabHeight + this.headerHeight;
+      console.log(
+        `tabListOffset: ${this.tabListOffset}, maxTabListOffset: ${this.maxTabListOffset
+        }, tabListScrollTop: ${this.tabListScrollTop}`
+      );
       if (tabTopPosInViewport < 184 && this.tabListOffset > 0) {
         return "up";
       } else if (
+        // check to make sure tabTopPosInViewport is greater than initialTabTopPos. Otherwise it means tab is being dragged up.
+        tabBottomPosInViewport > initialTabBottomPos &&
         tabBottomPosInViewport > 420 &&
-        this.tabListOffset < this.maxTabListOffset &&
+        this.tabListOffset < this.maxTabListOffset - this.tabListScrollTop &&
+        // this.tabListOffset < this.maxTabListOffset &&
         this.tabListScrollTop < this.maxScrollTop
       ) {
+        // console.log(
+        //   `tabBottomPosInViewport: ${tabBottomPosInViewport}, tabTopPosInViewport: ${tabTopPosInViewport}`
+        // );
+        console.log(
+          `scrolling down for some fucking reason, even though tabListOffset is ${this.tabListOffset
+          } and maxTabListOffset - scrollTop is ${this.maxTabListOffset -
+          this.tabListScrollTop}`
+        );
         return "down";
       } else return false;
-    },
-    getScrollSpeed() {
-      const difference = this.draggedTabPosition - 426;
-      if (difference < 10) {
-        return "1000ms";
-      } else if (difference < 30) {
-        return "600ms";
-      } else {
-        return "200ms";
-      }
     }
+    // getScrollSpeed() {
+    //   const difference = this.draggedTabPosition - 426;
+    //   if (difference < 10) {
+    //     return "1000ms";
+    //   } else if (difference < 30) {
+    //     return "600ms";
+    //   } else {
+    //     return "200ms";
+    //   }
+    // }
   };
 
   draggedTab.onpointermove = onTabDrag.bind(this);
