@@ -40,7 +40,6 @@ function dragTab(options = {}) {
         dragState.initialTabPositions[tab.id] -
         initialTabPosition -
         dragState.tabOffset -
-        this.scrollTop -
         dragState.tabListOffset;
 
       // console.log(dragState.getUpdatedTabPos(), totalDifference);

@@ -8,15 +8,17 @@ function onTabDragEnd(event) {
   }
   // get tabList offset value, and scroll by that amount
   // remember to hide system scrollbar and add custom one that scrolls with the offset
-  const tabListOffset = Number.parseFloat(
-    dragState.tabList.style.getPropertyValue("--y-offset") || 0
-  );
+  // const tabListOffset = Number.parseFloat(
+  //   dragState.tabList.style.getPropertyValue("--y-offset") || 0
+  // );
+  const tabListOffset = dragState.tabListOffset;
   dragState.tabList.style.setProperty("--y-offset", 0 + "px");
   dragState.tabList.classList.remove("tab-list--scroll");
   dragState.tabListContainer.scroll(
     0,
-    (tabListOffset - dragState.tabListScrollTop) * -1
+    tabListOffset + dragState.tabListScrollTop
   );
+
   dragState.tabListContainer.style.setProperty(
     "--scrolltop",
     dragState.tabListScrollTop
@@ -24,8 +26,7 @@ function onTabDragEnd(event) {
 
   dragState.draggedTab.onpointermove = null;
   dragState.draggedTab.onpointerup = null;
-  const currentTabTopPosition =
-    event.pageY - dragState.shiftY + dragState.tabListScrollTop;
+  const currentTabTopPosition = dragState.getUpdatedTabPos();
 
   dragState.draggedTab.classList.remove("tab-list-item--draggable");
   dragState.listedTabs.forEach(t => {
@@ -33,10 +34,7 @@ function onTabDragEnd(event) {
     t.classList.remove("tab-list-item--moveable", "tab-list-item--moving");
   });
 
-  if (
-    currentTabTopPosition <
-    dragState.initialTabPositions[dragState.draggedTab.id]
-  ) {
+  if (currentTabTopPosition < dragState.initialPosition) {
     dragState.tabsAbove.forEach(t => {
       if (
         dragState.initialTabPositions[t.id] + 23 > currentTabTopPosition &&
@@ -46,10 +44,7 @@ function onTabDragEnd(event) {
         dragState.tabList.insertBefore(dragState.draggedTab, t);
       }
     });
-  } else if (
-    currentTabTopPosition >
-    dragState.initialTabPositions[dragState.draggedTab.id]
-  ) {
+  } else if (currentTabTopPosition > dragState.initialPosition) {
     dragState.tabsBelow.forEach(t => {
       if (
         dragState.initialTabPositions[t.id] + 23 - dragState.margin <

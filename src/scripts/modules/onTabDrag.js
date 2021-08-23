@@ -126,25 +126,19 @@ function onTabDrag(event) {
       dragState.shiftY +
       dragState.tabListScrollTop;
 
-    // console.log(
-    //   `adjustedTabPos: ${adjustedTabPos}, adjustedPointerPos: ${adjustedPointerPos}`
-    // );
+    console.log(
+      `adjustedTabPos: ${adjustedTabPos}, adjustedPointerPos: ${adjustedPointerPos}`
+    );
 
     const distance = (adjustedPointerPos - adjustedTabPos) / 10;
 
     if (dragState.shouldScroll() == "down") {
       console.log("%cshould scroll down", "color: skyblue");
-      dragState.tabListOffset += distance;
+      scroll.call(this, { distance: distance });
       console.log(
-        `tabListOffset: ${dragState.tabListOffset
-        }, maxTabListOffset: ${dragState.maxTabListOffset -
-        dragState.tabListScrollTop}`
+        `tabListOffset: ${dragState.tabListOffset}, maxTabListOffset: ${dragState.maxTabListOffset
+        }, tabListScrollTop: ${dragState.tabListScrollTop}`
       );
-      dragState.tabListOffset = Math.min(
-        dragState.tabListOffset,
-        dragState.maxTabListOffset
-      );
-      scroll.call(this, { distance: dragState.tabListOffset });
       dragTab.call(this, { distance: distance });
       // console.log(
       //   `currentTabPos: ${dragState.getUpdatedTabPos()}, lastTabPos: ${dragState.lastTabPos

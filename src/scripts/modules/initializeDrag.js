@@ -145,10 +145,10 @@ function initializeDrag(event) {
       const tabBottomPosInViewport = tabTopPosInViewport + this.tabHeight;
       const initialTabBottomPos =
         this.initialPosition + this.tabHeight + this.headerHeight;
-      console.log(
-        `tabListOffset: ${this.tabListOffset}, maxTabListOffset: ${this.maxTabListOffset
-        }, tabListScrollTop: ${this.tabListScrollTop}`
-      );
+      // console.log(
+      //   `tabListOffset: ${this.tabListOffset}, maxTabListOffset: ${this.maxTabListOffset
+      //   }, tabListScrollTop: ${this.tabListScrollTop}`
+      // );
       if (tabTopPosInViewport < 184 && this.tabListOffset > 0) {
         return "up";
       } else if (
