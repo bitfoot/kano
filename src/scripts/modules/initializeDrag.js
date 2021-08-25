@@ -102,13 +102,12 @@ function initializeDrag(event) {
       //   `Intial offsetTop: ${this.initialPosition}, newOffsetTop: ${this
       //     .initialPosition + this.tabOffset}`
       // );
-
-      console.log(
-        `pointer position: ${this.pointerPosition -
-        this.shiftY -
-        this.headerHeight}, newOffsetTop: ${this.initialPosition +
-        this.tabOffset}`
-      );
+      // console.log(
+      //   `pointer position: ${this.pointerPosition -
+      //   this.shiftY -
+      //   this.headerHeight}, newOffsetTop: ${this.initialPosition +
+      //   this.tabOffset}`
+      // );
     },
     lastPointerPos: null,
     getUpdatedTabPos() {
@@ -149,14 +148,16 @@ function initializeDrag(event) {
       //   `tabListOffset: ${this.tabListOffset}, maxTabListOffset: ${this.maxTabListOffset
       //   }, tabListScrollTop: ${this.tabListScrollTop}`
       // );
-      if (tabTopPosInViewport < 184 && this.tabListOffset > 0) {
+      if (
+        tabTopPosInViewport < 184 &&
+        (this.tabListScrollTop > 0 || this.tabListOffset > 0)
+      ) {
         return "up";
       } else if (
         // check to make sure tabTopPosInViewport is greater than initialTabTopPos. Otherwise it means tab is being dragged up.
         tabBottomPosInViewport > initialTabBottomPos &&
         tabBottomPosInViewport > 420 &&
         this.tabListOffset < this.maxTabListOffset - this.tabListScrollTop &&
-        // this.tabListOffset < this.maxTabListOffset &&
         this.tabListScrollTop < this.maxScrollTop
       ) {
         // console.log(

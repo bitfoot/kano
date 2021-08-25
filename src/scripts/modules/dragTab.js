@@ -15,20 +15,13 @@ function dragTab(options = {}) {
     // const newTabPosition = currentTabPosition + distance;
 
     // change position of the dragged tab, ensuring it doesn't exceed the max
-    // if (dragState.tabListOffset == 0) {
-    // dragState.tabOffset += distance;
     dragState.tabOffset += distance;
-    console.log(`scrollTop: ${this.scrollTop}`);
+    // console.log(`scrollTop: ${this.scrollTop}`);
     dragState.tabOffset = Math.max(
       dragState.maxTabOffsetAbove,
       Math.min(dragState.tabOffset, dragState.maxTabOffsetBelow)
     );
-    // console.log(`max tab offset below: ${dragState.maxTabOffsetBelow}`);
-    // }
-
-    // console.log(dragState.tabOffset);
-
-    // if (dragState.maxTabOffsetBelow <= dragState.tabOffset) {}
+    dragState.lastTabPos = dragState.getUpdatedTabPos();
 
     dragState.draggedTab.style.setProperty(
       "--y-offset",
@@ -39,10 +32,8 @@ function dragTab(options = {}) {
       const totalDifference =
         dragState.initialTabPositions[tab.id] -
         initialTabPosition -
-        dragState.tabOffset -
-        dragState.tabListOffset;
+        dragState.tabOffset;
 
-      // console.log(dragState.getUpdatedTabPos(), totalDifference);
       // get the difference between the bottom of todo and the top of draggable todo.
       const difference = totalDifference + dragState.tabHeight;
       // calculate tab offset (should be min of 0, max of 46)
@@ -70,12 +61,7 @@ function dragTab(options = {}) {
         dragState.initialTabPositions[tab.id] -
         initialTabPosition -
         dragState.tabOffset;
-      // this.scrollTop;
-      // const totalDifference =
-      //   dragState.initialTabPositions[tab.id] -
-      //   initialTabPosition -
-      //   dragState.tabOffset -
-      //   dragState.tabListOffset;
+
       const difference = totalDifference - dragState.tabHeight;
       const offset = Math.min(
         Math.max(

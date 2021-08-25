@@ -36,14 +36,31 @@ function scroll(options = {}) {
 
   // only offset tabList if scrolling using drag
   if (scrollBarOnly == false) {
+    if (!dragState) return;
+
     dragState.tabListOffset += distance;
-    console.log(
-      `tabListOffset: ${dragState.tabListOffset}, maxTabListOffset: ${dragState.maxTabListOffset
-      }, tabListScrollTop: ${dragState.tabListScrollTop}`
-    );
+
     dragState.tabListOffset = Math.min(
       dragState.tabListOffset,
       dragState.maxTabListOffset - dragState.tabListScrollTop
+    );
+
+    dragState.tabListOffset = Math.max(
+      dragState.tabListScrollTop * -1,
+      dragState.tabListOffset
+    );
+
+    // dragState.tabListOffset = Math.max(
+    //   (dragState.tabListScrollTop - dragState.tabListOffset) * -1,
+    //   Math.min(
+    //     dragState.tabListOffset,
+    //     dragState.maxTabListOffset - dragState.tabListScrollTop
+    //   )
+    // );
+
+    console.log(
+      `tabListOffset: ${dragState.tabListOffset}, maxTabListOffset: ${dragState.maxTabListOffset
+      }, tabListScrollTop: ${dragState.tabListScrollTop}`
     );
     // this value is negative. equal to maxScrollTop * -1
     // const maxOffset = this.dragState.maxTabListOffset * -1;
