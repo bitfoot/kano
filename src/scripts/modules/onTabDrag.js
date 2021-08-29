@@ -113,13 +113,19 @@ function onTabDrag(event) {
 
     // console.log(`pointerPosDifference: ${pointerPosDifference}`);
 
+    // this whole logic should be done inside shouldScroll function, not here.
+    // that function should return numeric value, not strings like "down" or "up".
     const distance = adjustedPointerPos - adjustedTabPos;
-    const pointerDistance =
-      (dragState.pointerPosition -
-        dragState.shiftY +
-        dragState.tabHeight -
-        420) /
-      10;
+    const virtualTabTop = dragState.pointerPosition - dragState.shiftY;
+    const virtualTabBottom = virtualTabTop + dragState.tabHeight;
+    let scrollDistance = null;
+    if (virtualTabBottom > 420) {
+      scrollDistance = virtualTabBottom - 420;
+    } else if (virtualTabTop < 184) {
+      scrollDistance = virtualTabTop - 184;
+    }
+    scrollDistance /= 10;
+
     // console.log(`pointerDistance: ${pointerDistance}`);
     // const distance2 = adjustedPointerPos - adjustedTabPos;
     // const distanceToMove = dragState.getUpdatedTabPos() - dragState.lastTabPos;
@@ -129,7 +135,7 @@ function onTabDrag(event) {
       console.log("%cshould scroll", "color: purple");
       // scroll.call(this, { distance: distance + distanceToMove });
       // dragTab.call(this, { distance: distance + distanceToMove });
-      scroll.call(this, { distance: pointerDistance });
+      scroll.call(this, { distance: scrollDistance });
       dragTab.call(this, { distance: distance });
       window.requestAnimationFrame(step);
     } else if (

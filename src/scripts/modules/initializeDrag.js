@@ -137,6 +137,11 @@ function initializeDrag(event) {
         Math.max(this.minTabPosition, position)
       );
 
+      console.log(
+        `position: ${position}, correctedPosition: ${correctedPosition}, tabListOffset: ${this.tabListOffset
+        }`
+      );
+
       return correctedPosition;
     },
     shouldScroll() {
