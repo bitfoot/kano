@@ -4,7 +4,9 @@
   display: flex;
   align-items: stretch;
   height: var(--block-height);
-  background: var(--color-three);
+  // background: var(--color-three);
+  background: var(--color-two);
+  color: var(--color-three);
   // margin: 0 0 var(--lesser-padding) 0;
   margin: 0 0 var(--lesser-padding) 0;
   padding: var(--greater-padding);
@@ -40,7 +42,8 @@
   // }
 
   &:hover {
-    background: #D4D4D4;
+    // background: #D4D4D4;
+    background: var(--color-two-hover);
     // transition: background-color 140ms ease-in-out, opacity 140ms ease-out;
     transition: background-color 100ms ease-in-out, transform 60ms ease-out, opacity 140ms ease-in-out, box-shadow 100ms ease-in-out;
   }
@@ -173,11 +176,12 @@
     }
 
     &:checked + svg .tab-list-item__svg-checkbox-box {
-      fill: var(--color-two);
+      // fill: var(--color-two);
+      fill: var(--color-four);
     }
 
     &:checked + svg .tab-list-item__svg-checkbox-checkmark {
-      stroke: var(--color-three);
+      stroke: var(--color-two);
     }
   }
 
@@ -187,7 +191,7 @@
     border-radius: var(--lesser-padding);
     top: -0.2rem;
     left: -0.2rem;
-    transition: box-shadow 100ms ease-in-out;
+    transition: box-shadow 80ms ease-in-out;
 
     &-box {
       fill: transparent;
@@ -270,7 +274,8 @@
       // transition: transform 30ms ease-in-out;
       // transition: transform 0 ease-in-out;
       transition: none;
-      background: white;
+      // background: white;
+      background: var(--color-two-hover);
     }
 
     & .tab-list-item__tab-button {
@@ -315,7 +320,7 @@
 
   &--moving { 
     opacity: var(--opacity);
-    background: #DDD;
+    background: var(--color-two-hover);
     transform: translateY(var(--y-offset)) scale(var(--scale));
     transition: transform 140ms ease-in-out, opacity 140ms ease-in-out;
     z-index: -1000;
@@ -326,7 +331,8 @@
   }
 
   &--duplicate {
-    stroke: var(--color-two);
+    // stroke: var(--color-three);
+    stroke: var(--color-four);
   }
 
   &--deleted {

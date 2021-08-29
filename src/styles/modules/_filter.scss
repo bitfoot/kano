@@ -42,6 +42,10 @@
     top: var(--greater-padding);
     left: var(--greater-padding);
     pointer-events: none;
+
+    // & path {
+    //   stroke: lime;
+    // }
   }
 
   &__remove-text-icon {
