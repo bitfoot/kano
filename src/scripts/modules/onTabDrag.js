@@ -124,7 +124,7 @@ function onTabDrag(event) {
     } else if (virtualTabTop < 184) {
       scrollDistance = virtualTabTop - 184;
     }
-    scrollDistance /= 10;
+    scrollDistance /= 12;
 
     // console.log(`pointerDistance: ${pointerDistance}`);
     // const distance2 = adjustedPointerPos - adjustedTabPos;

@@ -20,13 +20,22 @@ function dragTab(options = {}) {
     //   dragState.maxTabOffsetAbove,
     //   Math.min(dragState.tabOffset, dragState.maxTabOffsetBelow)
     // );
+
     const currentMaxOffsetBelow =
       dragState.maxTabOffsetBelow -
       dragState.maxScrollTop +
-      dragState.tabListOffset;
+      dragState.tabListOffset +
+      dragState.tabListScrollTop;
+
+    const currentMaxOffsetAbove =
+      dragState.maxTabOffsetAbove +
+      dragState.tabListOffset +
+      dragState.tabListScrollTop;
+
+    console.log(`currentMaxOffsetAbove is: ${currentMaxOffsetAbove}`);
 
     dragState.tabOffset = Math.max(
-      dragState.maxTabOffsetAbove,
+      currentMaxOffsetAbove,
       Math.min(dragState.tabOffset, currentMaxOffsetBelow)
     );
 

@@ -58,10 +58,10 @@ function scroll(options = {}) {
     //   )
     // );
 
-    console.log(
-      `tabListOffset: ${dragState.tabListOffset}, maxTabListOffset: ${dragState.maxTabListOffset
-      }, tabListScrollTop: ${dragState.tabListScrollTop}`
-    );
+    // console.log(
+    //   `tabListOffset: ${dragState.tabListOffset}, maxTabListOffset: ${dragState.maxTabListOffset
+    //   }, tabListScrollTop: ${dragState.tabListScrollTop}`
+    // );
     // this value is negative. equal to maxScrollTop * -1
     // const maxOffset = this.dragState.maxTabListOffset * -1;
     content.classList.add("tab-list--scroll");
