@@ -1,38 +1,55 @@
 "use strict";
 
-// const dragTab = require("./dragTab");
-
+// rename this function to scrollBy
 function scroll(options = {}) {
   const { distance = 0, scrollBarOnly = false, speed = 0 } = options;
   const dragState = this.dragState;
   const container = document.getElementById("tab-list-container");
+  const scrollbarThumb = document.getElementById("scrollbar-thumb");
   const content = container.children[0];
   const margin = 6;
   const visibleContentHeight = container.offsetHeight - margin; // 500
-  const wholeContentHeight = container.scrollHeight - margin;
-  const hiddenContentHeight = wholeContentHeight - visibleContentHeight;
-
-  // const contentOffsetHeight = content.offsetHeight;
-  const scrollbarThumb = document.getElementById("scrollbar-thumb");
-
-  const containerScrollTop = this.scrollTop;
-  const containerToContentRatio = visibleContentHeight / wholeContentHeight;
-
+  const entireContentHeight = content.offsetHeight - margin;
+  const containerToContentRatio = visibleContentHeight / entireContentHeight;
+  // const containerScrollTop = this.scrollState.scrollTop;
+  const curThumbOffset = this.scrollState.thumbOffset;
+  const scrollbarDistance = distance * containerToContentRatio;
+  const newThumbOffset = curThumbOffset + scrollbarDistance;
+  this.scrollState.thumbOffset = newThumbOffset;
+  // console.log(`new thumbOffset: ${this.scrollState.thumbOffset}`);
+  console.log(`containerToContentRatio: ${containerToContentRatio}`);
   // this value doesn't change no matter where thumb is. Max offset is always the same.
-  const maxScrollbarThumbOffset = this.maxScrollbarThumbOffset;
-  const currentThumbOffset = containerScrollTop * containerToContentRatio;
-
-  // if (containerScrollTop == 460) {
-  //   console.log(`currentThumbOffset: ${currentThumbOffset}`);
+  // const maxScrollbarThumbOffset = this.maxScrollbarThumbOffset;
+  // let currentThumbOffset = null;
+  // console.log(`containerScrollTop: ${containerScrollTop}`);
+  // if (dragState) {
+  //   currentThumbOffset =
+  //     (containerScrollTop + dragState.tabListOffset) * containerToContentRatio;
+  // } else {
+  //   // this.scrollState.tabListOffset = 0;
+  //   currentThumbOffset = containerScrollTop * containerToContentRatio;
   // }
 
-  // if (currentThumbOffset <= maxScrollbarThumbOffset) {
-  const newScrollbarThumbOffset = distance * containerToContentRatio;
-  scrollbarThumb.style.setProperty(
-    "--thumb-offset",
-    Math.min(newScrollbarThumbOffset, maxScrollbarThumbOffset) + "px"
-  );
+  // currentThumbOffset =
+  //   (containerScrollTop + this.scrollState.tabListOffset) *
+  //   containerToContentRatio;
+
+  // let newThumbOffset = null;
+  // if (dragState) {
+  //   console.log(`FROM SCROLL FUNCTION! DragState is acive`);
+  // currentThumbOffset = Math.max(
+  //   0,
+  //   Math.min(currentThumbOffset, maxScrollbarThumbOffset)
+  // );
+  // } else {
+  //   console.log(`FROM SCROLL FUNCTION! DragState is NOT acive`);
+  //   newThumbOffset = Math.max(
+  //     0,
+  //     Math.min(currentThumbOffset, maxScrollbarThumbOffset)
+  //   );
   // }
+
+  scrollbarThumb.style.setProperty("--thumb-offset", newThumbOffset + "px");
 
   // only offset tabList if scrolling using drag
   if (scrollBarOnly == false) {
@@ -50,29 +67,10 @@ function scroll(options = {}) {
       dragState.tabListOffset
     );
 
-    // dragState.tabListOffset = Math.max(
-    //   (dragState.tabListScrollTop - dragState.tabListOffset) * -1,
-    //   Math.min(
-    //     dragState.tabListOffset,
-    //     dragState.maxTabListOffset - dragState.tabListScrollTop
-    //   )
-    // );
-
-    // console.log(
-    //   `tabListOffset: ${dragState.tabListOffset}, maxTabListOffset: ${dragState.maxTabListOffset
-    //   }, tabListScrollTop: ${dragState.tabListScrollTop}`
-    // );
-    // this value is negative. equal to maxScrollTop * -1
-    // const maxOffset = this.dragState.maxTabListOffset * -1;
+    this.scrollState.tabListOffset = dragState.tabListOffset;
     content.classList.add("tab-list--scroll");
-    // const availableScrollDownDistance = hiddenContentHeight;
-
-    // if (containerScrollTop < availableScrollDistance) {
-    // const maxOffset = (hiddenContentHeight - containerScrollTop) * -1;
     const newOffset = dragState.tabListOffset * -1;
-
     content.style.setProperty("--y-offset", newOffset + "px");
-    // }
   }
 }
 

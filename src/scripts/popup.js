@@ -93,7 +93,6 @@ const state = {
   renderedTabs: [],
   dragState: null,
   dragTimer: null,
-  scrollTop: 0,
   maxScrollbarThumbOffset: 0,
   totalFilteredOutTabs: 0,
   lastFilteredOutTabs: 0,
@@ -102,6 +101,11 @@ const state = {
   selectedTabs: [],
   filterState: {
     visibleTabs: 0
+  },
+  scrollState: {
+    scrollTop: 0,
+    tabListOffset: 0,
+    thumbOffset: 0
   }
 };
 

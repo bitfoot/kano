@@ -23,10 +23,6 @@
   --opacity: 1;
   // --scale: 1;
   --scale: 0.99;
-  --float-x-from: 0;
-  --float-x-to: 0;
-  --float-y-from: 0;
-  --float-y-to: 0;
   // transform: translateY(0);
   // transform: translateY(var(--y-offset));
   // transition: background-color 1400ms ease-in-out, transform 6000ms ease-in-out, opacity 1400ms ease-out;
@@ -191,16 +187,16 @@
     border-radius: var(--lesser-padding);
     top: -0.2rem;
     left: -0.2rem;
-    transition: box-shadow 80ms ease-in-out;
+    transition: box-shadow 20ms ease-in-out;
 
     &-box {
       fill: transparent;
-      transition: fill 80ms ease-in-out;
+      transition: fill 20ms ease-in-out;
     }
 
     &-checkmark {
       stroke: transparent;
-      transition: stroke 80ms ease-in-out;
+      transition: stroke 20ms ease-in-out;
     }
   }
 
@@ -261,20 +257,12 @@
   }
 
   &--draggable {
-    // z-index: 1000;
     cursor: grabbing;
     transform: translateY(var(--y-offset)) scale(1.01);
-    // transform: translateY(var(--y-offset));
-    // transition: transform 30ms ease-in-out;
-    // transition: transform 0 ease-in-out;
-    transition: none;;
-    // transition: transform 8000ms ease-in-out;
+    transition: none;
 
     &:hover {
-      // transition: transform 30ms ease-in-out;
-      // transition: transform 0 ease-in-out;
       transition: none;
-      // background: white;
       background: var(--color-two-hover);
     }
 
@@ -282,10 +270,6 @@
       cursor: grabbing;
     }
 
-    // & ~ li {
-    //   transform: translateY(calc(100% + var(--lesser-padding)));
-    //   transition: none;
-    // }
   }
 
   &--scroll-drag {

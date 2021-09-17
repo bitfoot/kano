@@ -6,7 +6,7 @@ const getListedTabs = require("./util").getListedTabs;
 // this function declares and initializes the variables needed for handling all aspects of dragging a tab
 function initializeDrag(event) {
   const tabListContainer = document.getElementById("tab-list-container");
-  const tabListScrollTop = this.scrollTop;
+  const tabListScrollTop = this.scrollState.scrollTop;
   const maxScrollTop =
     tabListContainer.scrollHeight - tabListContainer.offsetHeight;
   const tabList = document.getElementById("tab-list");
@@ -29,8 +29,6 @@ function initializeDrag(event) {
     headerHeight +
     tabListScrollTop;
   const pointerPosition = event.pageY;
-  const draggedTabPosition = pointerPosition - shiftY;
-  const tabTopPosInViewport = pointerPosition - shiftY;
   const maxTabPosition = tabListHeight - margin - draggedTab.offsetHeight;
   const minTabPosition = 0;
   let lastTabPos =
@@ -58,7 +56,6 @@ function initializeDrag(event) {
     scroll: false,
     draggedTab,
     pointerPosition,
-    draggedTabPosition,
     headerHeight,
     tabList,
     tabListHeight,
@@ -77,7 +74,6 @@ function initializeDrag(event) {
     tabsAbove,
     tabsBelow,
     initialTabPositions,
-    tabTopPosInViewport,
     tabPositionInTheList: 0,
     minTabPosition,
     maxTabPosition,
@@ -88,60 +84,42 @@ function initializeDrag(event) {
     //   this.pointerPosition = pos;
     //   this.lastPointerPos = dragState.pointerPosition;
     // }
-    getTabOffset() {
-      const maxOffsetBelowNow = this.maxTabOffsetBelow - this.tabListOffset;
-      console.log(
-        `tabListOffset: ${this.tabListOffset
-        }, maxOffsetBelowNow: ${maxOffsetBelowNow}`
-      );
-      // const tabListOffset
-    },
-    getTabPos() {
-      // this function calculates updated 'offsetTop' position of dragged tab
-      // get tab offset
-      // console.log(
-      //   `Intial offsetTop: ${this.initialPosition}, newOffsetTop: ${this
-      //     .initialPosition + this.tabOffset}`
-      // );
-      // console.log(
-      //   `pointer position: ${this.pointerPosition -
-      //   this.shiftY -
-      //   this.headerHeight}, newOffsetTop: ${this.initialPosition +
-      //   this.tabOffset}`
-      // );
-    },
     lastPointerPos: null,
     getUpdatedTabPos() {
-      // console.log(
-      //   `pointerPosition: ${ this.pointerPosition }, shiftY: ${
-      // this.shiftY;
-      //   }, headerHeight: ${this.headerHeight}, tabListScrollTop: ${this.tabListScrollTop
-      //   }, tabListOffset: ${this.tabListOffset}`
-      // );
       const position =
         this.pointerPosition -
         this.shiftY -
         this.headerHeight +
         this.tabListScrollTop +
         this.tabListOffset;
-      // const position =
-      //   this.initialPosition +
-      //   this.tabOffset +
-      //   this.tabListScrollTop +
-      //   this.tabListOffset;
 
-      // console.log(this.tabListScrollTop, this.tabListOffset);
-      // console.log(`offset: ${this.tabOffset}`);
+      const currentMaxOffsetBelow =
+        this.maxTabOffsetBelow -
+        this.maxScrollTop +
+        this.tabListOffset +
+        this.tabListScrollTop;
 
-      const correctedPosition = Math.min(
-        this.maxTabPosition,
-        Math.max(this.minTabPosition, position)
-      );
+      const currentMaxOffsetAbove =
+        this.maxTabOffsetAbove + this.tabListOffset + this.tabListScrollTop;
 
-      console.log(
-        `position: ${position}, correctedPosition: ${correctedPosition}, tabListOffset: ${this.tabListOffset
-        }`
-      );
+      const currentMaxPos = this.initialPosition + currentMaxOffsetBelow;
+      const currentMinPos = this.initialPosition + currentMaxOffsetAbove;
+
+      // console.log(
+      //   `currentMaxPos: ${currentMaxPos}, currentMinPos: ${currentMinPos}`
+      // );
+      // const correctedPosition = Math.min(
+      //   currentMaxPos,
+      //   Math.max(this.minTabPosition, position)
+      // );
+
+      let correctedPosition = Math.max(currentMinPos, position);
+      correctedPosition = Math.min(currentMaxPos, correctedPosition);
+
+      // console.log(
+      //   `position: ${position}, correctedPosition: ${correctedPosition}, tabListOffset: ${this.tabListOffset
+      //   }`
+      // );
 
       return correctedPosition;
     },
@@ -175,41 +153,37 @@ function initializeDrag(event) {
     shouldScroll() {
       const tabTopPosInViewport = this.pointerPosition - this.shiftY;
       const tabBottomPosInViewport = tabTopPosInViewport + this.tabHeight;
-      const initialTabBottomPos =
-        this.initialPosition + this.tabHeight + this.headerHeight;
-      // console.log(
-      //   `tabListOffset: ${this.tabListOffset}, maxTabListOffset: ${this.maxTabListOffset
-      //   }, tabListScrollTop: ${this.tabListScrollTop}`
-      // );
-      if (
-        tabTopPosInViewport < 184 &&
-        this.tabListOffset + this.tabListScrollTop > 0
-      ) {
-        return "up";
+      const topBoundary = 184;
+      const bottomBoundary = 420;
+      let distance = 0;
+
+      // console.log(`tabListOffset is ${this.tabListOffset}`);
+
+      if (tabTopPosInViewport < topBoundary) {
+        distance = (tabTopPosInViewport - topBoundary) / 12;
+        // console.log(`the scroll distance is ${distance}`);
+        if (this.tabListOffset + distance < this.tabListScrollTop * -1) {
+          distance = (this.tabListScrollTop + this.tabListOffset) * -1;
+          // console.log(
+          //   `tabListOffset is currently ${this.tabListOffset
+          //   } and tabListScrollTop is ${this.tabListScrollTop
+          //   } and distance is ${distance}`
+          // );
+        }
       } else if (
-        // check to make sure tabTopPosInViewport is greater than initialTabTopPos. Otherwise it means tab is being dragged up.
-        // tabBottomPosInViewport > initialTabBottomPos &&
-        tabBottomPosInViewport > 420 &&
-        this.tabListOffset + this.tabListScrollTop < this.maxScrollTop
-        // this.tabListOffset < this.maxTabListOffset - this.tabListScrollTop &&
-        // this.tabListScrollTop < this.maxScrollTop
+        tabBottomPosInViewport > bottomBoundary &&
+        this.tabListScrollTop + this.tabListOffset < this.maxScrollTop
       ) {
-        // console.log(
-        //   `tabBottomPosInViewport: ${tabBottomPosInViewport}, tabTopPosInViewport: ${tabTopPosInViewport}`
-        // );
-        return "down";
-      } else return false;
+        // console.log(`tabListOffset: ${this.tabListOffset}, maxScrollTop: `);
+        distance = (tabBottomPosInViewport - bottomBoundary) / 12;
+        if (this.tabListOffset + distance > this.maxScrollTop) {
+          // distance = this.maxScrollTop % this.tabListOffset;
+          distance = this.maxScrollTop - this.tabListOffset;
+        }
+      }
+      // console.log(`the scroll distance is ${distance}`);
+      return distance;
     }
-    // getScrollSpeed() {
-    //   const difference = this.draggedTabPosition - 426;
-    //   if (difference < 10) {
-    //     return "1000ms";
-    //   } else if (difference < 30) {
-    //     return "600ms";
-    //   } else {
-    //     return "200ms";
-    //   }
-    // }
   };
 
   draggedTab.onpointermove = onTabDrag.bind(this);

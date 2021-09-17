@@ -25,14 +25,14 @@ function dragTab(options = {}) {
       dragState.maxTabOffsetBelow -
       dragState.maxScrollTop +
       dragState.tabListOffset +
-      dragState.tabListScrollTop;
+      this.scrollState.scrollTop;
 
     const currentMaxOffsetAbove =
       dragState.maxTabOffsetAbove +
       dragState.tabListOffset +
-      dragState.tabListScrollTop;
+      this.scrollState.scrollTop;
 
-    console.log(`currentMaxOffsetAbove is: ${currentMaxOffsetAbove}`);
+    // console.log(`currentMaxOffsetAbove is: ${currentMaxOffsetAbove}`);
 
     dragState.tabOffset = Math.max(
       currentMaxOffsetAbove,
@@ -114,7 +114,8 @@ function dragTab(options = {}) {
       );
     });
   } else {
-    throw new Error("dragState object is not initialized");
+    // throw new Error("dragState object is not initialized");
+    console.log("dragState object is not initialized");
   }
 }
 
