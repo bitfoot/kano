@@ -159,29 +159,30 @@ function initializeDrag(event) {
 
       // console.log(`tabListOffset is ${this.tabListOffset}`);
 
-      if (tabTopPosInViewport < topBoundary) {
+      if (
+        tabTopPosInViewport < topBoundary
+        // this.tabListScrollTop + this.tabListOffset > 0
+      ) {
         distance = (tabTopPosInViewport - topBoundary) / 12;
         // console.log(`the scroll distance is ${distance}`);
         if (this.tabListOffset + distance < this.tabListScrollTop * -1) {
           distance = (this.tabListScrollTop + this.tabListOffset) * -1;
-          // console.log(
-          //   `tabListOffset is currently ${this.tabListOffset
-          //   } and tabListScrollTop is ${this.tabListScrollTop
-          //   } and distance is ${distance}`
-          // );
         }
       } else if (
         tabBottomPosInViewport > bottomBoundary &&
         this.tabListScrollTop + this.tabListOffset < this.maxScrollTop
       ) {
-        // console.log(`tabListOffset: ${this.tabListOffset}, maxScrollTop: `);
+        console.log(
+          `tabListScrollTop: ${this.tabListScrollTop}, tabListOffset: ${this.tabListOffset
+          }, maxScrollTop: ${this.maxScrollTop}`
+        );
         distance = (tabBottomPosInViewport - bottomBoundary) / 12;
         if (this.tabListOffset + distance > this.maxScrollTop) {
           // distance = this.maxScrollTop % this.tabListOffset;
           distance = this.maxScrollTop - this.tabListOffset;
         }
       }
-      // console.log(`the scroll distance is ${distance}`);
+      console.log(`the scroll distance is ${distance}`);
       return distance;
     }
   };
