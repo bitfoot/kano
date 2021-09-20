@@ -6,9 +6,12 @@ const dragTab = require("./dragTab");
 function onScroll(e) {
   // return;
   // console.log(e);
-  const container = e.target;
+  // const document = e.target;
+  const container = document.getElementById("tab-list-container");
+  // const container = e.target;
   const prevScrolltop = this.scrollState.scrollTop;
   const currScrolltop = container.scrollTop;
+  console.log("scroll event fired");
   // update scrolltop in state so that other functions get the latest value without having to use elem.scrollTop and forcing reflow
   this.scrollState.scrollTop = currScrolltop;
   let previousTabListOffset = null;
@@ -31,10 +34,10 @@ function onScroll(e) {
     this.dragState.tabListScrollTop = currScrolltop;
   }
 
-  console.log(
-    `currScrolltop: ${currScrolltop}, prevScrolltop: ${prevScrolltop}, tabListOffset: ${previousTabListOffset}, distance to "scroll" by: ${distanceToScrollBy}, thumbOffset: ${this.scrollState.thumbOffset
-    }, dragState: ${Boolean(this.dragState)}`
-  );
+  // console.log(
+  //   `currScrolltop: ${currScrolltop}, prevScrolltop: ${prevScrolltop}, tabListOffset: ${previousTabListOffset}, distance to "scroll" by: ${distanceToScrollBy}, thumbOffset: ${this.scrollState.thumbOffset
+  //   }, dragState: ${Boolean(this.dragState)}`
+  // );
 
   const scrollOptions = {
     distance: distanceToScrollBy,
@@ -47,7 +50,8 @@ function onScroll(e) {
   // if so, drag the tab to keep up with the changing scrolltop
   if (
     this.dragState &&
-    this.dragState.tabListOffset + currScrolltop < this.dragState.maxScrollTop
+    this.dragState.tabListOffset + distanceToScrollBy + currScrolltop <
+    this.dragState.maxScrollTop
   ) {
     console.log(
       `tabListOffset: ${this.dragState.tabListOffset}, maxScrollTop: ${this.dragState.maxScrollTop

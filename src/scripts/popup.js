@@ -182,8 +182,11 @@ document.addEventListener(`input`, e => {
 });
 
 const tabListContainer = document.getElementById("tab-list-container");
+const scrollBarTrack = document.getElementById("scrollbar-track");
 
-tabListContainer.addEventListener("scroll", onScroll.bind(state));
+// tabListContainer.addEventListener("scroll", onScroll.bind(state));
+scrollBarTrack.addEventListener("scroll", onScroll.bind(state));
+// document.addEventListener("scroll", onScroll.bind(state));
 
 document.addEventListener("pointerdown", e => {
   if (e.target.classList.contains("tab-list-item__tab-button")) {
@@ -203,8 +206,10 @@ document.addEventListener("contextmenu", e => {
 });
 
 document.addEventListener("keyup", e => {
-  if (e.key != "Tab") {
-    filter.call(state);
+  if (e.target.id == "filter-input") {
+    if (e.key != "Tab") {
+      filter.call(state);
+    }
   }
   // console.log(e.key);
 });

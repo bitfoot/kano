@@ -62,6 +62,12 @@ function onTabDragEnd(event) {
         currentTabTopPosition
       ) {
         dragState.tabList.insertBefore(dragState.draggedTab, t);
+        const tabId = +dragState.draggedTab.id.split("-")[1];
+        const nextTabId = +t.id.split("-")[1];
+        chrome.tabs.get(nextTabId).then(tabDetails => {
+          console.log(tabDetails);
+          chrome.tabs.move(tabId, { index: tabDetails.index });
+        });
       }
     });
   } else {
@@ -70,7 +76,15 @@ function onTabDragEnd(event) {
         dragState.initialTabPositions[t.id] + 23 - dragState.margin <
         currentTabTopPosition + dragState.tabHeight
       ) {
+        // const tabId = +dragState.draggedTab.id.split("-")[1];
+        // chrome.tabs.move(tabId, { index: -1 });
         dragState.tabList.insertBefore(dragState.draggedTab, t.nextSibling);
+        const tabId = +dragState.draggedTab.id.split("-")[1];
+        const nextTabId = +t.id.split("-")[1];
+        chrome.tabs.get(nextTabId).then(tabDetails => {
+          // console.log(tabDetails);
+          chrome.tabs.move(tabId, { index: tabDetails.index });
+        });
       }
     });
   }

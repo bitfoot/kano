@@ -113,14 +113,21 @@ button {
 
 .scrollbar-track {
   // z-index: -1;
-  position: fixed;
+  // position: fixed;
+  position: absolute;
+  overflow-y: scroll;
   top: var(--header-height);
-  right: 0;
+  // top: 0;
+  left: calc(34rem - var(--lesser-padding) * 3);
+  // right: 0;
   width: calc(var(--lesser-padding) * 3);
   height: 506px;
+  // height: 526px;
   padding: 0 var(--lesser-padding);
 
   &__thumb {
+    position: relative;
+    margin-bottom: 506px;
     --thumb-height: 0;
     --thumb-offset: 0;
     height: var(--thumb-height);
