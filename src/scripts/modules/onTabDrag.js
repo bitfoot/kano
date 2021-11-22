@@ -104,9 +104,14 @@ function onTabDrag(event) {
   const step = () => {
     // console.log(`tabListOffset: ${dragState.tabListOffset}`);
     const adjustedTabPos =
-      dragState.initialPosition + dragState.tabOffset - dragState.tabListOffset;
+      dragState.initialPosition +
+      dragState.tabOffset -
+      dragState.tabListOffset +
+      this.tabListContentHeight;
     const adjustedMaxTabPos =
-      dragState.maxTabPosition - dragState.tabListOffset;
+      dragState.maxTabPosition -
+      dragState.tabListOffset +
+      this.tabListContentHeight;
     const adjustedPointerPos =
       dragState.pointerPosition -
       dragState.headerHeight -
@@ -116,8 +121,8 @@ function onTabDrag(event) {
     const dragDistance = adjustedPointerPos - adjustedTabPos;
 
     console.log(
-      `adjustedTabPos: ${adjustedTabPos}, maxTabPos: ${dragState.maxTabPosition
-      }`
+      `adjustedTabPos: ${adjustedTabPos}, adjustedMaxTabPos: ${adjustedMaxTabPos}, adjustedPointerPos: ${adjustedPointerPos}, dynamic margin: ${this.tabListContentHeight
+      }, dragDistance: ${dragDistance}`
     );
 
     if (dragState.shouldScroll() && dragState.animation) {
@@ -129,7 +134,8 @@ function onTabDrag(event) {
     } else if (
       Math.round(adjustedTabPos) != adjustedPointerPos &&
       dragState.animation &&
-      adjustedTabPos < adjustedMaxTabPos
+      adjustedTabPos < adjustedMaxTabPos &&
+      adjustedTabPos > 0
     ) {
       dragTab.call(this, { distance: dragDistance });
       window.requestAnimationFrame(step);

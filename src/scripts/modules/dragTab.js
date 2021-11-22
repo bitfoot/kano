@@ -27,29 +27,20 @@ function dragTab(options = {}) {
       this.dragState.tabListOffset +
       this.scrollState.scrollTop;
 
+    // console.log(
+    //   `FROM DRAGTAB maxTabOffsetBelow is ${dragState.maxTabOffsetBelow}`
+    // );
+
     const currentMaxOffsetAbove =
       dragState.maxTabOffsetAbove +
       dragState.tabListOffset +
-      this.scrollState.scrollTop;
+      this.scrollState.specialScrolltop;
 
     dragState.tabOffset = Math.max(
       currentMaxOffsetAbove,
       Math.min(dragState.tabOffset, currentMaxOffsetBelow)
     );
 
-    // const container = document.getElementById("tab-list-container");
-    // const content = container.children[0];
-    // const margin = 6;
-    // const visibleContentHeight = container.offsetHeight - margin; // 500
-    // const wholeContentHeight = container.scrollHeight - margin;
-    // const hiddenContentHeight = wholeContentHeight - visibleContentHeight;
-
-    // console.log(`currentMaxOffset: ${currentMaxOffset}`);
-
-    // console.log(
-    //   `maxTabOffsetBelow: ${dragState.maxTabOffsetBelow}, tabListOffset: ${dragState.tabListOffset
-    //   }, maxScrollTop: ${dragState.maxScrollTop}`
-    // );
     dragState.lastTabPos = dragState.getUpdatedTabPos();
 
     dragState.draggedTab.style.setProperty(

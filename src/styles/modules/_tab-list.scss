@@ -1,19 +1,35 @@
 .tab-list {
   --y-offset: 0px;
-  // --scroll-drag-speed: 0;
+  --dynamic-margin: 0;
   position: relative;
+  // position: absolute;
+  margin: var(--dynamic-margin) 0;
   width: 34rem;
   list-style: none;
-  height: max-content;
+  // height: max-content;
   // padding: 0 var(--lesser-padding) var(--lesser-padding) var(--lesser-padding);
   padding: 0 var(--lesser-padding);
   // background: rgba(255, 0, 0, 0.5);
   // background: red;
   overflow: hidden;
 
+  // &::before {
+  //   content: "";
+  //   display: block;
+  //   position: relatve;
+  //   height: var(--margin);
+  //   width: 100%;
+  //   background: red;
+  // }
+
   &--scrollable {
     overflow: auto;
+
+    // & .tab-list-item {
+    //   // width: calc(100% - var(--lesser-padding) * 2);
+    // }
     width: calc(34rem - var(--lesser-padding) * 2);
+    // width: 24rem;
   }
 
   &--filtered {

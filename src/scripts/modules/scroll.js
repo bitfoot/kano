@@ -13,6 +13,7 @@ function scroll(options = {}) {
   const containerToContentRatio = visibleContentHeight / entireContentHeight;
   const curThumbOffset = this.scrollState.thumbOffset;
   const scrollbarDistance = distance * containerToContentRatio;
+  console.log(`scrollbarDistance: ${scrollbarDistance}`);
   const maxThumbOffset =
     (entireContentHeight - visibleContentHeight) * containerToContentRatio;
   const newThumbOffset = Math.max(
@@ -28,50 +29,33 @@ function scroll(options = {}) {
     // if scrolling using drag (from onTabDrag)
     if (!scrollBarOnly) {
       dragState.tabListOffset += distance;
-
-      // dragState.tabListOffset = Math.min(
-      //   dragState.tabListOffset,
-      //   dragState.maxScrollTop - dragState.tabListScrollTop
-      // );
-
       dragState.tabListOffset = Math.min(
         dragState.tabListOffset,
         dragState.maxScrollTop - dragState.tabListScrollTop
       );
-
       dragState.tabListOffset = Math.max(
         dragState.tabListOffset,
         dragState.tabListScrollTop * -1
       );
-
       this.scrollState.tabListOffset = dragState.tabListOffset;
       content.classList.add("tab-list--scroll");
       const newOffset = dragState.tabListOffset * -1;
       content.style.setProperty("--y-offset", newOffset + "px");
     } else {
+      // if scrolling using wheel
       dragState.tabListOffset = Math.min(
         dragState.tabListOffset,
         dragState.maxScrollTop - dragState.tabListScrollTop
       );
-
       dragState.tabListOffset = Math.max(
         dragState.tabListOffset,
         dragState.tabListScrollTop * -1
       );
-
       this.scrollState.tabListOffset = dragState.tabListOffset;
       const newOffset = dragState.tabListOffset * -1;
       content.style.setProperty("--y-offset", newOffset + "px");
     }
   }
-  // else {
-  //   if (!dragState) return;
-  //   dragState.tabListOffset -= distance;
-  //   this.scrollState.tabListOffset = dragState.tabListOffset;
-  //   // content.classList.add("tab-list--scroll");
-  //   const newOffset = dragState.tabListOffset * -1;
-  //   // content.style.setProperty("--y-offset", newOffset + "px");
-  // }
 }
 
 module.exports = scroll;

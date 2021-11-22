@@ -103,7 +103,9 @@ const state = {
     visibleTabs: 0
   },
   scrollState: {
+    scrollbarTrack: document.getElementById("scrollbar-track"),
     scrollTop: 0,
+    specialScrolltop: 0,
     tabListOffset: 0,
     thumbOffset: 0
   }
@@ -119,6 +121,24 @@ chrome.tabs.query({ windowId: chrome.windows.WINDOW_ID_CURRENT }, function (
   tabs.forEach(tab => state.addTab(tab));
   util.adjustScrollbar.call(state);
   state.renderedTabs = util.getListedTabs();
+  const tabList = document.getElementById(`tab-list`);
+  const tabListContainer = document.getElementById(`tab-list-container`);
+  state.tabListContentHeight = state.renderedTabs.length * 46;
+
+  requestAnimationFrame(() => {
+    if (tabList.offsetHeight > tabListContainer.offsetHeight) {
+      tabList.style.setProperty(
+        "--dynamic-margin",
+        state.tabListContentHeight + "px"
+      );
+    } else {
+      tabList.style.setProperty("--dynamic-margin", 0);
+    }
+
+    if (tabList.offsetHeight > tabListContainer.offsetHeight) {
+      tabListContainer.scrollBy(0, state.tabListContentHeight);
+    }
+  });
 });
 
 // document.addEventListener("pointermove", e => {
@@ -182,10 +202,22 @@ document.addEventListener(`input`, e => {
 });
 
 const tabListContainer = document.getElementById("tab-list-container");
-const scrollBarTrack = document.getElementById("scrollbar-track");
+// const scrollBarTrack = document.getElementById("scrollbar-track");
 
-// tabListContainer.addEventListener("scroll", onScroll.bind(state));
-scrollBarTrack.addEventListener("scroll", onScroll.bind(state));
+tabListContainer.addEventListener("scroll", onScroll.bind(state));
+// tabListContainer.addEventListener(
+//   "wheel",
+//   function (e) {
+//     e.preventDefault();
+//     const container = tabListContainer;
+//     this.dragState.tabList.style.setProperty("--y-offset", 0 + "px");
+//     this.dragState.tabList.classList.remove("tab-list--scroll");
+//     const scrollTo =
+//       this.scrollState.scrollTop + this.scrollState.tabListOffset;
+//     container.scrollBy(0, scrollTo);
+//   }.bind(state)
+// );
+// scrollBarTrack.addEventListener("scroll", onScroll.bind(state));
 // document.addEventListener("scroll", onScroll.bind(state));
 
 document.addEventListener("pointerdown", e => {

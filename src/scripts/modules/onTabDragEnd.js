@@ -65,7 +65,7 @@ function onTabDragEnd(event) {
         const tabId = +dragState.draggedTab.id.split("-")[1];
         const nextTabId = +t.id.split("-")[1];
         chrome.tabs.get(nextTabId).then(tabDetails => {
-          console.log(tabDetails);
+          // console.log(tabDetails);
           chrome.tabs.move(tabId, { index: tabDetails.index });
         });
       }

@@ -2,16 +2,22 @@
 // using translate to move tabList up and down.
 
 .tab-list-container {
-  --scrolltop: 0;
+  // --dynamic-margin: 46px;
+  // --scrolltop: 0;
   position: relative;
   width: 42rem;
   max-height: 506px;
   overflow-y: scroll;
   padding: 0;
   margin: 0;
+  // margin: calc(var(--dynamic-margin) * -1) 0;
 
   &--no-scroll {
     overflow-y: hidden;
+
+    // & .tab-list {
+    //   margin: 0;
+    // }
   }
   
 }

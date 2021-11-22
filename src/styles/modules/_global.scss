@@ -10,9 +10,10 @@
 }
 
 :root {
-  --scroll-drag-speed: 5000ms;
+  // --scroll-drag-speed: 5000ms;
   --block-height: 2rem;
   --border-radius: calc(var(--block-height) / 4);
+  --scrolltop: 0;
   // --color-one: #3d3e48;
   // --color-one: rgb(61, 62, 72);
   // --color-one: #40404d;
@@ -113,21 +114,27 @@ button {
 
 .scrollbar-track {
   // z-index: -1;
+  // position: relative;
+  // position: absolute;
   // position: fixed;
+  // position: sticky;
+  --scrolltop: 0;
+  transform: translateY(var(--scrolltop));
   position: absolute;
-  overflow-y: scroll;
-  top: var(--header-height);
-  // top: 0;
+  // overflow-y: scroll;
+  // top: var(--header-height);
+  top: 0;
   left: calc(34rem - var(--lesser-padding) * 3);
   // right: 0;
   width: calc(var(--lesser-padding) * 3);
   height: 506px;
   // height: 526px;
+  background: purple;
   padding: 0 var(--lesser-padding);
 
   &__thumb {
     position: relative;
-    margin-bottom: 506px;
+    // margin-bottom: 506px;
     --thumb-height: 0;
     --thumb-offset: 0;
     height: var(--thumb-height);
@@ -144,6 +151,7 @@ button {
 
   &--hidden {
     visibility: hidden;
+    // display: none;
   }
 }
 
