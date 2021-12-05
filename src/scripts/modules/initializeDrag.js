@@ -6,6 +6,7 @@ const getListedTabs = require("./util").getListedTabs;
 // this function declares and initializes the variables needed for handling all aspects of dragging a tab
 function initializeDrag(event) {
   const tabListContainer = document.getElementById("tab-list-container");
+  const scrollState = this.scrollState;
   const tabListScrollTop = this.scrollState.scrollTop;
   const specialScrollTop = this.scrollState.specialScrolltop;
   const tabListContentHeight = this.tabListContentHeight;
@@ -57,10 +58,11 @@ function initializeDrag(event) {
 
   // this is normal
   console.log(
-    `pointerPosition: ${pointerPosition}, shiftY: ${shiftY}, headerHeight: ${headerHeight}, tabListScrollTop: ${tabListScrollTop}, tabListOffset: ${tabListOffset}, lastTabPos: ${lastTabPos}`
+    `INITIALIZING DRAG! pointerPosition: ${pointerPosition}, shiftY: ${shiftY}, headerHeight: ${headerHeight}, tabListScrollTop: ${tabListScrollTop}, tabListOffset: ${tabListOffset}, lastTabPos: ${lastTabPos}`
   );
 
   this.dragState = {
+    scrollState,
     animation: null,
     scroll: false,
     draggedTab,
@@ -69,8 +71,8 @@ function initializeDrag(event) {
     tabList,
     tabListHeight,
     tabListContainer,
-    tabListScrollTop,
-    specialScrollTop,
+    // tabListScrollTop,
+    // specialScrollTop,
     initialPosition: initialTabPositions[draggedTab.id],
     maxScrollTop,
     tabOffset: 0,
@@ -108,27 +110,43 @@ function initializeDrag(event) {
       //   this.maxScrollTop +
       //   this.tabListOffset +
       //   this.tabListScrollTop;
+
       const position =
         this.pointerPosition -
         this.shiftY -
         this.headerHeight +
-        this.specialScrollTop +
+        this.scrollState.specialScrolltop +
         this.tabListOffset;
 
       const currentMaxOffsetBelow =
         this.maxTabOffsetBelow -
         this.maxScrollTop +
         this.tabListOffset +
-        this.tabListScrollTop;
+        this.scrollState.scrollTop;
+
+      console.log(
+        `FROM getUpdatedTabPos. maxTabOffsetBelow: ${this.maxTabOffsetBelow
+        }, maxScrollTop: ${this.maxScrollTop}, tabListOffset: ${this.tabListOffset
+        }, scrollTop: ${this.scrollState.scrollTop}`
+      );
 
       const currentMaxOffsetAbove =
-        this.maxTabOffsetAbove + this.tabListOffset + this.specialScrollTop;
+        this.maxTabOffsetAbove +
+        this.tabListOffset +
+        this.scrollState.specialScrolltop;
 
       const currentMaxPos = this.initialPosition + currentMaxOffsetBelow;
       const currentMinPos = this.initialPosition + currentMaxOffsetAbove;
 
+      // console.log(
+      //   `position: ${position}, currentMaxOffsetBelow: ${currentMaxOffsetBelow}, currentMaxOffsetAbove: ${currentMaxOffsetAbove}, currentMinPos: ${currentMinPos}`
+      // );
+
       console.log(
-        `position: ${position}, currentMaxOffsetBelow: ${currentMaxOffsetBelow}, currentMaxOffsetAbove: ${currentMaxOffsetAbove}, currentMinPos: ${currentMinPos}`
+        `maxTabOffsetBelow: ${this.maxTabOffsetBelow
+        }, currentMaxOffsetBelow: ${currentMaxOffsetBelow}, maxScrollTop: ${this.maxScrollTop
+        }, tabListOffset: ${this.tabListOffset}, tabListScrollTop: ${this.scrollState.scrollTop
+        }`
       );
       // const correctedPosition = Math.min(
       //   currentMaxPos,
@@ -188,15 +206,20 @@ function initializeDrag(event) {
       ) {
         distance = (tabTopPosInViewport - topBoundary) / 12;
         // console.log(`the scroll distance is ${distance}`);
-        if (this.tabListOffset + distance < this.specialScrollTop * -1) {
-          distance = (this.specialScrollTop + this.tabListOffset) * -1;
+        if (
+          this.tabListOffset + distance <
+          this.scrollState.specialScrolltop * -1
+        ) {
+          distance =
+            (this.scrollState.specialScrolltop + this.tabListOffset) * -1;
         }
       } else if (
         tabBottomPosInViewport > bottomBoundary &&
-        this.tabListScrollTop + this.tabListOffset < this.maxScrollTop
+        this.scrollState.scrollTop + this.tabListOffset < this.maxScrollTop
       ) {
         console.log(
-          `POOO tabListScrollTop: ${this.tabListScrollTop}, specialScrollTop: ${this.specialScrollTop
+          `POOO tabListScrollTop: ${this.scrollState.scrollTop
+          }, specialScrollTop: ${this.scrollState.specialScrolltop
           }, tabListOffset: ${this.tabListOffset}, maxScrollTop: ${this.maxScrollTop
           }`
         );

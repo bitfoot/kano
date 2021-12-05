@@ -31,25 +31,24 @@ function scroll(options = {}) {
       dragState.tabListOffset += distance;
       dragState.tabListOffset = Math.min(
         dragState.tabListOffset,
-        dragState.maxScrollTop - dragState.tabListScrollTop
+        dragState.maxScrollTop - this.scrollState.scrollTop
       );
       dragState.tabListOffset = Math.max(
         dragState.tabListOffset,
-        dragState.tabListScrollTop * -1
+        this.scrollState.scrollTop * -1
       );
       this.scrollState.tabListOffset = dragState.tabListOffset;
       content.classList.add("tab-list--scroll");
       const newOffset = dragState.tabListOffset * -1;
       content.style.setProperty("--y-offset", newOffset + "px");
     } else {
-      // if scrolling using wheel
       dragState.tabListOffset = Math.min(
         dragState.tabListOffset,
-        dragState.maxScrollTop - dragState.tabListScrollTop
+        dragState.maxScrollTop - this.scrollState.scrollTop
       );
       dragState.tabListOffset = Math.max(
         dragState.tabListOffset,
-        dragState.tabListScrollTop * -1
+        this.scrollState.scrollTop * -1
       );
       this.scrollState.tabListOffset = dragState.tabListOffset;
       const newOffset = dragState.tabListOffset * -1;

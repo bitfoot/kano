@@ -116,7 +116,7 @@ function onTabDrag(event) {
       dragState.pointerPosition -
       dragState.headerHeight -
       dragState.shiftY +
-      dragState.tabListScrollTop;
+      this.scrollState.scrollTop;
 
     const dragDistance = adjustedPointerPos - adjustedTabPos;
 
@@ -126,6 +126,8 @@ function onTabDrag(event) {
     );
 
     if (dragState.shouldScroll() && dragState.animation) {
+      // THIS IS WHAT GETS RUN DURING INFINITE DRAG.
+      // THE PROBLEM IS IN SHOULDSCROLL FUNCTION
       console.log("%cshould scroll", "color: purple");
       console.log(`scrolling by ${dragState.shouldScroll()}`);
       scroll.call(this, { distance: dragState.shouldScroll() });

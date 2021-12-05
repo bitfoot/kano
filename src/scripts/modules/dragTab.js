@@ -24,7 +24,7 @@ function dragTab(options = {}) {
     const currentMaxOffsetBelow =
       dragState.maxTabOffsetBelow -
       dragState.maxScrollTop +
-      this.dragState.tabListOffset +
+      dragState.tabListOffset +
       this.scrollState.scrollTop;
 
     // console.log(

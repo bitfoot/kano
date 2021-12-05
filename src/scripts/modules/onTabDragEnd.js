@@ -24,10 +24,12 @@ function onTabDragEnd(event) {
   //   0,
   //   dragState.tabListOffset + this.scrollState.scrollTop
   // );
-  dragState.tabListContainer.scrollBy(0, dragState.tabListOffset);
-  console.log(
-    `Scrolling BY ${dragState.tabListOffset} from within onTabDragEnd`
-  );
+  if (dragState.tabListOffset !== 0) {
+    dragState.tabListContainer.scrollBy(0, dragState.tabListOffset);
+    console.log(
+      `Scrolling BY ${dragState.tabListOffset} from within onTabDragEnd`
+    );
+  }
 
   // console.log(
   //   `from onTabDragEnd, tabListOffset is ${this.scrollState.tabListOffset
