@@ -121,24 +121,19 @@ chrome.tabs.query({ windowId: chrome.windows.WINDOW_ID_CURRENT }, function (
   tabs.forEach(tab => state.addTab(tab));
   util.adjustScrollbar.call(state);
   state.renderedTabs = util.getListedTabs();
-  const tabList = document.getElementById(`tab-list`);
-  const tabListContainer = document.getElementById(`tab-list-container`);
+  // const tabList = document.getElementById(`tab-list`);
+  // const tabListContainer = document.getElementById(`tab-list-container`);
   state.tabListContentHeight = state.renderedTabs.length * 46;
-
-  requestAnimationFrame(() => {
-    if (tabList.offsetHeight > tabListContainer.offsetHeight) {
-      tabList.style.setProperty(
-        "--dynamic-margin",
-        state.tabListContentHeight + "px"
-      );
-    } else {
-      tabList.style.setProperty("--dynamic-margin", 0);
-    }
-
-    if (tabList.offsetHeight > tabListContainer.offsetHeight) {
-      tabListContainer.scrollBy(0, state.tabListContentHeight);
-    }
-  });
+  // if tabList height exceeds parent's height, add a margin to tabList
+  // if (state.tabListContentHeight > tabListContainer.offsetHeight) {
+  //   state.tabListMargin = state.tabListContentHeight;
+  // } else {
+  //   state.tabListMargin = 0;
+  // }
+  // requestAnimationFrame(() => {
+  //   tabList.style.setProperty("--tab-list-margin", state.tabListMargin + "px");
+  //   tabListContainer.scrollBy(0, state.tabListMargin);
+  // });
 });
 
 // document.addEventListener("pointermove", e => {

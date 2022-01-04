@@ -77,74 +77,31 @@ function onScroll(e) {
 
   // for positioning scrollbar track
   requestAnimationFrame(() => {
-    let srollbarOffset = currScrolltop;
-    if (currScrolltop < this.tabListContentHeight) {
-      srollbarOffset = this.tabListContentHeight;
-    } else if (currScrolltop > this.tabListContentHeight * 2 - 506) {
-      srollbarOffset = this.tabListContentHeight * 2 - 506;
-    }
     this.scrollState.scrollbarTrack.style.setProperty(
       "--scrolltop",
-      srollbarOffset + "px"
+      currScrolltop + "px"
     );
   });
 
-  if (
-    currScrolltop + this.scrollState.tabListOffset <
-    this.tabListContentHeight
-  ) {
-    container.scroll(
-      0,
-      this.tabListContentHeight + this.scrollState.tabListOffset
-    );
-    console.log(
-      `numero uno. currScrolltop: ${currScrolltop}, tabListContentHeight: ${this.tabListContentHeight
-      }`
-    );
-    this.scrollState.tabListOffset = 0;
-    return;
-  } else if (currScrolltop > this.tabListContentHeight * 2 - 506) {
-    console.log(
-      `NUMERO DOSSS currScrolltop: ${currScrolltop}, tabListOffset: ${this.scrollState.tabListOffset
-      }, tabListContentHeight: ${this.tabListContentHeight}`
-    );
-    container.scroll(0, this.tabListContentHeight * 2 - 506);
-    console.log("numero dos");
-    // this.scrollState.tabListOffset = 0;
-    return;
-  }
-
   // update scrolltop in state so that other functions get the latest value without having to use elem.scrollTop and forcing reflow
+  const prevScrolltop = this.scrollState.scrollTop;
   this.scrollState.scrollTop = currScrolltop;
-  // const prevScrolltop = this.scrollState.scrollTop;
-  const specialScrolltop = currScrolltop - this.tabListContentHeight;
-  const prevSpecialScrolltop = this.scrollState.specialScrolltop;
-  this.scrollState.specialScrolltop = specialScrolltop;
+
   let previousTabListOffset = null;
   let distanceToScrollBy = null;
   if (this.dragState) {
     // this.dragState.tabListScrollTop = this.scrollState.scrollTop;
     previousTabListOffset = this.dragState.tabListOffset;
-    distanceToScrollBy = specialScrolltop - prevSpecialScrolltop;
+    distanceToScrollBy = currScrolltop - prevScrolltop;
   } else {
     previousTabListOffset = this.scrollState.tabListOffset;
-    distanceToScrollBy =
-      specialScrolltop - prevSpecialScrolltop - previousTabListOffset;
+    distanceToScrollBy = currScrolltop - prevScrolltop - previousTabListOffset;
   }
   this.scrollState.tabListOffset = 0;
 
-  // console.log(
-  //   `previousTabListOffset: ${previousTabListOffset}, distanceToScrollBy: ${distanceToScrollBy}, prevSpecialScrolltop: ${prevSpecialScrolltop}`
-  // );
-
   if (this.dragState) {
-    this.dragState.tabListScrollTop = specialScrolltop;
+    this.dragState.tabListScrollTop = currScrolltop;
   }
-
-  // console.log(
-  //   `currScrolltop: ${currScrolltop}, prevScrolltop: ${prevScrolltop}, tabListOffset: ${previousTabListOffset}, distance to "scroll" by: ${distanceToScrollBy}, thumbOffset: ${this.scrollState.thumbOffset
-  //   }, dragState: ${Boolean(this.dragState)}`
-  // );
 
   const scrollOptions = {
     distance: distanceToScrollBy,

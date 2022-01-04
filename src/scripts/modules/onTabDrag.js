@@ -104,14 +104,9 @@ function onTabDrag(event) {
   const step = () => {
     // console.log(`tabListOffset: ${dragState.tabListOffset}`);
     const adjustedTabPos =
-      dragState.initialPosition +
-      dragState.tabOffset -
-      dragState.tabListOffset +
-      this.tabListContentHeight;
+      dragState.initialPosition + dragState.tabOffset - dragState.tabListOffset;
     const adjustedMaxTabPos =
-      dragState.maxTabPosition -
-      dragState.tabListOffset +
-      this.tabListContentHeight;
+      dragState.maxTabPosition - dragState.tabListOffset;
     const adjustedPointerPos =
       dragState.pointerPosition -
       dragState.headerHeight -
@@ -119,11 +114,6 @@ function onTabDrag(event) {
       this.scrollState.scrollTop;
 
     const dragDistance = adjustedPointerPos - adjustedTabPos;
-
-    console.log(
-      `adjustedTabPos: ${adjustedTabPos}, adjustedMaxTabPos: ${adjustedMaxTabPos}, adjustedPointerPos: ${adjustedPointerPos}, dynamic margin: ${this.tabListContentHeight
-      }, dragDistance: ${dragDistance}`
-    );
 
     if (dragState.shouldScroll() && dragState.animation) {
       // THIS IS WHAT GETS RUN DURING INFINITE DRAG.

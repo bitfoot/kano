@@ -39,6 +39,7 @@ function onTabDragEnd(event) {
   dragState.tabList.style.setProperty("--y-offset", 0 + "px");
   dragState.tabList.classList.remove("tab-list--scroll");
 
+  dragState.tabListContainer.classList.remove("tab-list-container--no-scroll");
   dragState.tabListContainer.style.setProperty(
     "--scrolltop",
     dragState.tabListScrollTop
