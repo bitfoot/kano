@@ -172,13 +172,46 @@ function initializeDrag(event) {
     shouldScroll() {
       const tabTopPosInViewport = this.pointerPosition - this.shiftY;
       const tabBottomPosInViewport = tabTopPosInViewport + this.tabHeight;
-      const topBoundary = 184;
-      const bottomBoundary = 420;
+      const initialTabBottomPosInViewport =
+        this.initialPosition + this.tabHeight + this.headerHeight;
+      const bottomPosDifference =
+        tabBottomPosInViewport - initialTabBottomPosInViewport;
+      // console.log(
+      //   `tabBottomPosInViewport is ${tabBottomPosInViewport}, initialTabBottomPosInViewport: ${initialTabBottomPosInViewport}, bottomPosDifference: ${bottomPosDifference}`
+      // );
+      const defaultTopBoundary = 184;
+      const defaultBottomBoundary = 420;
+      // boundaries may change depending on where the tab is when drag is initiated
+      // so for example, if user clicks on the last visible tab and initiates drag, that tab is already below default bottom scroll boundary,
+      // and scrolling would be very fast if user were to move this tab even one pixel. To prevent this, boundary value is increased.
+      let topBoundary = defaultTopBoundary;
+      let bottomBoundary = defaultBottomBoundary;
       let distance = 0;
 
       // console.log(`tabListOffset is ${this.tabListOffset}`);
       // something is up with scroll function I feel like. TabList is not being offset
       // check the below if statement.
+
+      if (initialTabBottomPosInViewport > defaultBottomBoundary) {
+        if (
+          tabBottomPosInViewport < initialTabBottomPosInViewport &&
+          tabBottomPosInViewport < bottomBoundary &&
+          tabBottomPosInViewport > defaultBottomBoundary
+        ) {
+          bottomBoundary = tabBottomPosInViewport;
+        }
+      }
+
+      // adjust boundaries
+      // if (bottomBoundary < defaultBottomBoundary) {
+      // }
+
+      if (initialTabBottomPosInViewport > defaultBottomBoundary) {
+        if (tabBottomPosInViewport > initialTabBottomPosInViewport) {
+          bottomBoundary = initialTabBottomPosInViewport;
+        }
+      }
+      console.log(`BOTTOM BOUNDARY: ${bottomBoundary}`);
 
       if (
         tabTopPosInViewport < topBoundary
@@ -201,7 +234,7 @@ function initializeDrag(event) {
           distance = this.maxScrollTop - this.tabListOffset;
         }
       }
-      console.log(`the scroll distance is ${distance}`);
+      // console.log(`the scroll distance is ${distance}`);
       return distance;
     }
   };
