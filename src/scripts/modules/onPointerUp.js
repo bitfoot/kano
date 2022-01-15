@@ -1,49 +1,29 @@
 "use strict";
 
-function onTabDragEnd(event) {
+function onPointerUp(event) {
   const dragState = this.dragState;
   if (dragState.animation) {
-    console.log(`cancelled animation from within onTabDragEnd`);
+    console.log(`cancelled animation from within onPointerUp`);
     cancelAnimationFrame(dragState.animation);
     dragState.animation = null;
   }
   // get tabList offset value, and scroll by that amount
-  // remember to hide system scrollbar and add custom one that scrolls with the offset
-  // const tabListOffset = Number.parseFloat(
-  //   dragState.tabList.style.getPropertyValue("--y-offset") || 0
-  // );
-  // const tabListOffset = dragState.tabListOffset;
-  const currentTabTopPosition = dragState.getUpdatedTabPos();
-  // const tabTravelDistance = currentTabTopPosition - dragState.lastTabPos;
-  // the container is under-scrolled by distance inside dragTab
+  // const currentTabTopPosition = dragState.getUpdatedTabPos();
 
-  // console.log(
-  //   `scrolling to: ${dragState.tabListOffset + dragState.tabListScrollTop}`
-  // );
-  // dragState.tabListContainer.scroll(
-  //   0,
-  //   dragState.tabListOffset + this.scrollState.scrollTop
-  // );
+  dragState.tabListContainer.classList.remove("tab-list-container--no-scroll");
+
   if (dragState.tabListOffset !== 0) {
     dragState.tabListContainer.scrollBy(0, dragState.tabListOffset);
     console.log(
-      `Scrolling BY ${dragState.tabListOffset} from within onTabDragEnd`
+      `Scrolling BY ${dragState.tabListOffset} from within onPointerUp`
     );
+    dragState.tabListOffset = 0;
   }
 
-  // console.log(
-  //   `from onTabDragEnd, tabListOffset is ${this.scrollState.tabListOffset
-  //   } but about to become 0`
-  // );
-  // this.scrollState.tabListOffset = 0;
+  const currentTabTopPosition = dragState.tabPosInList;
+
   dragState.tabList.style.setProperty("--y-offset", 0 + "px");
   dragState.tabList.classList.remove("tab-list--scroll");
-
-  dragState.tabListContainer.classList.remove("tab-list-container--no-scroll");
-  dragState.tabListContainer.style.setProperty(
-    "--scrolltop",
-    dragState.tabListScrollTop
-  );
 
   dragState.draggedTab.onpointermove = null;
   dragState.draggedTab.onpointerup = null;
@@ -60,8 +40,8 @@ function onTabDragEnd(event) {
   if (currentTabTopPosition < dragState.initialPosition) {
     dragState.tabsAbove.forEach(t => {
       if (
-        dragState.initialTabPositions[t.id] + 23 > currentTabTopPosition &&
-        dragState.initialTabPositions[t.id] - dragState.margin - 23 <
+        dragState.offsetTops[t.id] + 23 > currentTabTopPosition &&
+        dragState.offsetTops[t.id] - dragState.margin - 23 <
         currentTabTopPosition
       ) {
         dragState.tabList.insertBefore(dragState.draggedTab, t);
@@ -76,7 +56,7 @@ function onTabDragEnd(event) {
   } else {
     dragState.tabsBelow.forEach(t => {
       if (
-        dragState.initialTabPositions[t.id] + 23 - dragState.margin <
+        dragState.offsetTops[t.id] + 23 - dragState.margin <
         currentTabTopPosition + dragState.tabHeight
       ) {
         // const tabId = +dragState.draggedTab.id.split("-")[1];
@@ -96,4 +76,4 @@ function onTabDragEnd(event) {
   this.dragState = null;
 }
 
-module.exports = onTabDragEnd;
+module.exports = onPointerUp;

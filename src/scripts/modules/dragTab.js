@@ -1,47 +1,29 @@
 "use strict";
 
-// this function will move tab up or down, depending on whether the distance value is positive or negative
-
 function dragTab(options = {}) {
   const { distance = 0, speed = 0 } = options;
   const dragState = this.dragState;
   console.log(`distance inside dragTab: ${distance}`);
 
   if (dragState) {
-    const initialTabPosition =
-      dragState.initialTabPositions[dragState.draggedTab.id];
+    const initialTabPosition = dragState.offsetTops[dragState.draggedTab.id];
+    // this function should only update tabOffset
 
-    // const currentTabPosition = dragState.getTabTopPosInList();
-    // const newTabPosition = currentTabPosition + distance;
-
-    // change position of the dragged tab, ensuring it doesn't exceed the max
     dragState.tabOffset += distance;
-    // dragState.tabOffset = Math.max(
-    //   dragState.maxTabOffsetAbove,
-    //   Math.min(dragState.tabOffset, dragState.maxTabOffsetBelow)
-    // );
 
-    const currentMaxOffsetBelow =
-      dragState.maxTabOffsetBelow -
-      dragState.maxScrollTop +
-      dragState.tabListOffset +
-      this.scrollState.scrollTop;
+    const maxOffsetInViewport = dragState.maxOffsetInViewport;
+    const minOffsetInViewport = dragState.minOffsetInViewport;
 
     // console.log(
-    //   `FROM DRAGTAB maxTabOffsetBelow is ${dragState.maxTabOffsetBelow}`
+    //   `from DRAGTAB: maxOffsetInViewport: ${maxOffsetInViewport}, minOffsetInViewport: ${minOffsetInViewport}, scrollDistance: ${dragState.getScrollDistance()}`
     // );
 
-    const currentMaxOffsetAbove =
-      dragState.maxTabOffsetAbove +
-      dragState.tabListOffset +
-      this.scrollState.scrollTop;
-
     dragState.tabOffset = Math.max(
-      currentMaxOffsetAbove,
-      Math.min(dragState.tabOffset, currentMaxOffsetBelow)
+      minOffsetInViewport,
+      Math.min(dragState.tabOffset, maxOffsetInViewport)
     );
 
-    dragState.lastTabPos = dragState.getUpdatedTabPos();
+    // update dragState.tabPosition here
 
     dragState.draggedTab.style.setProperty(
       "--y-offset",
@@ -50,9 +32,7 @@ function dragTab(options = {}) {
 
     dragState.tabsAbove.forEach(tab => {
       const totalDifference =
-        dragState.initialTabPositions[tab.id] -
-        initialTabPosition -
-        dragState.tabOffset;
+        dragState.offsetTops[tab.id] - initialTabPosition - dragState.tabOffset;
 
       // get the difference between the bottom of todo and the top of draggable todo.
       const difference = totalDifference + dragState.tabHeight;
@@ -74,13 +54,9 @@ function dragTab(options = {}) {
       );
     });
 
-    // this breaks down when drag starts after list is scrolled down a bit
-
     dragState.tabsBelow.forEach(tab => {
       const totalDifference =
-        dragState.initialTabPositions[tab.id] -
-        initialTabPosition -
-        dragState.tabOffset;
+        dragState.offsetTops[tab.id] - initialTabPosition - dragState.tabOffset;
 
       const difference = totalDifference - dragState.tabHeight;
       const offset = Math.min(

@@ -71,37 +71,24 @@ const dragTab = require("./dragTab");
 // }
 
 function onScroll(e) {
-  // console.log(`fired`);
-  const container = document.getElementById("tab-list-container");
-  const currScrolltop = container.scrollTop;
+  const newScrolltop = e.target.scrollTop;
 
   // for positioning scrollbar track
   requestAnimationFrame(() => {
     this.scrollState.scrollbarTrack.style.setProperty(
       "--scrolltop",
-      currScrolltop + "px"
+      newScrolltop + "px"
     );
   });
 
   // update scrolltop in state so that other functions get the latest value without having to use elem.scrollTop and forcing reflow
   const prevScrolltop = this.scrollState.scrollTop;
-  this.scrollState.scrollTop = currScrolltop;
+  this.scrollState.scrollTop = newScrolltop;
 
-  let previousTabListOffset = null;
-  let distanceToScrollBy = null;
-  if (this.dragState) {
-    // this.dragState.tabListScrollTop = this.scrollState.scrollTop;
-    previousTabListOffset = this.dragState.tabListOffset;
-    distanceToScrollBy = currScrolltop - prevScrolltop;
-  } else {
-    previousTabListOffset = this.scrollState.tabListOffset;
-    distanceToScrollBy = currScrolltop - prevScrolltop - previousTabListOffset;
-  }
+  let previousTabListOffset = this.scrollState.tabListOffset;
+  let distanceToScrollBy = newScrolltop - prevScrolltop - previousTabListOffset;
+
   this.scrollState.tabListOffset = 0;
-
-  if (this.dragState) {
-    this.dragState.tabListScrollTop = currScrolltop;
-  }
 
   const scrollOptions = {
     distance: distanceToScrollBy,
@@ -109,24 +96,43 @@ function onScroll(e) {
   };
 
   scroll.call(this, scrollOptions);
-
-  // check if a tab is being dragged right now
-  // if so, drag the tab to keep up with the changing scrolltop
-  if (
-    // this.dragState &&
-    // this.dragState.tabListOffset + currScrolltop <
-    // this.dragState.maxScrollTop &&
-    // this.dragState.tabListScrollTop + this.dragState.tabListOffset > 0
-    this.dragState
-  ) {
-    // console.log(
-    //   `tabListOffset: ${this.dragState.tabListOffset}, maxScrollTop: ${this.dragState.maxScrollTop
-    //   }`
-    // );
-    dragTab.call(this, {
-      distance: distanceToScrollBy
-    });
-  }
 }
+
+// function onScroll(e) {
+//   // console.log(`fired`);
+//   const container = document.getElementById("tab-list-container");
+//   const currScrolltop = container.scrollTop;
+
+//   // for positioning scrollbar track
+//   requestAnimationFrame(() => {
+//     this.scrollState.scrollbarTrack.style.setProperty(
+//       "--scrolltop",
+//       currScrolltop + "px"
+//     );
+//   });
+
+//   // update scrolltop in state so that other functions get the latest value without having to use elem.scrollTop and forcing reflow
+//   const prevScrolltop = this.scrollState.scrollTop;
+//   this.scrollState.scrollTop = currScrolltop;
+
+//   let previousTabListOffset = null;
+//   let distanceToScrollBy = null;
+//   if (this.dragState) {
+//     // this.dragState.tabListScrollTop = this.scrollState.scrollTop;
+//     previousTabListOffset = this.dragState.tabListOffset;
+//     distanceToScrollBy = currScrolltop - prevScrolltop;
+//   } else {
+//     previousTabListOffset = this.scrollState.tabListOffset;
+//     distanceToScrollBy = currScrolltop - prevScrolltop - previousTabListOffset;
+//   }
+//   this.scrollState.tabListOffset = 0;
+
+//   const scrollOptions = {
+//     distance: distanceToScrollBy,
+//     scrollBarOnly: true
+//   };
+
+//   scroll.call(this, scrollOptions);
+// }
 
 module.exports = onScroll;
