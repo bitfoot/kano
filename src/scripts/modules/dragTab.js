@@ -11,16 +11,13 @@ function dragTab(options = {}) {
 
     dragState.tabOffset += distance;
 
-    const maxOffsetInViewport = dragState.maxOffsetInViewport;
-    const minOffsetInViewport = dragState.minOffsetInViewport;
+    const currentMaxOffset = dragState.currentMaxOffset;
+    const currentMinOffset = dragState.currentMinOffset;
 
-    // console.log(
-    //   `from DRAGTAB: maxOffsetInViewport: ${maxOffsetInViewport}, minOffsetInViewport: ${minOffsetInViewport}, scrollDistance: ${dragState.getScrollDistance()}`
-    // );
-
+    // ensure that offset does not exceed current max or min offset
     dragState.tabOffset = Math.max(
-      minOffsetInViewport,
-      Math.min(dragState.tabOffset, maxOffsetInViewport)
+      currentMinOffset,
+      Math.min(dragState.tabOffset, currentMaxOffset)
     );
 
     // update dragState.tabPosition here

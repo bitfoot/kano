@@ -16,65 +16,24 @@ function onPointerMove(event) {
   //   dragState.pointerPosition - dragState.lastPointerPos;
 
   const getDragDistance = () => {
-    const tabPosInList = dragState.initialPosition + dragState.tabOffset;
+    let tabPosInViewport = dragState.tabPosInViewport.top;
 
-    let tabPosInViewport =
-      tabPosInList -
-      dragState.scrollTop -
-      dragState.tabListOffset +
-      dragState.headerHeight;
-
-    tabPosInViewport = Math.min(
-      dragState.tabMaxPosInViewport,
-      Math.max(dragState.tabMinPosInViewport, tabPosInViewport)
-    );
-
-    const virtualTabPos = dragState.pointerPosition - dragState.shiftY;
-
-    return virtualTabPos - tabPosInViewport;
-  };
-
-  const step = () => {
-    // const actualTabPos =
-    //   dragState.initialPosition + dragState.tabOffset - dragState.tabListOffset;
-
-    // const tabPosInList = dragState.initialPosition + dragState.tabOffset;
-
-    // let tabPosInViewport =
-    //   tabPosInList -
-    //   dragState.scrollTop -
-    //   dragState.tabListOffset +
-    //   dragState.headerHeight;
-
-    // // ensure the position is within min and max bounds
+    // dragTab is doing this validation, so this is redundant
     // tabPosInViewport = Math.min(
     //   dragState.tabMaxPosInViewport,
     //   Math.max(dragState.tabMinPosInViewport, tabPosInViewport)
     // );
-    // const actualTabPos =
-    //   dragState.initialPosition + dragState.tabOffset - dragState.tabListOffset;
-    // const adjustedMaxTabPos =
-    //   dragState.maxTabPosition - dragState.tabListOffset;
+
+    const imaginaryTopPos = dragState.pointerPosition - dragState.shiftY;
+
+    return imaginaryTopPos - tabPosInViewport;
+  };
+
+  const step = () => {
     const tabMaxPosInViewport = dragState.tabMaxPosInViewport;
     const tabMinPosInViewport = dragState.tabMinPosInViewport;
-    // const adjustedPointerPos =
-    //   dragState.pointerPosition -
-    //   dragState.headerHeight -
-    //   dragState.shiftY +
-    //   dragState.scrollTop;
 
     const virtualTabPos = dragState.pointerPosition - dragState.shiftY;
-
-    // console.log(
-    //   `virtualTabPos: ${virtualTabPos}, tabPosInViewport: ${tabPosInViewport}, tabMaxPosInViewport: ${tabMaxPosInViewport}`
-    // );
-
-    // tab position is updated when DRAGGING
-
-    // the problem is that while getDragDistance() is guaranteed to not exceed maxOffset, that does not hold when you add getScrollDistance to it.
-    // need to adjust this somehow so that scrollDistance is factored into max offset
-    // const dragDistance = getDragDistance() + dragState.getScrollDistance();
-    // const dragDistance = virtualTabPos - tabPosInViewport;
     const dragDistance = getDragDistance();
 
     if (dragState.getScrollDistance() != 0 && dragState.animation) {
@@ -84,10 +43,10 @@ function onPointerMove(event) {
       window.requestAnimationFrame(step);
     } else if (
       // this needs work
-      Math.round(dragState.tabPosInViewport) != virtualTabPos &&
+      Math.round(dragState.tabPosInViewport.top) != virtualTabPos &&
       dragState.animation &&
       virtualTabPos < tabMaxPosInViewport &&
-      dragState.tabPosInViewport > tabMinPosInViewport
+      dragState.tabPosInViewport.top > tabMinPosInViewport
     ) {
       console.log("%cshould NOT scroll", "color: red");
       dragTab.call(this, { distance: dragDistance });

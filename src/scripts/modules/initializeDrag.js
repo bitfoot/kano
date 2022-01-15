@@ -73,11 +73,24 @@ function initializeDrag(event) {
       up: defaultScrollBoundary.up,
       down: defaultScrollBoundary.down
     },
+    // this doesn't need validation because dragTab will ensure tabOffset doesn't exceed current max or min
     get tabPosInList() {
       return this.initialPosition + this.tabOffset;
     },
+    // get tabPosInViewport() {
+    //   const top =
+    //     this.tabPosInList -
+    //     this.scrollTop -
+    //     this.tabListOffset +
+    //     this.headerHeight;
+    //   const bottom = top + this.tabHeight;
+    //   return {
+    //     top,
+    //     bottom
+    //   };
+    // },
     get tabPosInViewport() {
-      const top =
+      let top =
         this.tabPosInList -
         this.scrollTop -
         this.tabListOffset +
@@ -116,7 +129,7 @@ function initializeDrag(event) {
     //     this.scrollTop;
     //   return maxOffset;
     // },
-    get maxOffsetInViewport() {
+    get currentMaxOffset() {
       const maxOffset =
         this.maxTabOffsetInList -
         this.maxScrollTop +
@@ -124,46 +137,15 @@ function initializeDrag(event) {
         this.scrollTop;
       return maxOffset;
     },
-    get minOffsetInViewport() {
+    get currentMinOffset() {
       const minOffset =
         this.minTabOffsetInList + this.tabListOffset + this.scrollTop;
       return minOffset;
     },
 
-    lastPointerPos: null,
-    // figure out how to simplify this
-    // getUpdatedTabPos() {
-    //   const topPos =
-    //     this.pointerPosition -
-    //     this.shiftY -
-    //     this.headerHeight +
-    //     this.scrollTop +
-    //     this.tabListOffset;
-
-    //   const currentMaxPos = this.initialPosition + this.maxOffsetInViewport;
-    //   const currentMinPos = this.initialPosition + this.minOffsetInViewport;
-
-    //   let correctedPosition = Math.max(currentMinPos, topPos);
-    //   correctedPosition = Math.min(currentMaxPos, correctedPosition);
-
-    //   return correctedPosition;
-    // },
-    getUpdatedTabPos() {
-      const topPos = this.initialPosition + this.tabOffset - this.tabListOffset;
-      // const topPos = this.initialPosition + this.tabOffset;
-
-      // const currentMaxPos = this.initialPosition + this.maxOffsetInViewport;
-      // const currentMinPos = this.initialPosition + this.minOffsetInViewport;
-
-      // let correctedPosition = Math.max(currentMinPos, topPos);
-      // correctedPosition = Math.min(currentMaxPos, correctedPosition);
-
-      return topPos;
-    },
-
     getScrollDistance() {
-      const tabTopPosInViewport = this.pointerPosition - this.shiftY;
-      const tabBottomPosInViewport = tabTopPosInViewport + this.tabHeight;
+      const imaginaryTopPos = this.pointerPosition - this.shiftY;
+      const imaginaryBottomPos = imaginaryTopPos + this.tabHeight;
 
       // const { top, bottom } = this.tabPosInViewport;
       // console.log(`TOP: ${top}, BOTTOM: ${bottom}`);
@@ -180,19 +162,19 @@ function initializeDrag(event) {
 
         if (initialTopPosInViewport < defaultUpScrollBoundary) {
           if (
-            tabTopPosInViewport < defaultUpScrollBoundary &&
-            tabTopPosInViewport > this.scrollBoundary.up
+            imaginaryTopPos < defaultUpScrollBoundary &&
+            imaginaryTopPos > this.scrollBoundary.up
           ) {
-            this.scrollBoundary.up = tabTopPosInViewport;
+            this.scrollBoundary.up = imaginaryTopPos;
           } else if (this.scrollBoundary.up == defaultUpScrollBoundary) {
             this.scrollBoundary.up = initialTopPosInViewport;
           }
         } else if (initialBottomPosInViewport > defaultDownScrollBoundary) {
           if (
-            tabBottomPosInViewport > defaultDownScrollBoundary &&
-            tabBottomPosInViewport < this.scrollBoundary.down
+            imaginaryBottomPos > defaultDownScrollBoundary &&
+            imaginaryBottomPos < this.scrollBoundary.down
           ) {
-            this.scrollBoundary.down = tabBottomPosInViewport;
+            this.scrollBoundary.down = imaginaryBottomPos;
           } else if (this.scrollBoundary.down == defaultDownScrollBoundary) {
             this.scrollBoundary.down = initialBottomPosInViewport;
           }
@@ -203,16 +185,16 @@ function initializeDrag(event) {
 
       const getDistance = () => {
         let distance = 0;
-        if (tabTopPosInViewport < this.scrollBoundary.up) {
-          distance = (tabTopPosInViewport - this.scrollBoundary.up) / 12;
+        if (imaginaryTopPos < this.scrollBoundary.up) {
+          distance = (imaginaryTopPos - this.scrollBoundary.up) / 12;
           if (this.tabListOffset + distance < this.scrollState.scrollTop * -1) {
             distance = (this.scrollState.scrollTop + this.tabListOffset) * -1;
           }
         } else if (
-          tabBottomPosInViewport > this.scrollBoundary.down &&
+          imaginaryBottomPos > this.scrollBoundary.down &&
           this.scrollState.scrollTop + this.tabListOffset < this.maxScrollTop
         ) {
-          distance = (tabBottomPosInViewport - this.scrollBoundary.down) / 12;
+          distance = (imaginaryBottomPos - this.scrollBoundary.down) / 12;
           if (this.tabListOffset + distance > this.maxScrollTop) {
             distance = this.maxScrollTop - this.tabListOffset;
           }
