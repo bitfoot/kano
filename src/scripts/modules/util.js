@@ -16,43 +16,36 @@ function adjustBodyPadding() {
   }
 }
 
-function getNewDuplicateColor() {
-  const state = this;
-  const color = `hsl(${state.hue}, 100%, ${state.lightness}%)`;
-
-  // update color values in state so they are different for the next duplicate
-  if (this.hue <= 280) {
-    this.hue += 40;
-  } else if (this.lightness == 60) {
-    this.hue = 0;
-    this.lightness = 40;
-  }
-
-  return color;
-}
-
 function getListedTabs() {
-  return [...document.getElementsByClassName("tab-list-item")] || [];
+  return [...document.getElementsByClassName("tab")] || [];
 }
 
+function getFilteredTabs() {
+  return [...document.getElementsByClassName("tab")] || [];
+}
+
+// this function should be merged with the one below
 function calculateScrollbarHeight() {
   const container = document.getElementById("tab-list-container");
   const margin = 6;
-  const visibleContentHeight = container.offsetHeight - margin; // 500
-  const wholeContentHeight = container.scrollHeight - margin;
+  const visibleContentHeight = container.offsetHeight; // 500
+  const wholeContentHeight = container.scrollHeight;
   const contentHeightRatio = visibleContentHeight / wholeContentHeight;
-  const scrollbarHeight = visibleContentHeight * contentHeightRatio;
+  const scrollbarHeight = visibleContentHeight * contentHeightRatio - margin;
   return scrollbarHeight;
 }
+
+// function get
 
 // this will be called when tabs are first rendered, when a tab is deleted, and when tabs are filtered
 // TODO: make scrollbar length adjust based on number of filtered-out tabs
 function adjustScrollbar() {
+  const state = this;
   // determine if scrollbar is needed, and if it's not then remove it
   const container = document.getElementById("tab-list-container");
-  const tabs = document.getElementsByClassName("tab-list-item");
+  const tabs = document.getElementsByClassName("tab");
   const visibleTabsCount = [...tabs].reduce((a, t) => {
-    if (!t.classList.contains("tab-list-item--hidden")) {
+    if (!t.classList.contains("tab--hidden")) {
       a += 1;
     }
     return a;
@@ -79,13 +72,11 @@ function adjustScrollbar() {
   const scrollbarThumb = document.getElementById("scrollbar-thumb");
   const scrollbarHeight = calculateScrollbarHeight();
 
-  const containerScrollTop = Number.parseFloat(
-    container.style.getPropertyValue("--scrolltop") || 0
-  );
+  const scrollTop = state.scrollState.scrollTop;
 
   // this value doesn't change no matter where thumb is. Max offset is always the same.
   this.maxScrollbarThumbOffset = hiddenContentHeight * containerToContentRatio;
-  const currentThumbOffset = containerScrollTop * containerToContentRatio;
+  const currentThumbOffset = scrollTop * containerToContentRatio;
 
   if (currentThumbOffset > this.maxScrollbarThumbOffset) {
     const newScrollbarThumbOffset = this.maxScrollbarThumbOffset;
@@ -96,18 +87,6 @@ function adjustScrollbar() {
   }
 
   scrollbarThumb.style.setProperty("--thumb-height", scrollbarHeight + "px");
-}
-
-function calculateScrollSpeed() { }
-
-function dragTab(options = {}) {
-  const { distance = 0, speed = 0 } = options;
-  const draggedTab = document.getElementsByClassName(
-    "tab-list-item--draggable"
-  )[0];
-  if (draggedTab) {
-    draggedTab.style.setProperty("--y-offset", distance + "px");
-  }
 }
 
 function createCheckboxSvg() {
@@ -144,13 +123,13 @@ function createCheckboxSvg() {
   );
   // paths[0].setAttribute("stroke", "var(--color-three)");
   paths[0].setAttribute("stroke", "var(--color-four)");
-  paths[0].classList.add(`tab-list-item__svg-checkbox-box`);
+  paths[0].classList.add(`tab__svg-checkbox-box`);
 
   paths[1].setAttribute(
     "d",
     "M6,13.223L8.45,16.7C8.645,16.991 8.972,17.165 9.322,17.165C9.649,17.165 9.959,17.012 10.157,16.751L18,6.828"
   );
-  paths[1].classList.add(`tab-list-item__svg-checkbox-checkmark`);
+  paths[1].classList.add(`tab__svg-checkbox-checkmark`);
   paths.forEach(path => g.appendChild(path));
   svg.appendChild(g);
   return svg;
@@ -158,7 +137,7 @@ function createCheckboxSvg() {
 
 function createDuplicateIndicatorSvg() {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.classList.add(`tab-list-item__duplicate-indicator`);
+  svg.classList.add(`tab__duplicate-indicator`);
   const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
   let paths = null;
 
@@ -202,12 +181,9 @@ function createDuplicateIndicatorSvg() {
 
 module.exports = {
   adjustBodyPadding,
-  getNewDuplicateColor,
   getListedTabs,
   adjustScrollbar,
   createCheckboxSvg,
   createDuplicateIndicatorSvg,
-  calculateScrollbarHeight,
-  scroll,
-  dragTab
+  calculateScrollbarHeight
 };

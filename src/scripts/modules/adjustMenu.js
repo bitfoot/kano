@@ -31,10 +31,10 @@ function adjustMenu() {
   );
 
   // get currently visible tabs
-  const tabs = document.getElementsByClassName("tab-list-item");
+  const tabs = document.getElementsByClassName("tab");
   // const tabs = state.tabs;
   const numOfVisibleTabs = [...tabs].reduce((a, t) => {
-    if (!t.classList.contains("tab-list-item--hidden")) {
+    if (!t.classList.contains("tab--hidden")) {
       a += 1;
     }
     return a;

@@ -24,13 +24,13 @@ const adjustMenu = require("./adjustMenu");
 
 //   const hideTab = tab => {
 //     tab.ariaHidden = "true";
-//     tab.classList.add("tab-list-item--hidden");
+//     tab.classList.add("tab--hidden");
 //     tab.setAttribute("disabled", true);
 //   };
 
 //   const unhideTab = tab => {
 //     tab.ariaHidden = "false";
-//     tab.classList.remove("tab-list-item--hidden");
+//     tab.classList.remove("tab--hidden");
 //     tab.setAttribute("disabled", false);
 //   };
 
@@ -39,7 +39,7 @@ const adjustMenu = require("./adjustMenu");
 //   let filteredOutTabs = 0;
 //   let filteredInTabs = 0;
 
-//   const tabs = [...document.getElementsByClassName("tab-list-item")];
+//   const tabs = [...document.getElementsByClassName("tab")];
 
 //   // determine if tabs match the filter, and if they are currently visible
 //   const tabsStatus = tabs.map(tab => {
@@ -51,7 +51,7 @@ const adjustMenu = require("./adjustMenu");
 //       statusObj.matchesFilter = false;
 //     }
 //     // check if tab is currently visible
-//     if (tab.classList.contains("tab-list-item--hidden")) {
+//     if (tab.classList.contains("tab--hidden")) {
 //       statusObj.visible = false;
 //     } else {
 //       statusObj.visible = true;
@@ -72,14 +72,14 @@ const adjustMenu = require("./adjustMenu");
 //       // if tab is not already hidden
 //       if (tabsStatus[index].visible == true) {
 //         hideTab(tab);
-//         tab.classList.remove("tab-list-item--filtered");
+//         tab.classList.remove("tab--filtered");
 //         filteredOutTabs += 1;
 //         filterState.visibleTabs -= 1;
 //       }
 //     } else {
 //       // if tab's title DOES include filter
 //       filterState.visibleTabs += 1;
-//       tab.classList.add("tab-list-item--filtered");
+//       tab.classList.add("tab--filtered");
 //       // const title = state.tabs[tab.id].title.toLowerCase();
 //       // console.log(title, filteredOutTabs);
 //       tab.style.setProperty(
@@ -87,7 +87,7 @@ const adjustMenu = require("./adjustMenu");
 //         filteredOutTabs > 0 ? "160ms" : "0ms"
 //       );
 
-//       if (!tab.classList.contains("tab-list-item--hidden")) {
+//       if (!tab.classList.contains("tab--hidden")) {
 //         // if tab is already visible
 //         tab.style.setProperty("--speed", "160ms");
 //         tab.style.setProperty(
@@ -117,7 +117,7 @@ const adjustMenu = require("./adjustMenu");
 //         filteredInTabs += 1;
 //       }
 
-//       tab.classList.add("tab-list-item--filtered");
+//       tab.classList.add("tab--filtered");
 //     }
 //   });
 
@@ -143,13 +143,13 @@ const adjustMenu = require("./adjustMenu");
 
 //   const hideTab = tab => {
 //     tab.ariaHidden = "true";
-//     tab.classList.add("tab-list-item--hidden");
+//     tab.classList.add("tab--hidden");
 //     tab.setAttribute("disabled", true);
 //   };
 
 //   const unhideTab = tab => {
 //     tab.ariaHidden = "false";
-//     tab.classList.remove("tab-list-item--hidden");
+//     tab.classList.remove("tab--hidden");
 //     tab.setAttribute("disabled", false);
 //   };
 
@@ -158,7 +158,7 @@ const adjustMenu = require("./adjustMenu");
 //   let filteredOutTabs = 0;
 //   let filteredInTabs = 0;
 
-//   const tabs = [...document.getElementsByClassName("tab-list-item")];
+//   const tabs = [...document.getElementsByClassName("tab")];
 
 //   // determine if tabs match the filter, and if they are currently visible
 //   // const tabsStatus = tabs.map(tab => {
@@ -170,7 +170,7 @@ const adjustMenu = require("./adjustMenu");
 //   //     statusObj.matchesFilter = false;
 //   //   }
 //   //   // check if tab is currently visible
-//   //   if (tab.classList.contains("tab-list-item--hidden")) {
+//   //   if (tab.classList.contains("tab--hidden")) {
 //   //     statusObj.visible = false;
 //   //   } else {
 //   //     statusObj.visible = true;
@@ -186,7 +186,7 @@ const adjustMenu = require("./adjustMenu");
 //       statusObj.matchesFilter = false;
 //     }
 //     // check if tab is currently visible
-//     if (tab.classList.contains("tab-list-item--hidden")) {
+//     if (tab.classList.contains("tab--hidden")) {
 //       statusObj.visible = false;
 //     } else {
 //       statusObj.visible = true;
@@ -215,14 +215,14 @@ const adjustMenu = require("./adjustMenu");
 //       // if tab is not already hidden
 //       if (tabsStatus[index].visible == true) {
 //         hideTab(tab);
-//         tab.classList.remove("tab-list-item--filtered");
+//         tab.classList.remove("tab--filtered");
 //         filteredOutTabs += 1;
 //         filterState.visibleTabs -= 1;
 //       }
 //     } else {
 //       // if tab's title DOES include filter
 //       filterState.visibleTabs += 1;
-//       tab.classList.add("tab-list-item--filtered");
+//       tab.classList.add("tab--filtered");
 //       // const title = state.tabs[tab.id].title.toLowerCase();
 //       // console.log(title, filteredOutTabs);
 //       tab.style.setProperty(
@@ -232,7 +232,7 @@ const adjustMenu = require("./adjustMenu");
 //       // lastMatchedTabIndex = index;
 //       // filteredIn = false;
 
-//       if (!tab.classList.contains("tab-list-item--hidden")) {
+//       if (!tab.classList.contains("tab--hidden")) {
 //         // if tab is already visible
 //         tab.style.setProperty("--speed", "160ms");
 //         tab.style.setProperty(
@@ -267,7 +267,7 @@ const adjustMenu = require("./adjustMenu");
 //         lastUnhiddenTabIndex = index;
 //       }
 
-//       tab.classList.add("tab-list-item--filtered");
+//       tab.classList.add("tab--filtered");
 //     }
 //   });
 
@@ -284,8 +284,8 @@ function filter() {
   const filter = input.value.toLowerCase();
 
   // scroll to the top of the list
-  const tabListContainer = document.getElementById("tab-list-container");
-  tabListContainer.scroll({
+  const container = state.scrollState.container;
+  container.scroll({
     top: 0,
     left: 0,
     behavior: "smooth"
@@ -293,13 +293,13 @@ function filter() {
 
   const hideTab = tab => {
     tab.ariaHidden = "true";
-    tab.classList.add("tab-list-item--hidden");
+    tab.classList.add("tab--hidden");
     tab.setAttribute("disabled", true);
   };
 
   const unhideTab = tab => {
     tab.ariaHidden = "false";
-    tab.classList.remove("tab-list-item--hidden");
+    tab.classList.remove("tab--hidden");
     tab.setAttribute("disabled", false);
   };
 
@@ -308,7 +308,8 @@ function filter() {
   let filteredOutTabs = 0;
   let filteredInTabs = 0;
 
-  const tabs = [...document.getElementsByClassName("tab-list-item")];
+  // const tabs = [...document.getElementsByClassName("tab")];
+  const tabs = state.tabs;
 
   // determine if tabs match the filter, and if they are currently visible
   // const tabsStatus = tabs.map(tab => {
@@ -320,7 +321,7 @@ function filter() {
   //     statusObj.matchesFilter = false;
   //   }
   //   // check if tab is currently visible
-  //   if (tab.classList.contains("tab-list-item--hidden")) {
+  //   if (tab.classList.contains("tab--hidden")) {
   //     statusObj.visible = false;
   //   } else {
   //     statusObj.visible = true;
@@ -328,11 +329,11 @@ function filter() {
   //   return statusObj;
   // });
   const tabsObj = tabs.reduce(
-    (a, tab) => {
-      const title = state.tabs[tab.id].title.toLowerCase();
+    (a, tab, i) => {
+      const title = state.tabsArr[i].title.toLowerCase();
       const statusObj = {};
       // check if tab is currently visible
-      if (tab.classList.contains("tab-list-item--hidden")) {
+      if (tab.classList.contains("tab--hidden")) {
         statusObj.visible = false;
       } else {
         statusObj.visible = true;
@@ -369,7 +370,7 @@ function filter() {
 
   // style tabs based on whether they (or those that preceed/follow them) match the filter
   tabs.forEach((tab, index) => {
-    // tab.classList.remove("tab-list-item--filtered");
+    // tab.classList.remove("tab--filtered");
     tab.style.setProperty(
       "--y-offset",
       state.totalFilteredOutTabs * -46 + "px"
@@ -384,16 +385,16 @@ function filter() {
         if (firstHiddenTabIndex == null) {
           firstHiddenTabIndex = index;
         }
-        tab.classList.remove("tab-list-item--filtered");
+        tab.classList.remove("tab--filtered");
         filteredOutTabs += 1;
         filterState.visibleTabs -= 1;
       }
     } else {
       // if tab's title DOES include filter
       filterState.visibleTabs += 1;
-      tab.classList.add("tab-list-item--filtered");
+      tab.classList.add("tab--filtered");
 
-      if (!tab.classList.contains("tab-list-item--hidden")) {
+      if (!tab.classList.contains("tab--hidden")) {
         // if tab is already visible
         if (firstAlreadyVisibleTabIndex == null) {
           firstAlreadyVisibleTabIndex = index;
@@ -444,12 +445,12 @@ function filter() {
       }
 
       matchedTabs += 1;
-      // tab.classList.add("tab-list-item--filtered");
+      // tab.classList.add("tab--filtered");
     }
   });
 
   // console.log(state.totalFilteredOutTabs);
-  util.adjustScrollbar();
+  util.adjustScrollbar.call(state);
   adjustMenu.call(state);
 }
 

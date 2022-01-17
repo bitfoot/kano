@@ -3,7 +3,9 @@
 const scroll = require("./scroll");
 const dragTab = require("./dragTab");
 
-function onPointerMove(event) {
+function onDragPointerMove(event) {
+  // Despite its name, this function is fired on pointermove event and not on drag event.
+  // However, it's only fired while "drag" is active, hence the name.
   const dragState = this.dragState;
 
   dragState.lastPointerPos = dragState.pointerPosition;
@@ -63,10 +65,6 @@ function onPointerMove(event) {
       console.log("%cshould scroll -- no animation running", "color: skyblue");
       dragState.animation = window.requestAnimationFrame(step);
     } else {
-      // console.log(
-      //   `dragging from onPointerMove. lastPointerPos: ${lastPointerPos}, currentPointerPos: ${dragState.pointerPosition
-      //   }`
-      // );
       dragTab.call(this, { distance: getDragDistance() });
     }
   }
@@ -138,4 +136,4 @@ function onPointerMove(event) {
 //   }
 // }
 
-module.exports = onPointerMove;
+module.exports = onDragPointerMove;

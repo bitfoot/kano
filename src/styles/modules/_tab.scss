@@ -1,4 +1,4 @@
-.tab-list-item {
+.tab {
   user-select: none; 
   position: relative;
   display: flex;
@@ -171,12 +171,12 @@
       box-shadow: inset 0 0 0 2px lime;
     }
 
-    &:checked + svg .tab-list-item__svg-checkbox-box {
+    &:checked + svg .tab__svg-checkbox-box {
       // fill: var(--color-two);
       fill: var(--color-four);
     }
 
-    &:checked + svg .tab-list-item__svg-checkbox-checkmark {
+    &:checked + svg .tab__svg-checkbox-checkmark {
       stroke: var(--color-two);
     }
   }
@@ -266,7 +266,7 @@
       background: var(--color-two-hover);
     }
 
-    & .tab-list-item__tab-button {
+    & .tab__tab-button {
       cursor: grabbing;
     }
 
@@ -286,7 +286,7 @@
       background: white;
     }
 
-    & .tab-list-item__tab-button {
+    & .tab__tab-button {
       cursor: grabbing;
     }
 

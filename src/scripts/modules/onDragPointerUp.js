@@ -1,9 +1,9 @@
 "use strict";
 
-function onPointerUp(event) {
+function onDragPointerUp(event) {
   const dragState = this.dragState;
   if (dragState.animation) {
-    console.log(`cancelled animation from within onPointerUp`);
+    console.log(`cancelled animation from within onDragPointerUp`);
     cancelAnimationFrame(dragState.animation);
     dragState.animation = null;
   }
@@ -15,7 +15,7 @@ function onPointerUp(event) {
   if (dragState.tabListOffset !== 0) {
     dragState.tabListContainer.scrollBy(0, dragState.tabListOffset);
     console.log(
-      `Scrolling BY ${dragState.tabListOffset} from within onPointerUp`
+      `Scrolling BY ${dragState.tabListOffset} from within onDragPointerUp`
     );
     dragState.tabListOffset = 0;
   }
@@ -28,13 +28,13 @@ function onPointerUp(event) {
   dragState.draggedTab.onpointermove = null;
   dragState.draggedTab.onpointerup = null;
 
-  dragState.draggedTab.classList.remove("tab-list-item--draggable");
+  dragState.draggedTab.classList.remove("tab--draggable");
   // reset style values of all the tabs to their defaults
   dragState.listedTabs.forEach(tab => {
     tab.style.setProperty("--y-offset", 0);
     tab.style.setProperty("--opacity", 1);
     tab.style.setProperty("--scale", 0.99);
-    tab.classList.remove("tab-list-item--moving");
+    tab.classList.remove("tab--moving", "tab--moveable");
   });
 
   if (currentTabTopPosition < dragState.initialPosition) {
@@ -72,8 +72,14 @@ function onPointerUp(event) {
     });
   }
 
-  // dragState.draggedTab.scrollIntoView({ block: "nearest" });
+  // tab order has changed, so it should be changed in the "tab" and "tabsArr" lists in state
+  // this.tabs = [...document.getElementsByClassName("tab")];
+  this.tabs = [
+    ...dragState.tabsAbove,
+    dragState.draggedTab,
+    ...dragState.tabsBelow
+  ];
   this.dragState = null;
 }
 
-module.exports = onPointerUp;
+module.exports = onDragPointerUp;

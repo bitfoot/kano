@@ -1,9 +1,9 @@
 "use strict";
-const onPointerMove = require("./onPointerMove");
-const onPointerUp = require("./onPointerUp");
+const onDragPointerMove = require("./onDragPointerMove");
+const onDragPointerUp = require("./onDragPointerUp");
 const getListedTabs = require("./util").getListedTabs;
 
-function initializeDrag(event) {
+function initializeTabDrag(event) {
   const draggedTab = event.target.parentElement;
   const pointerPosition = event.pageY;
   const container = document.getElementById("tab-list-container");
@@ -13,7 +13,7 @@ function initializeDrag(event) {
   const scrollState = this.scrollState;
   const scrollTop = this.scrollState.scrollTop;
   const maxScrollTop = container.scrollHeight - container.offsetHeight;
-  const tabList = document.getElementById("tab-list");
+  const tabList = this.tabList;
   const tabListHeight = tabList.offsetHeight;
   const margin = 6;
   const listedTabs = getListedTabs();
@@ -43,12 +43,12 @@ function initializeDrag(event) {
   };
 
   draggedTab.setPointerCapture(event.pointerId);
-  draggedTab.classList.add("tab-list-item--draggable");
-  draggedTab.classList.remove("tab-list-item--held-down");
+  draggedTab.classList.add("tab--draggable");
+  draggedTab.classList.remove("tab--held-down");
   listedTabs
     .filter(t => t.id != draggedTab.id)
     .forEach(t => {
-      t.classList.add("tab-list-item--moveable", "tab-list-item--moving");
+      t.classList.add("tab--moveable", "tab--moving");
     });
 
   this.dragState = {
@@ -206,9 +206,8 @@ function initializeDrag(event) {
     }
   };
 
-  draggedTab.onpointermove = onPointerMove.bind(this);
-  draggedTab.onpointerup = onPointerUp.bind(this);
-  // document.addEventListener("pointerup", onPointerMove, { once: true });
+  draggedTab.onpointermove = onDragPointerMove.bind(this);
+  draggedTab.onpointerup = onDragPointerUp.bind(this);
 }
 
-module.exports = initializeDrag;
+module.exports = initializeTabDrag;
