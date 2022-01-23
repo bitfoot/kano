@@ -15,6 +15,7 @@ function dragTab(options = {}) {
     const currentMinOffset = dragState.currentMinOffset;
 
     // ensure that offset does not exceed current max or min offset
+
     dragState.tabOffset = Math.max(
       currentMinOffset,
       Math.min(dragState.tabOffset, currentMaxOffset)

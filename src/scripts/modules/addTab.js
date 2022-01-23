@@ -21,7 +21,7 @@ function addTab(tab) {
     // The first tab with the same URL just became a duplicate, so it needs to be marked as such
     const duplicateTabId = state.tabIdsByURL[tab.url][0];
     const duplicateTabIndex = state.tabIndices[duplicateTabId];
-    state.tabsArr[duplicateTabIndex].isDuplicate = true;
+    state.orderedTabObjects[duplicateTabIndex].isDuplicate = true;
   }
 
   const createTabObj = tab => {
@@ -30,11 +30,12 @@ function addTab(tab) {
       url: tab.url,
       title: tab.title,
       isActive: tab.active,
-      isDuplicate
+      isDuplicate,
+      favIconUrl: tab.favIconUrl
     };
   };
 
-  state.tabsArr.push(createTabObj(tab));
+  state.orderedTabObjects[tab.index] = createTabObj(tab);
   state.tabIndices[id] = tab.index;
 
   // renderTabComponent.call(state, tab);

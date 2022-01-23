@@ -6,14 +6,14 @@ const getListedTabs = require("./util").getListedTabs;
 function initializeTabDrag(event) {
   const draggedTab = event.target.parentElement;
   const pointerPosition = event.pageY;
-  const container = document.getElementById("tab-list-container");
+  const container = this.scrollState.container;
   const bodyHeight = document.body.offsetHeight;
   // disable system scrolling while tab is being dragged
   container.classList.add("tab-list-container--no-scroll");
+  const tabList = this.tabList;
   const scrollState = this.scrollState;
   const scrollTop = this.scrollState.scrollTop;
-  const maxScrollTop = container.scrollHeight - container.offsetHeight;
-  const tabList = this.tabList;
+  const maxScrollTop = tabList.offsetHeight - container.offsetHeight;
   const tabListHeight = tabList.offsetHeight;
   const margin = 6;
   const listedTabs = getListedTabs();
@@ -36,6 +36,7 @@ function initializeTabDrag(event) {
   const shiftY = pointerPosition - initialPosition - headerHeight + scrollTop;
 
   const maxTabPosInList = tabListHeight - margin - tabHeight;
+  console.log(`MAX POS IN LIST: ${maxTabPosInList}`);
   const minTabPosInList = 0;
   const defaultScrollBoundary = {
     up: 184,
@@ -135,6 +136,11 @@ function initializeTabDrag(event) {
         this.maxScrollTop +
         this.tabListOffset +
         this.scrollTop;
+      console.log(
+        `CURRENT MAX OFFSET IS ${maxOffset}. Because: maxTabOffsetInList: ${this.maxTabOffsetInList
+        }, maxScrollTop: ${this.maxScrollTop}, tabListOffset: ${this.tabListOffset
+        }, scrollTop: ${this.scrollTop}`
+      );
       return maxOffset;
     },
     get currentMinOffset() {

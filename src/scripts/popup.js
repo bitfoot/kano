@@ -8,8 +8,8 @@ const onScroll = require("./modules/onScroll");
 const adjustMenu = require("./modules/adjustMenu");
 
 const state = {
-  tabList: null,
-  tabsArr: [],
+  tabList: document.getElementById("tab-list"),
+  orderedTabObjects: [],
   tabs: [],
   tabIndices: {},
   tabIdsByURL: {
@@ -72,7 +72,6 @@ const state = {
 chrome.tabs.query({ windowId: chrome.windows.WINDOW_ID_CURRENT }, function (
   tabs
 ) {
-  state.tabList = document.getElementById("tab-list");
   tabs.forEach(tab => state.addTab(tab));
   renderTabComponents.call(state);
   util.adjustScrollbar.call(state);

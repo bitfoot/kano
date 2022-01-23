@@ -330,7 +330,7 @@ function filter() {
   // });
   const tabsObj = tabs.reduce(
     (a, tab, i) => {
-      const title = state.tabsArr[i].title.toLowerCase();
+      const title = state.orderedTabObjects[i].title.toLowerCase();
       const statusObj = {};
       // check if tab is currently visible
       if (tab.classList.contains("tab--hidden")) {

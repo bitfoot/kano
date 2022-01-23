@@ -87,7 +87,6 @@ function onScroll(e) {
 
   let previousTabListOffset = this.scrollState.tabListOffset;
   let distanceToScrollBy = newScrolltop - prevScrolltop - previousTabListOffset;
-
   this.scrollState.tabListOffset = 0;
 
   const scrollOptions = {
