@@ -56,6 +56,7 @@ const state = {
   filterIsActive: false,
   selectedTabs: [],
   filterState: {
+    input: document.getElementById("filter-input"),
     visibleTabs: 0
   },
   scrollState: {

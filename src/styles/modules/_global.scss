@@ -5,8 +5,8 @@
 }
 
 *:focus {
-  // outline: none;
-  outline: 3px solid transparent;
+  outline: none;
+  // outline: 3px solid transparent;
   box-shadow: inset 0 0 0 2px lime;
 }
 
@@ -24,7 +24,8 @@
   --color-two: #34486F;
   // --color-two: #5C76B2;
   // --color-two-hover: #5E747D;
-  --color-two-hover: #395179;
+  // --color-two-hover: #395179;
+  --color-two-hover: #3C5580;
 
   
   --color-three: #eee;
@@ -32,7 +33,8 @@
   --golden-ratio: 1.61803398875;
   --greater-padding: 0.5rem;
   --lesser-padding: 0.3rem;
-  --icon-color: white;
+  // --icon-color: white;
+  --icon-color: #eee;
   --num-of-deleted: 0;
   --header-height: calc(var(--block-height) + var(--lesser-padding) * 2);
   --thumb-height: 0;
@@ -118,7 +120,8 @@ button {
   left: calc(34rem - var(--lesser-padding) * 3);
   // right: 0;
   width: calc(var(--lesser-padding) * 3);
-  height: 506px;
+  // height: 506px;
+  height: 100%;
   // height: 526px;
   // background: purple;
   padding: 0 var(--lesser-padding);

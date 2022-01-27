@@ -31,7 +31,8 @@ function addTab(tab) {
       title: tab.title,
       isActive: tab.active,
       isDuplicate,
-      favIconUrl: tab.favIconUrl
+      favIconUrl: tab.favIconUrl,
+      visible: true
     };
   };
 

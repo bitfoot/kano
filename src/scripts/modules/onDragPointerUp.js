@@ -103,7 +103,6 @@ function onDragPointerUp(event) {
         });
 
       dragState.tabList.insertBefore(dragState.draggedTab, nextTab.nextSibling);
-
       const nextTabId = +nextTab.id.split("-")[1];
       chrome.tabs.get(nextTabId).then(tabDetails => {
         // console.log(tabDetails);
@@ -113,12 +112,15 @@ function onDragPointerUp(event) {
   }
 
   if (dragState.tabListOffset !== 0) {
-    // dragState.tabListContainer.scrollBy(0, dragState.tabListOffset);
+    dragState.tabListContainer.scrollBy(0, dragState.tabListOffset);
     console.log(
       `Scrolling BY ${dragState.tabListOffset} from within onDragPointerUp`
     );
     dragState.tabListOffset = 0;
   }
+
+  const tabButton = dragState.draggedTab.querySelector(".tab__tab-button");
+  tabButton.focus();
 
   // tab order has changed, so it should be changed in the "tabs" and "orderedTabObjects" lists in state
   this.tabs = [

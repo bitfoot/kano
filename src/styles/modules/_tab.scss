@@ -16,7 +16,9 @@
   // --y-pos: null;
   --y-offset: 0;
   --delay: 0;
+  --trans-delay: 0ms;
   --opacity-delay: 0ms;
+  --trans-duration: 0ms;
   --speed: 0ms;
   // --offset-speed: 0;
   // --active-indicator-space: calc(var(--greater-padding) + var(--lesser-padding));
@@ -32,6 +34,7 @@
   // transition: none;
   touch-action: none;
   // overflow: hidden;
+  box-shadow: 0 0 0 2px var(--color-one);
 
   // &:last-child {
   //   margin-bottom: 0;
@@ -45,13 +48,13 @@
   }
 
   /* when tab gets hidden:
-  - its opacity should star decreasing without delay
-  - it should not move until its opacity is 0, so transform should have 1000ms delay
+  - its opacity should start decreasing without delay
+  - if any tab above is unhidden, hidden tab will need to move immediately, before it reaches opacity 0. In this case its trans-delay should be set to 0 and trans-duration should be set to 160ms.
   */
   &--hidden {
     visibility: hidden;
     opacity: 0;
-    transition: opacity 160ms ease-in-out, transform 0ms 160ms ease-in-out, visibility 0ms 160ms;
+    transition: opacity 160ms ease-in-out, transform var(--trans-duration) var(--trans-delay) ease-in-out, visibility 0ms 160ms;
     transform: translateY(var(--y-offset));
 
     &:hover {
@@ -211,7 +214,9 @@
     position: relative;
     margin: 0 var(--greater-padding) 0 0;
     flex: 1 0 0;
-    // overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 
   &__delete-button {
@@ -260,6 +265,7 @@
     cursor: grabbing;
     transform: translateY(var(--y-offset)) scale(1.01);
     transition: none;
+    box-shadow: none;
 
     &:hover {
       transition: none;

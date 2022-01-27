@@ -44,7 +44,7 @@ function createTabComponent(tab) {
   p.classList.add("tab__title");
 
   // this soulution isn't good, can't handle 44 Ws
-  p.textContent = tab.title.substring(0, 60);
+  p.textContent = tab.title;
 
   // create delete button
   const deleteButton = document.createElement("button");
