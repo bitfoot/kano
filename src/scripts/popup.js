@@ -57,7 +57,10 @@ const state = {
   selectedTabs: [],
   filterState: {
     input: document.getElementById("filter-input"),
-    visibleTabs: 0
+    tabs: {},
+    numOfFilteredTabs: 0,
+    lastVisibleTabIndex: null,
+    lastNewlyFilteredOutIndex: null
   },
   scrollState: {
     container: document.getElementById("tab-list-container"),

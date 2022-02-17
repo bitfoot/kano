@@ -19,7 +19,7 @@
   --trans-delay: 0ms;
   --opacity-delay: 0ms;
   --trans-duration: 0ms;
-  --speed: 0ms;
+  // --speed: 0ms;
   // --offset-speed: 0;
   // --active-indicator-space: calc(var(--greater-padding) + var(--lesser-padding));
   --opacity: 1;
@@ -48,35 +48,38 @@
   }
 
   /* when tab gets hidden:
-  - its opacity should start decreasing without delay
+  - its opacity should start decreasing without delay, regardless of tabs above
   - if any tab above is unhidden, hidden tab will need to move immediately, before it reaches opacity 0. In this case its trans-delay should be set to 0 and trans-duration should be set to 160ms.
+  - otherwise, whether tabs above are also hidden or unaffected, it should have trans-delay set to 160ms and trans-duration to 0ms 
   */
-  &--hidden {
+  &--filtered-out {
+    background: green;
     visibility: hidden;
     opacity: 0;
-    transition: opacity 160ms ease-in-out, transform var(--trans-duration) var(--trans-delay) ease-in-out, visibility 0ms 160ms;
+    transition: opacity 5000ms 0ms ease-in-out, transform 0ms var(--trans-delay) ease-in-out, visibility 0ms 5000ms;
     transform: translateY(var(--y-offset));
 
     &:hover {
-      transition: opacity 160ms ease-in-out, transform 0ms 160ms ease-in-out, visibility 0ms 160ms;
+      transition: opacity 5000ms 0ms ease-in-out, transform 0ms var(--trans-delay) ease-in-out, visibility 0ms 5000ms;
     }
   }
 
   /* when tab gets unhidden:
-  - it should move into place without delay and with speed 0, so transform should have speed 0 and delay 0
-  - its opacity increase should be delayed ONLY IF some tabs above are visible Otherwise, no opacity-delay needed.
+  - it should move into proper place without delay and with speed 0, so transform should have speed 0 and delay 0
+  - its opacity increase should be delayed ONLY IF some tabs below are visible Otherwise, no opacity-delay needed.
   */
   /* when tab is already visible:
   - it should move into place with speed 1000ms and with delay ONLY if filteredOutTabs > 0, so transform should have speed 1000ms and delay 1000ms
   - its opacity should start increasing with delay ONLY IF some tabs above are getting unhidden
   */
   &--filtered {
+    background: purple;
     opacity: 1;
     transform: translateY(var(--y-offset));
-    transition: transform var(--speed) var(--delay) ease-in-out, opacity 160ms var(--opacity-delay) ease-in-out;
+    transition: transform var(--trans-duration) var(--trans-delay) ease-in-out, opacity 5000ms var(--opacity-delay) ease-in-out;
 
     &:hover {
-      transition: transform var(--speed) var(--delay) ease-in-out, opacity 160ms var(--opacity-delay) ease-in-out;
+      transition: transform var(--trans-duration) var(--trans-delay) ease-in-out, opacity 5000ms var(--opacity-delay) ease-in-out;
     }
   }
 

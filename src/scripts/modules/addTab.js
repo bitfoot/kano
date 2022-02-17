@@ -32,7 +32,7 @@ function addTab(tab) {
       isActive: tab.active,
       isDuplicate,
       favIconUrl: tab.favIconUrl,
-      visible: true
+      isVisible: true
     };
   };
 
