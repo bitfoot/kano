@@ -24,13 +24,15 @@ function filter() {
   };
 
   const prepareFilteredTabObjects = tabObjects => {
-    let filteredOutAbove = 0;
-    let filteredInAbove = 0;
-    let newlyFilteredOutAbove = 0;
-    let newlyFilteredInAbove = 0;
-    let lastNewlyFilteredOutIndex = 0;
-    let lastNewlyFilteredInIndex = 0;
     filterState.numOfFilteredTabs = 0;
+    filterState.firstVisibleTabIndex = null;
+    filterState.lastVisibleTabIndex = null;
+    filterState.firstNewlyFilteredOutTabIndex = null;
+    filterState.lastNewlyFilteredOutTabIndex = null;
+    filterState.firstNewlyFilteredInTabIndex = null;
+    filterState.lastNewlyFilteredInTabIndex = null;
+    filterState.lastMatchedTabIndex = null;
+    let filteredOutAbove = 0;
     // get the index of the last currently visible tab in the list, and store it in filterState
     // const getIndexOfLastVisibleTab = () => {
     //   let index = null;
@@ -60,9 +62,6 @@ function filter() {
         index,
         isNewlyFilteredIn: false,
         isNewlyFilteredOut: false,
-        newlyFilteredOutAbove,
-        newlyFilteredInAbove,
-        filteredInAbove,
         isFilteredOut: false,
         filterOffset
       };
@@ -76,23 +75,31 @@ function filter() {
       const matches = matchesFilter(obj.title, filter);
 
       if (matches) {
+        filterState.lastMatchedTabIndex = index;
         filterState.numOfFilteredTabs += 1;
-        filteredInAbove += 1;
         // if tab was previously filtered out (hidden from view)
         if (wasFilteredOut) {
-          newlyFilteredInAbove += 1;
           newObj.isNewlyFilteredIn = true;
+          filterState.lastNewlyFilteredInTabIndex = index;
+          if (filterState.firstNewlyFilteredInTabIndex === null) {
+            filterState.firstNewlyFilteredInTabIndex = index;
+          }
         } else {
           filterState.lastVisibleTabIndex = index;
+          if (filterState.firstVisibleTabIndex === null) {
+            filterState.firstVisibleTabIndex = index;
+          }
         }
       } else {
         // if tab was previously visible
         newObj.isFilteredOut = true;
         filteredOutAbove += 1;
         if (!wasFilteredOut) {
-          newlyFilteredOutAbove += 1;
           newObj.isNewlyFilteredOut = true;
-          filterState.lastNewlyFilteredOutIndex = index;
+          filterState.lastNewlyFilteredOutTabIndex = index;
+          if (filterState.firstNewlyFilteredOutTabIndex === null) {
+            filterState.firstNewlyFilteredOutTabIndex = index;
+          }
         }
       }
 
@@ -101,33 +108,6 @@ function filter() {
   };
 
   prepareFilteredTabObjects(state.orderedTabObjects);
-
-  // console.log(filterState.tabs);
-  // general steps when filter is fired:
-  // let filteredOutAbove = null;
-  // let newlyFilteredOutAbove = null;
-  // let newlyFilteredInAbove = null;
-  // let filterOffset = null;
-  // 1. Do a pass through ALL orderedTabObjects, and for each object:
-  //    a. Construct a new object {id} called tab
-  //    b. Check if orderedTabObject has isVisible set to true.
-  //    c. Check if orderedTabObject title matchesFilter
-  //    d. Calculate filterOffset (filterOffset = filteredOutAbove * -46)
-  //    e. if (NOT matchesFilter):
-  //               if (isVisible):
-  //                    * increment newlyFilteredOutAbove
-  //                    * set orderedTabObject.isVisible to false
-  //               * push tab onto filteredOutTabs array
-  //               * increment filteredOutAbove
-  //       else if (matchesFilter):
-  //               if (NOT isVisible):
-  //                    * increment newlyFilteredInAbove
-  //                    * set orderedTabObject.isVisible to true
-  //                    * set tab.isNewlyFilteredIn to true
-  //               * push tab onto filteredTabs array
-  //       NOTE: final tab object should look like this: {id, isNewlyFilteredIn, newlyFilteredOutAbove, newlyFilteredInAbove, filterOffset}
-  //    c. Set appropriate trans-delay and opacity-delay values on each tab, on the tab class itself. They will only be applied on --hidden or --filtered class.
-  //    d. Actually style tabs by applying --filtered or --hidden class, as appropriate
 
   // scroll to the top of the list
   state.scrollState.container.scroll({
@@ -158,27 +138,42 @@ function filter() {
     tab.setAttribute("disabled", false);
   };
 
+  // 120ms
   const styleTabs = orderedTabObjects => {
     const getTransformDelay = tabObj => {
       let transformDelay = 0;
-      // if any tab above is newly filtered in, current tab needs to move down immediately
-      // if tabs above are newlyFilteredIn AND tabs below are newlyFilteredOut, THEN trans-delay shouldbe 500
-      if (
-        tabObj.newlyFilteredInAbove > 0 &&
-        !tabObj.isFilteredOut &&
-        filterState.lastNewlyFilteredOutIndex < tabObj.index
-      ) {
-        transformDelay = 0;
-      } else if (tabObj.newlyFilteredOutAbove > 0 || tabObj.isFilteredOut) {
-        transformDelay = 5000;
+
+      if (tabObj.isNewlyFilteredOut) {
+        transformDelay = 1000;
+      } else if (!tabObj.isFilteredOut && !tabObj.isNewlyFilteredIn) {
+        if (filterState.firstNewlyFilteredInTabIndex !== null) {
+          if (filterState.lastNewlyFilteredOutTabIndex !== null) {
+            if (
+              filterState.firstNewlyFilteredInTabIndex < tabObj.index &&
+              filterState.lastNewlyFilteredOutTabIndex > tabObj.index
+            ) {
+              // if tabs above are filtered in and tabs below are filtered out, delay is needed to allow filtered-out tabs below the time to reach 0 opacity
+              transformDelay = 1000;
+            } else if (
+              filterState.firstNewlyFilteredOutTabIndex < tabObj.index
+            ) {
+              transformDelay = 1000;
+            }
+          }
+        } else if (filterState.firstNewlyFilteredOutTabIndex !== null) {
+          if (filterState.firstNewlyFilteredOutTabIndex < tabObj.index) {
+            transformDelay = 1000;
+          }
+        }
       } else if (tabObj.isNewlyFilteredIn) {
         transformDelay = 0;
       }
+
       return transformDelay;
     };
 
     const getTransformDuration = tabObj => {
-      let transformDuration = 5000;
+      let transformDuration = 1000;
       if (tabObj.isNewlyFilteredIn) {
         // if (filterState.lastVisibleTabIndex >= tabObj.index) {
         transformDuration = 0;
@@ -189,14 +184,34 @@ function filter() {
 
     const getOpacityDelay = tabObj => {
       let opacityDelay = 0;
-      if (tabObj.isNewlyFilteredIn) {
-        // if tab is filtered-in and there are visible tabs below it, it needs opacity-delay
-        if (filterState.lastVisibleTabIndex > tabObj.index) {
-          opacityDelay = 5000;
-        } else if (tabObj.newlyFilteredOutAbove > 0) {
-          // opacityDelay = 10000;
+
+      if (tabObj.isNewlyFilteredOut) {
+        // if current tab is newly filtered out (getting hidden)
+        opacityDelay = 0;
+      } else if (!tabObj.isFilteredOut && !tabObj.isNewlyFilteredIn) {
+        // if current tab is already visible and not filtered out
+        opacityDelay = 0;
+      } else if (tabObj.isNewlyFilteredIn) {
+        // if current tab is newly filtered in (getting unhidden)
+        if (filterState.lastVisibleTabIndex !== null) {
+          if (filterState.lastNewlyFilteredOutTabIndex !== null) {
+            opacityDelay = 2000;
+          } else if (
+            filterState.lastVisibleTabIndex > tabObj.index ||
+            tabObj.index !== filterState.lastNewlyFilteredInTabIndex
+          ) {
+            opacityDelay = 1000;
+          }
+          // if (filterState.lastNewlyFilteredOutTabIndex !== null) {
+          //   opacityDelay = 2000;
+          // } else {
+          //   opacityDelay = 1000;
+          // }
+        } else if (filterState.lastNewlyFilteredOutTabIndex !== null) {
+          opacityDelay = 1000;
         }
       }
+
       return opacityDelay;
     };
 

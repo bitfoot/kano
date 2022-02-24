@@ -59,8 +59,13 @@ const state = {
     input: document.getElementById("filter-input"),
     tabs: {},
     numOfFilteredTabs: 0,
+    firstVisibleTabIndex: null,
     lastVisibleTabIndex: null,
-    lastNewlyFilteredOutIndex: null
+    firstNewlyFilteredOutTabIndex: null,
+    lastNewlyFilteredOutTabIndex: null,
+    firstNewlyFilteredInTabIndex: null,
+    lastNewlyFilteredInTabIndex: null,
+    lastMatchedTabIndex: null
   },
   scrollState: {
     container: document.getElementById("tab-list-container"),

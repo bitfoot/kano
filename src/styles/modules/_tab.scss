@@ -56,11 +56,11 @@
     background: green;
     visibility: hidden;
     opacity: 0;
-    transition: opacity 5000ms 0ms ease-in-out, transform 0ms var(--trans-delay) ease-in-out, visibility 0ms 5000ms;
+    transition: opacity 1000ms 0ms ease-in-out, transform 0ms var(--trans-delay) ease-in-out, visibility 0ms 1000ms;
     transform: translateY(var(--y-offset));
 
     &:hover {
-      transition: opacity 5000ms 0ms ease-in-out, transform 0ms var(--trans-delay) ease-in-out, visibility 0ms 5000ms;
+      transition: opacity 1000ms 0ms ease-in-out, transform 0ms var(--trans-delay) ease-in-out, visibility 0ms 1000ms;
     }
   }
 
@@ -76,10 +76,10 @@
     background: purple;
     opacity: 1;
     transform: translateY(var(--y-offset));
-    transition: transform var(--trans-duration) var(--trans-delay) ease-in-out, opacity 5000ms var(--opacity-delay) ease-in-out;
+    transition: transform var(--trans-duration) var(--trans-delay) ease-in-out, opacity 1000ms var(--opacity-delay) ease-in-out;
 
     &:hover {
-      transition: transform var(--trans-duration) var(--trans-delay) ease-in-out, opacity 5000ms var(--opacity-delay) ease-in-out;
+      transition: transform var(--trans-duration) var(--trans-delay) ease-in-out, opacity 1000ms var(--opacity-delay) ease-in-out;
     }
   }
 
