@@ -35,6 +35,19 @@ function calculateScrollbarHeight() {
   return scrollbarHeight;
 }
 
+function resetTransitionVariables() {
+  const state = this;
+  // if (Object.keys(state.filterState.tabs).length > 0) {
+
+  // }
+  state.tabs.forEach(tab => {
+    tab.style.setProperty("--trans-delay", "0ms");
+    tab.style.setProperty("--opacity-delay", "0ms");
+    tab.style.setProperty("--trans-duration", "0ms");
+    tab.style.setProperty("--opacity-duration", "0ms");
+  });
+}
+
 // function get
 
 // this will be called when tabs are first rendered, when a tab is deleted, and when tabs are filtered
@@ -185,5 +198,6 @@ module.exports = {
   adjustScrollbar,
   createCheckboxSvg,
   createDuplicateIndicatorSvg,
-  calculateScrollbarHeight
+  calculateScrollbarHeight,
+  resetTransitionVariables
 };

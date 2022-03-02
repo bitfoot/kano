@@ -143,8 +143,8 @@ function filter() {
     const getTransformDelay = tabObj => {
       let transformDelay = 0;
 
-      if (tabObj.isNewlyFilteredOut) {
-        transformDelay = 1000;
+      if (tabObj.isFilteredOut) {
+        transformDelay = 200;
       } else if (!tabObj.isFilteredOut && !tabObj.isNewlyFilteredIn) {
         if (filterState.firstNewlyFilteredInTabIndex !== null) {
           if (filterState.lastNewlyFilteredOutTabIndex !== null) {
@@ -153,16 +153,16 @@ function filter() {
               filterState.lastNewlyFilteredOutTabIndex > tabObj.index
             ) {
               // if tabs above are filtered in and tabs below are filtered out, delay is needed to allow filtered-out tabs below the time to reach 0 opacity
-              transformDelay = 1000;
+              transformDelay = 200;
             } else if (
               filterState.firstNewlyFilteredOutTabIndex < tabObj.index
             ) {
-              transformDelay = 1000;
+              transformDelay = 200;
             }
           }
         } else if (filterState.firstNewlyFilteredOutTabIndex !== null) {
           if (filterState.firstNewlyFilteredOutTabIndex < tabObj.index) {
-            transformDelay = 1000;
+            transformDelay = 200;
           }
         }
       } else if (tabObj.isNewlyFilteredIn) {
@@ -173,13 +173,22 @@ function filter() {
     };
 
     const getTransformDuration = tabObj => {
-      let transformDuration = 1000;
-      if (tabObj.isNewlyFilteredIn) {
-        // if (filterState.lastVisibleTabIndex >= tabObj.index) {
-        transformDuration = 0;
-        // }
+      let transformDuration = 0;
+      // if (!tabObj.isNewlyFilteredIn) {
+      //   transformDuration = 1000;
+      // }
+      if (!tabObj.isFilteredOut && !tabObj.isNewlyFilteredIn) {
+        transformDuration = 200;
       }
       return transformDuration;
+    };
+
+    const getOpacityDuration = tabObj => {
+      let opacityDuration = 200;
+      if (tabObj.isFilteredOut && !tabObj.isNewlyFilteredOut) {
+        opacityDuration = 0;
+      }
+      return opacityDuration;
     };
 
     const getOpacityDelay = tabObj => {
@@ -195,20 +204,28 @@ function filter() {
         // if current tab is newly filtered in (getting unhidden)
         if (filterState.lastVisibleTabIndex !== null) {
           if (filterState.lastNewlyFilteredOutTabIndex !== null) {
-            opacityDelay = 2000;
+            opacityDelay = 400;
           } else if (
-            filterState.lastVisibleTabIndex > tabObj.index ||
-            tabObj.index !== filterState.lastNewlyFilteredInTabIndex
+            filterState.lastVisibleTabIndex >
+            filterState.firstNewlyFilteredInTabIndex
           ) {
-            opacityDelay = 1000;
+            opacityDelay = 200;
           }
+
+          // else if (
+          //   filterState.lastVisibleTabIndex > tabObj.index ||
+          //   tabObj.index <= filterState.lastNewlyFilteredInTabIndex
+          // ) {
+          //   opacityDelay = 1000;
+          // }
+
           // if (filterState.lastNewlyFilteredOutTabIndex !== null) {
           //   opacityDelay = 2000;
           // } else {
           //   opacityDelay = 1000;
           // }
         } else if (filterState.lastNewlyFilteredOutTabIndex !== null) {
-          opacityDelay = 1000;
+          opacityDelay = 200;
         }
       }
 
@@ -220,6 +237,7 @@ function filter() {
       const transformDelay = getTransformDelay(filteredTabObject);
       const opacityDelay = getOpacityDelay(filteredTabObject);
       const transformDuration = getTransformDuration(filteredTabObject);
+      const opacityDuration = getOpacityDuration(filteredTabObject);
 
       state.tabs[index].style.setProperty(
         "--trans-delay",
@@ -232,6 +250,10 @@ function filter() {
       state.tabs[index].style.setProperty(
         "--trans-duration",
         transformDuration + "ms"
+      );
+      state.tabs[index].style.setProperty(
+        "--opacity-duration",
+        opacityDuration + "ms"
       );
       state.tabs[index].style.setProperty(
         "--y-offset",

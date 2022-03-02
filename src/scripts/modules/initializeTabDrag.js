@@ -2,6 +2,7 @@
 const onDragPointerMove = require("./onDragPointerMove");
 const onDragPointerUp = require("./onDragPointerUp");
 const getListedTabs = require("./util").getListedTabs;
+const resetTransitionVariables = require("./util").resetTransitionVariables;
 
 function initializeTabDrag(event) {
   const draggedTab = event.target.parentElement;
@@ -46,6 +47,7 @@ function initializeTabDrag(event) {
   draggedTab.setPointerCapture(event.pointerId);
   draggedTab.classList.add("tab--draggable");
   draggedTab.classList.remove("tab--held-down");
+  resetTransitionVariables.call(this);
   listedTabs
     .filter(t => t.id != draggedTab.id)
     .forEach(t => {

@@ -19,6 +19,7 @@
   --trans-delay: 0ms;
   --opacity-delay: 0ms;
   --trans-duration: 0ms;
+  --opacity-duration: 0ms;
   // --speed: 0ms;
   // --offset-speed: 0;
   // --active-indicator-space: calc(var(--greater-padding) + var(--lesser-padding));
@@ -53,14 +54,14 @@
   - otherwise, whether tabs above are also hidden or unaffected, it should have trans-delay set to 160ms and trans-duration to 0ms 
   */
   &--filtered-out {
-    background: green;
+    // background: green;
     visibility: hidden;
     opacity: 0;
-    transition: opacity 1000ms 0ms ease-in-out, transform 0ms var(--trans-delay) ease-in-out, visibility 0ms 1000ms;
+    transition: opacity var(--opacity-duration) var(--opacity-delay) ease-in-out, transform var(--trans-duration) var(--trans-delay) ease-in-out, visibility var(--opacity-duration) var(--opacity-delay);
     transform: translateY(var(--y-offset));
 
     &:hover {
-      transition: opacity 1000ms 0ms ease-in-out, transform 0ms var(--trans-delay) ease-in-out, visibility 0ms 1000ms;
+      transition: opacity var(--opacity-duration) var(--opacity-delay) ease-in-out, transform var(--trans-duration) var(--trans-delay) ease-in-out, visibility var(--opacity-duration) var(--opacity-delay);
     }
   }
 
@@ -73,14 +74,15 @@
   - its opacity should start increasing with delay ONLY IF some tabs above are getting unhidden
   */
   &--filtered {
-    background: purple;
+    // background: purple;
     opacity: 1;
     transform: translateY(var(--y-offset));
-    transition: transform var(--trans-duration) var(--trans-delay) ease-in-out, opacity 1000ms var(--opacity-delay) ease-in-out;
+    transition: transform var(--trans-duration) var(--trans-delay) ease-in-out, opacity var(--opacity-duration) var(--opacity-delay) ease-in-out;
 
     &:hover {
-      transition: transform var(--trans-duration) var(--trans-delay) ease-in-out, opacity 1000ms var(--opacity-delay) ease-in-out;
+      transition: transform var(--trans-duration) var(--trans-delay) ease-in-out, opacity var(--opacity-duration) var(--opacity-delay) ease-in-out;
     }
+
   }
 
   &--held-down {
