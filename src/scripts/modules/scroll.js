@@ -6,18 +6,28 @@ function scroll(options = {}) {
   const state = this;
   const dragState = state.dragState;
   // all this stuff about ratio should be handled by adjust Scrollbar and stored in scrollState
+
+  let contentHeight = null;
   const container = state.scrollState.container;
+  const filterWasUsed = state.filterState.numOfFilteredTabs !== null;
+  if (filterWasUsed) {
+    contentHeight = state.filterState.numOfFilteredTabs * 46;
+  } else {
+    contentHeight = container.children[0].offsetHeight;
+  }
+
+  const containerHeight = container.offsetHeight;
   const scrollbarThumb = state.scrollState.scrollbarThumb;
-  const content = container.children[0];
+  // const content = container.children[0];
   const margin = 6;
-  const visibleContentHeight = container.offsetHeight - margin; // 500
-  const entireContentHeight = content.offsetHeight - margin;
-  const containerToContentRatio = visibleContentHeight / entireContentHeight;
+  // const visibleContentHeight = container.offsetHeight - margin; // 500
+  // const entireContentHeight = content.offsetHeight - margin;
+  const containerToContentRatio = containerHeight / contentHeight;
   const curThumbOffset = state.scrollState.thumbOffset;
   const scrollbarDistance = distance * containerToContentRatio;
   console.log(`scrollbarDistance: ${scrollbarDistance}`);
   const maxThumbOffset =
-    (entireContentHeight - visibleContentHeight) * containerToContentRatio;
+    (contentHeight - containerHeight) * containerToContentRatio;
   const newThumbOffset = Math.max(
     0,
     Math.min(curThumbOffset + scrollbarDistance, maxThumbOffset)

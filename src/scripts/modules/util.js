@@ -26,12 +26,20 @@ function getFilteredTabs() {
 
 // this function should be merged with the one below
 function calculateScrollbarHeight() {
-  const container = document.getElementById("tab-list-container");
+  const state = this;
+  const container = state.scrollState.container;
   const margin = 6;
-  const visibleContentHeight = container.offsetHeight; // 500
-  const wholeContentHeight = container.scrollHeight;
-  const contentHeightRatio = visibleContentHeight / wholeContentHeight;
-  const scrollbarHeight = visibleContentHeight * contentHeightRatio - margin;
+  const containerHeight = container.offsetHeight; // 500
+  // const wholeContentHeight = container.scrollHeight;
+  let wholeContentHeight = null;
+  const filterWasUsed = state.filterState.numOfFilteredTabs !== null;
+  if (filterWasUsed) {
+    wholeContentHeight = state.filterState.numOfFilteredTabs * 46;
+  } else {
+    wholeContentHeight = state.orderedTabObjects.length * 46;
+  }
+  const contentHeightRatio = containerHeight / wholeContentHeight;
+  const scrollbarHeight = containerHeight * contentHeightRatio - margin;
   return scrollbarHeight;
 }
 
@@ -55,14 +63,15 @@ function resetTransitionVariables() {
 function adjustScrollbar() {
   const state = this;
   // determine if scrollbar is needed, and if it's not then remove it
-  const container = document.getElementById("tab-list-container");
-  const tabs = document.getElementsByClassName("tab");
-  const visibleTabsCount = [...tabs].reduce((a, t) => {
-    if (!t.classList.contains("tab--hidden")) {
-      a += 1;
-    }
-    return a;
-  }, 0);
+  const container = state.scrollState.container;
+  // const tabs = document.getElementsByClassName("tab");
+  let visibleTabsCount = null;
+  const filterWasUsed = state.filterState.numOfFilteredTabs !== null;
+  if (filterWasUsed) {
+    visibleTabsCount = state.filterState.numOfFilteredTabs;
+  } else {
+    visibleTabsCount = state.orderedTabObjects.length;
+  }
   const scrollbarTrack = document.getElementById("scrollbar-track");
   if (visibleTabsCount > 11) {
     container.classList.remove("tab-list-container--no-scroll");
@@ -80,10 +89,8 @@ function adjustScrollbar() {
   const hiddenContentHeight = wholeContentHeight - visibleContentHeight;
   const containerToContentRatio = visibleContentHeight / wholeContentHeight;
 
-  // const content = container.children[0];
-
-  const scrollbarThumb = document.getElementById("scrollbar-thumb");
-  const scrollbarHeight = calculateScrollbarHeight();
+  const scrollbarThumb = state.scrollState.scrollbarThumb;
+  const scrollbarHeight = calculateScrollbarHeight.call(state);
 
   const scrollTop = state.scrollState.scrollTop;
 

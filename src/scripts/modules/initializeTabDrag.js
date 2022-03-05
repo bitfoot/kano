@@ -37,7 +37,7 @@ function initializeTabDrag(event) {
   const shiftY = pointerPosition - initialPosition - headerHeight + scrollTop;
 
   const maxTabPosInList = tabListHeight - margin - tabHeight;
-  console.log(`MAX POS IN LIST: ${maxTabPosInList}`);
+
   const minTabPosInList = 0;
   const defaultScrollBoundary = {
     up: 184,

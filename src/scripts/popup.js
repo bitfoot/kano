@@ -58,7 +58,7 @@ const state = {
   filterState: {
     input: document.getElementById("filter-input"),
     tabs: {},
-    numOfFilteredTabs: 0,
+    numOfFilteredTabs: null,
     firstVisibleTabIndex: null,
     lastVisibleTabIndex: null,
     firstNewlyFilteredOutTabIndex: null,
