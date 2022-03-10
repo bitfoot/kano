@@ -25,7 +25,7 @@ function onDragPointerUp(event) {
   dragState.draggedTab.classList.remove("tab--draggable");
   // reset style values of all the tabs to their defaults
   dragState.listedTabs.forEach(tab => {
-    tab.style.setProperty("--y-offset", 0);
+    // tab.style.setProperty("--y-offset", 0);
     tab.style.setProperty("--opacity", 1);
     tab.style.setProperty("--scale", 0.99);
     tab.classList.remove("tab--moving", "tab--moveable");
@@ -36,7 +36,14 @@ function onDragPointerUp(event) {
     const nextTab = dragState.tabsAbove.find(tab => {
       const halfTabHeight = dragState.tabHeight / 2;
       const tabOffsetMiddle = dragState.offsetTops[tab.id] + halfTabHeight;
+      let isFilteredOut = false;
+      if (state.filterState.tabs[tab.id]) {
+        if (state.filterState.tabs[tab.id].isFilteredOut) {
+          isFilteredOut = true;
+        }
+      }
       if (
+        !isFilteredOut &&
         tabOffsetMiddle > draggedTabTopPos &&
         dragState.offsetTops[tab.id] - dragState.margin - halfTabHeight <
         draggedTabTopPos
@@ -58,7 +65,9 @@ function onDragPointerUp(event) {
         // title.innerText += ` INDEX: ${state.tabIndices[tab.id]}`;
       });
 
+      let newTabOffset = dragState.filterOffset;
       dragState.tabList.insertBefore(dragState.draggedTab, nextTab);
+      dragState.draggedTab.style.setProperty("--y-offset", newTabOffset);
 
       // move the actual chrome tab
       const nextTabId = +nextTab.id.split("-")[1];
@@ -70,14 +79,23 @@ function onDragPointerUp(event) {
   } else {
     // if tab was dragged below where it was originally.
     const nextTab = dragState.tabsBelow.find(tab => {
+      const halfTabHeight = dragState.tabHeight / 2;
+      const tabOffsetMiddle = dragState.offsetTops[tab.id] + halfTabHeight;
+      const draggedTabBottom = draggedTabTopPos + dragState.tabHeight;
+      let isFilteredOut = false;
+      if (state.filterState.tabs[tab.id]) {
+        if (state.filterState.tabs[tab.id].isFilteredOut) {
+          isFilteredOut = true;
+        }
+      }
       if (
-        dragState.offsetTops[tab.id] + 20 <
-        draggedTabTopPos + dragState.tabHeight &&
+        !isFilteredOut &&
+        tabOffsetMiddle < draggedTabBottom &&
         dragState.offsetTops[tab.id] +
         dragState.tabHeight +
         dragState.margin +
-        20 >
-        draggedTabTopPos + dragState.tabHeight
+        halfTabHeight >
+        draggedTabBottom
       ) {
         return tab;
       }
@@ -102,7 +120,12 @@ function onDragPointerUp(event) {
           // title.innerText += ` INDEX: ${state.tabIndices[tab.id]}`;
         });
 
+      const nextTabFilterOffset =
+        state.filterState.tabs[nextTab.id].filterOffset;
+      let newTabOffset = dragState.filterOffset;
       dragState.tabList.insertBefore(dragState.draggedTab, nextTab.nextSibling);
+      dragState.draggedTab.style.setProperty("--y-offset", newTabOffset);
+
       const nextTabId = +nextTab.id.split("-")[1];
       chrome.tabs.get(nextTabId).then(tabDetails => {
         // console.log(tabDetails);

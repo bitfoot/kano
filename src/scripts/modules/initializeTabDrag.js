@@ -18,8 +18,23 @@ function initializeTabDrag(event) {
   const tabListHeight = tabList.offsetHeight;
   const margin = 6;
   const listedTabs = getListedTabs();
-  const offsetTops = listedTabs.reduce((a, t) => {
-    a[t.id] = t.offsetTop;
+  let filterOffset = 0;
+  if (this.filterState.tabs[draggedTab.id]) {
+    filterOffset = this.filterState.tabs[draggedTab.id].filterOffset;
+  }
+  // const offsetTops = listedTabs.reduce((a, t) => {
+  //   a[t.id] = t.offsetTop;
+  //   return a;
+  // }, {});
+  let dragOffset = 0;
+
+  const initialPositions = listedTabs.reduce((a, t) => {
+    if (this.filterState.tabs[t.id]) {
+      a[t.id] = t.offsetTop + this.filterState.tabs[t.id].filterOffset;
+    } else {
+      a[t.id] = t.offsetTop;
+    }
+
     return a;
   }, {});
   const tabIndex = listedTabs.findIndex(t => t.id === draggedTab.id);
@@ -28,7 +43,17 @@ function initializeTabDrag(event) {
   const headerHeight = document.getElementById("header").offsetHeight;
   const tabHeight = draggedTab.offsetHeight;
   const tabListOffset = 0;
-  const initialPosition = offsetTops[draggedTab.id];
+  const initialPosition = initialPositions[draggedTab.id];
+  // let filterOffset = 0;
+  // if (this.filterState.tabs[draggedTab.id]) {
+  //   filterOffset = this.filterState.tabs[draggedTab.id].filterOffset;
+  // }
+
+  // if (this.filterState.tabs[draggedTab.id]) {
+  //   initialPosition =
+  //     offsetTops[draggedTab.id] +
+  //     this.filterState.tabs[draggedTab.id].filterOffset;
+  // }
 
   const initialTopPosInViewport =
     initialPosition + headerHeight - scrollState.scrollTop - tabListOffset;
@@ -78,7 +103,7 @@ function initializeTabDrag(event) {
     },
     // this doesn't need validation because dragTab will ensure tabOffset doesn't exceed current max or min
     get tabPosInList() {
-      return this.initialPosition + this.tabOffset;
+      return this.initialPosition + this.dragOffset;
     },
     // get tabPosInViewport() {
     //   const top =
@@ -105,7 +130,9 @@ function initializeTabDrag(event) {
       };
     },
     maxScrollTop,
-    tabOffset: 0,
+    // tabOffset: 0,
+    dragOffset,
+    filterOffset,
     tabListOffset,
     maxTabListOffset: maxScrollTop,
     margin,
@@ -115,14 +142,14 @@ function initializeTabDrag(event) {
     tabIndex,
     tabsAbove,
     tabsBelow,
-    offsetTops,
+    offsetTops: initialPositions,
     tabMinPosInViewport: headerHeight,
     tabMaxPosInViewport: bodyHeight - margin - tabHeight,
     tabPositionInTheList: 0,
     minTabPosInList,
     maxTabPosInList,
-    minTabOffsetInList: offsetTops[draggedTab.id] * -1,
-    maxTabOffsetInList: maxTabPosInList - offsetTops[draggedTab.id],
+    minTabOffsetInList: initialPositions[draggedTab.id] * -1,
+    maxTabOffsetInList: maxTabPosInList - initialPositions[draggedTab.id],
     lastTabPos: initialPosition,
     // get maxOffsetInViewport() {
     //   const maxOffset =

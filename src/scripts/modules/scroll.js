@@ -9,23 +9,20 @@ function scroll(options = {}) {
 
   let contentHeight = null;
   const container = state.scrollState.container;
+  const tabList = container.children[0];
   const filterWasUsed = state.filterState.numOfFilteredTabs !== null;
   if (filterWasUsed) {
     contentHeight = state.filterState.numOfFilteredTabs * 46;
   } else {
-    contentHeight = container.children[0].offsetHeight;
+    contentHeight = tabList.offsetHeight;
   }
 
   const containerHeight = container.offsetHeight;
   const scrollbarThumb = state.scrollState.scrollbarThumb;
-  // const content = container.children[0];
-  const margin = 6;
-  // const visibleContentHeight = container.offsetHeight - margin; // 500
-  // const entireContentHeight = content.offsetHeight - margin;
   const containerToContentRatio = containerHeight / contentHeight;
   const curThumbOffset = state.scrollState.thumbOffset;
   const scrollbarDistance = distance * containerToContentRatio;
-  console.log(`scrollbarDistance: ${scrollbarDistance}`);
+  // console.log(`scrollbarDistance: ${scrollbarDistance}`);
   const maxThumbOffset =
     (contentHeight - containerHeight) * containerToContentRatio;
   const newThumbOffset = Math.max(
@@ -49,9 +46,9 @@ function scroll(options = {}) {
         state.scrollState.scrollTop * -1
       );
       state.scrollState.tabListOffset = dragState.tabListOffset;
-      content.classList.add("tab-list--scroll");
+      tabList.classList.add("tab-list--scroll");
       const newOffset = dragState.tabListOffset * -1;
-      content.style.setProperty("--y-offset", newOffset + "px");
+      tabList.style.setProperty("--y-offset", newOffset + "px");
     } else {
       dragState.tabListOffset = Math.min(
         dragState.tabListOffset,
@@ -63,7 +60,7 @@ function scroll(options = {}) {
       );
       state.scrollState.tabListOffset = dragState.tabListOffset;
       const newOffset = dragState.tabListOffset * -1;
-      content.style.setProperty("--y-offset", newOffset + "px");
+      tabList.style.setProperty("--y-offset", newOffset + "px");
     }
   }
 }

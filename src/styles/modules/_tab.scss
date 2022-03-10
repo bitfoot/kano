@@ -86,7 +86,7 @@
   }
 
   &--held-down {
-    transform: scale(0.99);
+    transform: translateY(var(--y-offset)) scale(0.99);
     transition: background-color 1400ms ease-in-out, transform 60ms ease-in-out, opacity 1400ms ease-out;
   }
 

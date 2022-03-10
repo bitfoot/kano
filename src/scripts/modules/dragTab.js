@@ -6,31 +6,45 @@ function dragTab(options = {}) {
   console.log(`distance inside dragTab: ${distance}`);
 
   if (dragState) {
-    const initialTabPosition = dragState.offsetTops[dragState.draggedTab.id];
+    const initialTabPosition = dragState.initialPosition;
     // this function should only update tabOffset
 
-    dragState.tabOffset += distance;
+    dragState.dragOffset += distance;
 
     const currentMaxOffset = dragState.currentMaxOffset;
     const currentMinOffset = dragState.currentMinOffset;
 
     // ensure that offset does not exceed current max or min offset
 
-    dragState.tabOffset = Math.max(
+    dragState.dragOffset = Math.max(
       currentMinOffset,
-      Math.min(dragState.tabOffset, currentMaxOffset)
+      Math.min(dragState.dragOffset, currentMaxOffset)
     );
 
     // update dragState.tabPosition here
+    let filterOffset = 0;
+    if (this.filterState.tabs[dragState.draggedTab.id]) {
+      filterOffset = this.filterState.tabs[dragState.draggedTab.id]
+        .filterOffset;
+    }
 
     dragState.draggedTab.style.setProperty(
       "--y-offset",
-      dragState.tabOffset + "px"
+      dragState.dragOffset + filterOffset + "px"
     );
 
     dragState.tabsAbove.forEach(tab => {
+      let filterOffset = 0;
+      if (this.filterState.tabs[tab.id]) {
+        filterOffset = this.filterState.tabs[tab.id].filterOffset;
+      } else {
+        filterOffset = 0;
+      }
+
       const totalDifference =
-        dragState.offsetTops[tab.id] - initialTabPosition - dragState.tabOffset;
+        dragState.offsetTops[tab.id] -
+        initialTabPosition -
+        dragState.dragOffset;
 
       // get the difference between the bottom of todo and the top of draggable todo.
       const difference = totalDifference + dragState.tabHeight;
@@ -40,7 +54,7 @@ function dragTab(options = {}) {
         0
       );
 
-      tab.style.setProperty("--y-offset", offset + "px");
+      tab.style.setProperty("--y-offset", offset + filterOffset + "px");
       tab.style.setProperty(
         "--opacity",
         Math.max(Math.abs(offset - 23) / 23, 0.62)
@@ -53,8 +67,17 @@ function dragTab(options = {}) {
     });
 
     dragState.tabsBelow.forEach(tab => {
+      let filterOffset = 0;
+      if (this.filterState.tabs[tab.id]) {
+        filterOffset = this.filterState.tabs[tab.id].filterOffset;
+      } else {
+        filterOffset = 0;
+      }
+
       const totalDifference =
-        dragState.offsetTops[tab.id] - initialTabPosition - dragState.tabOffset;
+        dragState.offsetTops[tab.id] -
+        initialTabPosition -
+        dragState.dragOffset;
 
       const difference = totalDifference - dragState.tabHeight;
       const offset = Math.min(
@@ -65,7 +88,7 @@ function dragTab(options = {}) {
         0
       );
 
-      tab.style.setProperty("--y-offset", offset + "px");
+      tab.style.setProperty("--y-offset", offset + filterOffset + "px");
       tab.style.setProperty(
         "--opacity",
         Math.max(Math.abs(offset + 23) / 23, 0.62)
