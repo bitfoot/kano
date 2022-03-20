@@ -33,28 +33,6 @@ function filter() {
     filterState.lastNewlyFilteredInTabIndex = null;
     filterState.lastMatchedTabIndex = null;
     let filteredOutAbove = 0;
-    // get the index of the last currently visible tab in the list, and store it in filterState
-    // const getIndexOfLastVisibleTab = () => {
-    //   let index = null;
-    //   if (Object.keys(filterState.tabs).length == 0) {
-    //     // if filterState doesn't have any tabs stored, that means tabs are not filtered and the last visible tab is just the last tab in the list
-    //     index = tabObjects.length - 1;
-    //   } else {
-    //     // get the index of last visible tab from the previous filtered list
-    //     for (let i = tabObjects.length - 1; i >= 0; i--) {
-    //       if (
-    //         filterState.tabs[tabObjects[i].id].isFilteredOut == false &&
-    //         matchesFilter(tabObjects[i].title, filter)
-    //       ) {
-    //         index = filterState.tabs[tabObjects[i].id].index;
-    //         break;
-    //       }
-    //     }
-    //   }
-    //   return index;
-    // };
-
-    // filterState.lastVisibleTabIndex = getIndexOfLastVisibleTab();
 
     tabObjects.forEach((obj, index) => {
       const filterOffset = filteredOutAbove * -46;
