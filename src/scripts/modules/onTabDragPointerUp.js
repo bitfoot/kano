@@ -1,6 +1,6 @@
 "use strict";
 
-function onDragPointerUp(event) {
+function onTabDragPointerUp(event) {
   const state = this;
   const dragState = this.dragState;
   if (dragState.animation) {
@@ -185,11 +185,6 @@ function onDragPointerUp(event) {
   tabButton.focus();
 
   // tab order has changed, so it should be changed in the "tabs" and "orderedTabObjects" lists in state
-  // this.tabs = [
-  //   ...dragState.tabsAbove,
-  //   dragState.draggedTab,
-  //   ...dragState.tabsBelow
-  // ];
   state.tabs = [...document.getElementsByClassName(`tab`)];
   const reorderedTabObjects = [];
   state.orderedTabObjects.forEach(tabObj => {
@@ -200,4 +195,4 @@ function onDragPointerUp(event) {
   this.dragState = null;
 }
 
-module.exports = onDragPointerUp;
+module.exports = onTabDragPointerUp;

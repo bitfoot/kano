@@ -24,31 +24,35 @@ function getFilteredTabs() {
   return [...document.getElementsByClassName("tab")] || [];
 }
 
-// this function should be merged with the one below
-function calculateScrollbarHeight() {
-  const state = this;
-  const container = state.scrollState.container;
-  const margin = 6;
-  const containerHeight = container.offsetHeight; // 500
-  // const wholeContentHeight = container.scrollHeight;
-  let wholeContentHeight = null;
-  const filterWasUsed = state.filterState.numOfFilteredTabs !== null;
+function getContentHeight() {
+  let contentHeight = null;
+  const filterWasUsed = this.filterState.numOfFilteredTabs !== null;
   if (filterWasUsed) {
-    wholeContentHeight = state.filterState.numOfFilteredTabs * 46;
+    contentHeight = this.filterState.numOfFilteredTabs * 46;
   } else {
-    wholeContentHeight = state.orderedTabObjects.length * 46;
+    contentHeight = this.orderedTabObjects.length * 46;
   }
-  const contentHeightRatio = containerHeight / wholeContentHeight;
-  const scrollbarHeight = containerHeight * contentHeightRatio - margin;
+  return contentHeight;
+}
+
+function getContainerToContentRatio() {
+  const containerHeight = this.scrollState.container.offsetHeight;
+  const contentHeight = getContentHeight.call(this);
+  const containerToContentRatio = containerHeight / contentHeight;
+  return containerToContentRatio;
+}
+
+function getScrollbarHeight() {
+  const margin = 6;
+  const scrollbarTrackSpace =
+    this.scrollState.scrollbarTrack.offsetHeight - margin;
+  const containerToContentRatio = getContainerToContentRatio.call(this);
+  const scrollbarHeight = scrollbarTrackSpace * containerToContentRatio;
   return scrollbarHeight;
 }
 
 function resetTransitionVariables() {
-  const state = this;
-  // if (Object.keys(state.filterState.tabs).length > 0) {
-
-  // }
-  state.tabs.forEach(tab => {
+  this.tabs.forEach(tab => {
     tab.style.setProperty("--trans-delay", "0ms");
     tab.style.setProperty("--opacity-delay", "0ms");
     tab.style.setProperty("--trans-duration", "0ms");
@@ -56,24 +60,22 @@ function resetTransitionVariables() {
   });
 }
 
-// function get
+function getMaxScrollTop() {
+  let contentHeight = getContentHeight.call(this);
+  let maxScrollTop = contentHeight - this.scrollState.maxContainerHeight;
+  if (maxScrollTop < 0) {
+    maxScrollTop = 0;
+  }
+  return maxScrollTop;
+}
 
 // this will be called when tabs are first rendered, when a tab is deleted, and when tabs are filtered
 // TODO: make scrollbar length adjust based on number of filtered-out tabs
 function adjustScrollbar() {
-  const state = this;
-  // determine if scrollbar is needed, and if it's not then remove it
-  const container = state.scrollState.container;
-  // const tabs = document.getElementsByClassName("tab");
-  let visibleTabsCount = null;
-  const filterWasUsed = state.filterState.numOfFilteredTabs !== null;
-  if (filterWasUsed) {
-    visibleTabsCount = state.filterState.numOfFilteredTabs;
-  } else {
-    visibleTabsCount = state.orderedTabObjects.length;
-  }
-  const scrollbarTrack = document.getElementById("scrollbar-track");
-  if (visibleTabsCount > 11) {
+  const container = this.scrollState.container;
+  let contentHeight = getContentHeight.call(this);
+  const scrollbarTrack = this.scrollState.scrollbarTrack;
+  if (contentHeight > this.scrollState.maxContainerHeight) {
     container.classList.remove("tab-list-container--no-scroll");
     container.children[0].classList.add("tab-list--scrollable");
     scrollbarTrack.classList.remove("scrollbar-track--hidden");
@@ -84,28 +86,16 @@ function adjustScrollbar() {
   }
 
   const margin = 6;
-  const visibleContentHeight = container.offsetHeight - margin; // 500
-  const wholeContentHeight = container.scrollHeight - margin;
-  const hiddenContentHeight = wholeContentHeight - visibleContentHeight;
-  const containerToContentRatio = visibleContentHeight / wholeContentHeight;
+  this.scrollState.containerToContentRatio = getContainerToContentRatio.call(
+    this
+  );
 
-  const scrollbarThumb = state.scrollState.scrollbarThumb;
-  const scrollbarHeight = calculateScrollbarHeight.call(state);
+  const scrollbarThumb = this.scrollState.scrollbarThumb;
+  const scrollbarHeight = getScrollbarHeight.call(this);
 
-  const scrollTop = state.scrollState.scrollTop;
-
-  // this value doesn't change no matter where thumb is. Max offset is always the same.
-  this.maxScrollbarThumbOffset = hiddenContentHeight * containerToContentRatio;
-  const currentThumbOffset = scrollTop * containerToContentRatio;
-
-  if (currentThumbOffset > this.maxScrollbarThumbOffset) {
-    const newScrollbarThumbOffset = this.maxScrollbarThumbOffset;
-    scrollbarThumb.style.setProperty(
-      "--thumb-offset",
-      Math.min(newScrollbarThumbOffset, this.maxScrollbarThumbOffset) + "px"
-    );
-  }
-
+  this.scrollState.maxScrollbarThumbOffset =
+    this.scrollState.maxContainerHeight - margin - scrollbarHeight;
+  this.scrollState.maxScrollTop = getMaxScrollTop.call(this);
   scrollbarThumb.style.setProperty("--thumb-height", scrollbarHeight + "px");
 }
 
@@ -203,8 +193,11 @@ module.exports = {
   adjustBodyPadding,
   getListedTabs,
   adjustScrollbar,
+  getContainerToContentRatio,
+  getContentHeight,
   createCheckboxSvg,
+  getMaxScrollTop,
   createDuplicateIndicatorSvg,
-  calculateScrollbarHeight,
+  getScrollbarHeight,
   resetTransitionVariables
 };

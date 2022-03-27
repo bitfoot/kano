@@ -1,6 +1,6 @@
 "use strict";
-const onDragPointerMove = require("./onDragPointerMove");
-const onDragPointerUp = require("./onDragPointerUp");
+const onTabDragPointerMove = require("./onTabDragPointerMove");
+const onTabDragPointerUp = require("./onTabDragPointerUp");
 const resetTransitionVariables = require("./util").resetTransitionVariables;
 
 function initializeTabDrag(event) {
@@ -217,8 +217,8 @@ function initializeTabDrag(event) {
     }
   };
 
-  draggedTab.onpointermove = onDragPointerMove.bind(this);
-  draggedTab.onpointerup = onDragPointerUp.bind(this);
+  draggedTab.onpointermove = onTabDragPointerMove.bind(this);
+  draggedTab.onpointerup = onTabDragPointerUp.bind(this);
 }
 
 module.exports = initializeTabDrag;

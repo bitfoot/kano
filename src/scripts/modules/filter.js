@@ -88,11 +88,16 @@ function filter() {
   prepareFilteredTabObjects(state.orderedTabObjects);
 
   // scroll to the top of the list
-  state.scrollState.container.scroll({
-    top: 0,
-    left: 0,
-    behavior: "smooth"
-  });
+  console.log(
+    `FROM FILTER! Current scrollTop is ${this.scrollState.scrollTop
+    }, ratio is ${this.scrollState.containerToContentRatio}`
+  );
+  // state.scrollState.container.scroll({
+  //   top: 0,
+  //   left: 0,
+  //   behavior: "smooth"
+  // });
+  // state.scrollState.container.scroll(0, 0);
 
   const hideTab = tab => {
     tab.ariaHidden = "true";
@@ -189,19 +194,6 @@ function filter() {
           ) {
             opacityDelay = 200;
           }
-
-          // else if (
-          //   filterState.lastVisibleTabIndex > tabObj.index ||
-          //   tabObj.index <= filterState.lastNewlyFilteredInTabIndex
-          // ) {
-          //   opacityDelay = 1000;
-          // }
-
-          // if (filterState.lastNewlyFilteredOutTabIndex !== null) {
-          //   opacityDelay = 2000;
-          // } else {
-          //   opacityDelay = 1000;
-          // }
         } else if (filterState.lastNewlyFilteredOutTabIndex !== null) {
           opacityDelay = 200;
         }
@@ -246,92 +238,8 @@ function filter() {
   };
 
   styleTabs(state.orderedTabObjects);
-
-  // const tabs = state.tabs;
-
-  // style tabs based on whether they (or those that preceed/follow them) match the filter
-  // tabs.forEach((tab, index) => {
-  //   // tab.classList.remove("tab--filtered");
-  //   tab.style.setProperty(
-  //     "--y-offset",
-  //     state.totalFilteredOutTabs * -46 + "px"
-  //   );
-
-  //   // if tab's title DOES NOT include filter
-  //   if (tabsObj.tabs[index].matchesFilter == false) {
-  //     state.totalFilteredOutTabs += 1;
-  //     // if tab is not already hidden
-  //     if (tabsObj.tabs[index].visible == true) {
-  //       hideTab(tab);
-  //       if (firstHiddenTabIndex == null) {
-  //         firstHiddenTabIndex = index;
-  //       }
-  //       tab.classList.remove("tab--filtered");
-  //       filteredOutTabs += 1;
-  //       filterState.visibleTabs -= 1;
-  //     }
-  //   } else {
-  //     // if tab's title DOES include filter
-  //     filterState.visibleTabs += 1;
-  //     tab.classList.add("tab--filtered");
-
-  //     if (!tab.classList.contains("tab--filtered-out")) {
-  //       // if tab is already visible
-  //       if (firstAlreadyVisibleTabIndex == null) {
-  //         firstAlreadyVisibleTabIndex = index;
-  //       }
-  //       // make sure speed is not set to 0 so tab doesn't move instantly
-  //       tab.style.setProperty("--speed", "560ms");
-  //       // if there are filteredOut tabs above, wait until they fade away before moving up
-  //       tab.style.setProperty("--delay", filteredOutTabs > 0 ? "560ms" : "0ms");
-  //       lastAlreadyVisibleTabIndex = index;
-  //     } else {
-  //       // if tab is hidden, UNHIDE it
-  //       unhideTab(tab);
-
-  //       if (firstUnhiddenTabIndex == null) {
-  //         firstUnhiddenTabIndex = index;
-  //       }
-
-  //       // if there are still visible tabs further down the list
-  //       if (nextVisibleTabIndex != -1) {
-  //         // if next visible tab index is less than current tab index (or if its undefined), it's no longer 'next' and needs to be updated
-  //         if (nextVisibleTabIndex == undefined || nextVisibleTabIndex < index) {
-  //           nextVisibleTabIndex = tabsObj.tabs
-  //             .slice(index)
-  //             .findIndex(t => t.visible == true);
-
-  //           if (nextVisibleTabIndex != -1) {
-  //             nextVisibleTabIndex += index;
-  //           }
-  //         }
-  //       }
-
-  //       // const title = state.tabs[tab.id].title.toLowerCase();
-  //       if (
-  //         lastAlreadyVisibleTabIndex > firstUnhiddenTabIndex ||
-  //         lastAlreadyVisibleTabIndex > firstHiddenTabIndex ||
-  //         nextVisibleTabIndex > index
-  //       ) {
-  //         tab.style.setProperty("--opacity-delay", "560ms");
-  //       } else {
-  //         tab.style.setProperty("--opacity-delay", "0ms");
-  //       }
-  //       tab.style.setProperty("--delay", "0ms");
-  //       tab.style.setProperty("--speed", "0ms");
-  //       // filteredIn = true;
-  //       filteredInTabs += 1;
-  //       // visible = false;
-  //       lastUnhiddenTabIndex = index;
-  //     }
-
-  //     matchedTabs += 1;
-  //     // tab.classList.add("tab--filtered");
-  //   }
-  // });
-
-  // console.log(state.totalFilteredOutTabs);
   util.adjustScrollbar.call(state);
+  state.scrollState.container.scroll(0, 0);
   adjustMenu.call(state);
 }
 

@@ -2,6 +2,7 @@ const util = require("./modules/util");
 const renderTabComponents = require("./modules/renderTabComponents");
 const addTab = require("./modules/addTab");
 const initializeTabDrag = require("./modules/initializeTabDrag");
+const initializeScrollbarDrag = require("./modules/initializeTabDrag");
 const scroll = require("./modules/scroll");
 const filter = require("./modules/filter");
 const onScroll = require("./modules/onScroll");
@@ -68,11 +69,14 @@ const state = {
     lastMatchedTabIndex: null
   },
   scrollState: {
+    containerToContentRatio: null,
+    maxContainerHeight: 506,
     container: document.getElementById("tab-list-container"),
     scrollbarTrack: document.getElementById("scrollbar-track"),
     scrollbarThumb: document.getElementById("scrollbar-thumb"),
     thumbOffset: 0,
     scrollTop: 0,
+    maxScrollTop: 0,
     tabListOffset: 0
   }
 };
@@ -176,8 +180,8 @@ document.addEventListener("pointerdown", e => {
     };
   } else if (e.target.id === "scrollbar-thumb") {
     console.log(`scrollbar was clicked!`);
-    const scrollBar = e.target;
-    initializeScrollbarDrag.bind(state, e);
+    // const scrollBar = e.target;
+    initializeScrollbarDrag.call(state, e);
   }
 });
 

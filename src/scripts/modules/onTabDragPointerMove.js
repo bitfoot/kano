@@ -3,7 +3,7 @@
 const scroll = require("./scroll");
 const dragTab = require("./dragTab");
 
-function onDragPointerMove(event) {
+function onTabDragPointerMove(event) {
   const dragState = this.dragState;
   dragState.pointerPosition = event.pageY;
 
@@ -49,4 +49,4 @@ function onDragPointerMove(event) {
   }
 }
 
-module.exports = onDragPointerMove;
+module.exports = onTabDragPointerMove;
