@@ -1,22 +1,48 @@
 "use strict";
 
+// const getContainerToContentRatio = require("./util").getContainerToContentRatio;
+// const getMaxScrollTop = require("./util").getMaxScrollTop;
+
 // rename this function to scrollBy
 function scroll(options = {}) {
   const { distance = 0, scrollBarOnly = false, speed = 0 } = options;
   const state = this;
   const dragState = state.dragState;
-  // all this stuff about ratio should be handled by adjust Scrollbar and stored in scrollState
-  // console.log(`inside scroll, distance is ${distance}`);
   const container = state.scrollState.container;
   const tabList = container.children[0];
-  // const filterWasUsed = state.filterState.numOfFilteredTabs !== null;
-
   const scrollbarThumb = state.scrollState.scrollbarThumb;
   const curThumbOffset = state.scrollState.thumbOffset;
-  const scrollbarDistance =
-    distance * state.scrollState.containerToContentRatio;
 
-  console.log(`inside scroll, scrollbarDistance is ${scrollbarDistance}`);
+  // const ratio = getContainerToContentRatio.call(this);
+  // this.scrollState.containerToContentRatio = getContainerToContentRatio.call(
+  //   this
+  // );
+  // let scrollbarDistance = null;
+  // let containerToContentRatio = null;
+  // if (this.filterState.scrollingUp) {
+  //   console.log(
+  //     `inside scroll, prevContainerToContentRatio is ${this.scrollState.prevContainerToContentRatio
+  //     }`
+  //   );
+  //   containerToContentRatio = this.scrollState.prevContainerToContentRatio;
+  //   // scrollbarDistance = 0;
+  // } else {
+  //   containerToContentRatio = this.scrollState.containerToContentRatio;
+  // }
+
+  // if (this.scrollState.prevContainerToContentRatio != null) {
+  //   scrollbarDistance = distance * this.scrollState.prevContainerToContentRatio;
+  //   // this.scrollState.adjustingScrollbar = false;
+  // } else {
+  //   scrollbarDistance = distance * this.scrollState.containerToContentRatio;
+  // }
+
+  const scrollbarDistance = distance * this.scrollState.containerToContentRatio;
+
+  // console.log(
+  //   `inside scroll, scrollbarDistance is ${scrollbarDistance}, containerToContentRatio: ${this.scrollState.containerToContentRatio
+  //   }`
+  // );
   const newThumbOffset = Math.max(
     0,
     Math.min(
@@ -24,6 +50,10 @@ function scroll(options = {}) {
       state.scrollState.maxScrollbarThumbOffset
     )
   );
+  // const newThumbOffset = Math.min(
+  //   curThumbOffset + scrollbarDistance,
+  //   state.scrollState.maxScrollbarThumbOffset
+  // );
   // const newThumbOffset = curThumbOffset + scrollbarDistance;
 
   state.scrollState.thumbOffset = newThumbOffset;

@@ -88,10 +88,10 @@ function filter() {
   prepareFilteredTabObjects(state.orderedTabObjects);
 
   // scroll to the top of the list
-  console.log(
-    `FROM FILTER! Current scrollTop is ${this.scrollState.scrollTop
-    }, ratio is ${this.scrollState.containerToContentRatio}`
-  );
+  // console.log(
+  //   `FROM FILTER! Current scrollTop is ${this.scrollState.scrollTop
+  //   }, ratio is ${this.scrollState.containerToContentRatio}`
+  // );
   // state.scrollState.container.scroll({
   //   top: 0,
   //   left: 0,
@@ -237,10 +237,25 @@ function filter() {
     });
   };
 
-  styleTabs(state.orderedTabObjects);
+  // console.log(
+  //   `Filtered out ${state.orderedTabObjects.length -
+  //   filterState.numOfFilteredTabs} tabs, numOfFilteredTabs: ${this.filterState.numOfFilteredTabs
+  //   }`
+  // );
+
+  // state.scrollState.container.scroll(0, 0);
+  if (state.scrollState.scrollTop > 0) {
+    state.filterState.scrollingUp = true;
+  }
   util.adjustScrollbar.call(state);
-  state.scrollState.container.scroll(0, 0);
+  styleTabs(state.orderedTabObjects);
   adjustMenu.call(state);
+  // state.scrollState.container.scroll({
+  //   top: 0,
+  //   left: 0,
+  //   behavior: "smooth"
+  // });
+  // requestAnimationFrame(util.adjustScrollbar.bind(state));
 }
 
 // function filter() {

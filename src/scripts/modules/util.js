@@ -73,9 +73,14 @@ function getMaxScrollTop() {
 // TODO: make scrollbar length adjust based on number of filtered-out tabs
 function adjustScrollbar() {
   const container = this.scrollState.container;
-  let contentHeight = getContentHeight.call(this);
   const scrollbarTrack = this.scrollState.scrollbarTrack;
-  if (contentHeight > this.scrollState.maxContainerHeight) {
+  // let contentHeight = getContentHeight.call(this);
+
+  this.scrollState.prevContainerToContentRatio = this.scrollState.containerToContentRatio;
+  this.scrollState.containerToContentRatio = getContainerToContentRatio.call(
+    this
+  );
+  if (this.scrollState.containerToContentRatio < 1) {
     container.classList.remove("tab-list-container--no-scroll");
     container.children[0].classList.add("tab-list--scrollable");
     scrollbarTrack.classList.remove("scrollbar-track--hidden");
@@ -86,16 +91,16 @@ function adjustScrollbar() {
   }
 
   const margin = 6;
-  this.scrollState.containerToContentRatio = getContainerToContentRatio.call(
-    this
-  );
-
   const scrollbarThumb = this.scrollState.scrollbarThumb;
   const scrollbarHeight = getScrollbarHeight.call(this);
-
   this.scrollState.maxScrollbarThumbOffset =
     this.scrollState.maxContainerHeight - margin - scrollbarHeight;
   this.scrollState.maxScrollTop = getMaxScrollTop.call(this);
+  this.scrollState.adjustingScrollbar = true;
+  if (this.scrollState.scrollTop > this.scrollState.maxScrollTop) {
+    // this.scrollState.adjustingScrollbar = true;
+    this.scrollState.container.scroll(0, this.scrollState.maxScrollTop);
+  }
   scrollbarThumb.style.setProperty("--thumb-height", scrollbarHeight + "px");
 }
 
