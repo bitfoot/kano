@@ -96,11 +96,25 @@ function adjustScrollbar() {
   this.scrollState.maxScrollbarThumbOffset =
     this.scrollState.maxContainerHeight - margin - scrollbarHeight;
   this.scrollState.maxScrollTop = getMaxScrollTop.call(this);
-  this.scrollState.adjustingScrollbar = true;
+  // const scrollbarThumb = state.scrollState.scrollbarThumb;
+
+  // this.scrollState.adjustingScrollbar = true;
   if (this.scrollState.scrollTop > this.scrollState.maxScrollTop) {
-    // this.scrollState.adjustingScrollbar = true;
-    this.scrollState.container.scroll(0, this.scrollState.maxScrollTop);
+    this.scrollState.adjustingScrollbar = true;
+    // this.scrollState.container.scroll(0, this.scrollState.maxScrollTop);
+    this.scrollState.container.scroll({
+      top: this.scrollState.maxScrollTop,
+      left: 0,
+      behavior: "smooth"
+    });
+    // this.scrollState.container.scrollTop = this.scrollState.maxScrollTop;
   }
+  this.scrollState.thumbOffset =
+    this.scrollState.scrollTop * this.scrollState.containerToContentRatio;
+  scrollbarThumb.style.setProperty(
+    "--thumb-offset",
+    this.scrollState.thumbOffset + "px"
+  );
   scrollbarThumb.style.setProperty("--thumb-height", scrollbarHeight + "px");
 }
 

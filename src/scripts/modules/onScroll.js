@@ -4,28 +4,50 @@ const scroll = require("./scroll");
 
 function onScroll(e) {
   let newScrollTop = e.target.scrollTop;
+  let prevScrolltop = this.scrollState.scrollTop;
+  const difference = newScrollTop - prevScrolltop;
+  console.log(`difference: ${difference}`);
 
   // for positioning scrollbar track
-  requestAnimationFrame(() => {
-    this.scrollState.scrollbarTrack.style.setProperty(
-      "--scrolltop",
-      Math.min(newScrollTop, this.scrollState.maxScrollTop) + "px"
-    );
-  });
+  // requestAnimationFrame(() => {
+  //   this.scrollState.scrollbarTrack.style.setProperty(
+  //     "--scrolltop",
+  //     Math.min(newScrollTop, this.scrollState.maxScrollTop) + "px"
+  //   );
+  // });
+  // requestAnimationFrame(() => {
+  //   this.scrollState.scrollbarTrack.style.setProperty(
+  //     "--scrolltop",
+  //     newScrollTop + "px"
+  //   );
+  // });
 
   // solution for the issue of filtered-out tabs getting hidden immediately, if they are at the end of the list:
   // disable user scolling by adding class to container, but smooth-scroll programmatically to max scrolltop.
   // from there, enable user-scrolling so user can interrupt.
 
-  if (newScrollTop > this.scrollState.maxScrollTop) {
-    e.target.scrollTop = this.scrollState.maxScrollTop;
+  if (this.scrollState.adjustingScrollbar) {
+    if (newScrollTop <= this.scrollState.maxScrollTop) {
+      this.scrollState.adjustingScrollbar = false;
+    }
+  } else if (newScrollTop > this.scrollState.maxScrollTop) {
+    newScrollTop = this.scrollState.maxScrollTop;
+    e.target.scrollTop = newScrollTop;
   }
 
+  requestAnimationFrame(() => {
+    this.scrollState.scrollbarTrack.style.setProperty(
+      "--scrolltop",
+      newScrollTop + "px"
+    );
+  });
+
   // update scrolltop in state so that other functions get the latest value without having to use elem.scrollTop and forcing reflow
-  let prevScrolltop = Math.min(
-    this.scrollState.scrollTop,
-    this.scrollState.maxScrollTop
-  );
+  // let prevScrolltop = Math.min(
+  //   this.scrollState.scrollTop,
+  //   this.scrollState.maxScrollTop
+  // );
+
   // if (prevScrolltop > this.scrollState.maxScrollTop) {
   //   prevScrolltop = this.scrollState.maxScrollTop;
   // }
@@ -45,19 +67,20 @@ function onScroll(e) {
     this.scrollState.maxScrollTop
   );
   let previousTabListOffset = this.scrollState.tabListOffset;
-  let distanceToScrollBy =
-    this.scrollState.scrollTop - prevScrolltop - previousTabListOffset;
+  // let distanceToScrollBy =
+  //   this.scrollState.scrollTop - prevScrolltop - previousTabListOffset;
+  let distanceToScrollBy = difference - previousTabListOffset;
   this.scrollState.tabListOffset = 0;
   // console.log(
   //   `newScrollTop: ${newScrollTop}, distanceToScrollBy: ${distanceToScrollBy}, maxScrollTop: ${this.scrollState.maxScrollTop
   //   }, thumbOffset before scroll: ${this.scrollState.thumbOffset}`
   // );
-  // console.log(
-  //   `newScrollTop: ${newScrollTop}, ratio: ${this.scrollState.containerToContentRatio
-  //   }, prevRatio: ${this.scrollState.prevContainerToContentRatio
-  //   }, distanceToScrollBy: ${distanceToScrollBy}, thumbOffset before scroll: ${this.scrollState.thumbOffset
-  //   }`
-  // );
+  console.log(
+    `newScrollTop: ${newScrollTop}, ratio: ${this.scrollState.containerToContentRatio
+    }, prevRatio: ${this.scrollState.prevContainerToContentRatio
+    }, distanceToScrollBy: ${distanceToScrollBy}, thumbOffset before scroll: ${this.scrollState.thumbOffset
+    }`
+  );
 
   // if (
   //   this.scrollState.adjustingScrollbar == true &&
