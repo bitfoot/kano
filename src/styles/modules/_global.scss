@@ -123,12 +123,13 @@ button {
   // height: 506px;
   height: 100%;
   // height: 526px;
-  background: purple;
+  // background: purple;
   padding: 0 var(--lesser-padding);
 
   &__thumb {
     position: relative;
     // margin-bottom: 506px;
+    --ratio: 1;
     --thumb-height: 0;
     --thumb-offset: 0;
     height: var(--thumb-height);
@@ -140,6 +141,13 @@ button {
     &:hover {
       background: var(--color-two-hover);
       transition: background-color 100ms ease-in-out;
+    }
+
+    &--transforming {
+      transform-origin: top;
+      transform: translateY(var(--thumb-offset)) scaleY(var(--ratio));
+      transition: background-color 100ms ease-in-out, transform 200ms ease-in-out;
+      background: purple;
     }
   }
 

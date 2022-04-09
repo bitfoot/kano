@@ -99,23 +99,35 @@ function adjustScrollbar() {
   // const scrollbarThumb = state.scrollState.scrollbarThumb;
 
   // this.scrollState.adjustingScrollbar = true;
+
   if (this.scrollState.scrollTop > this.scrollState.maxScrollTop) {
     this.scrollState.adjustingScrollbar = true;
-    // this.scrollState.container.scroll(0, this.scrollState.maxScrollTop);
+    this.scrollState.container.classList.add("tab-list-container--no-scroll");
+    this.scrollState.thumbOffset =
+      this.scrollState.maxScrollTop * this.scrollState.containerToContentRatio;
+
     this.scrollState.container.scroll({
       top: this.scrollState.maxScrollTop,
       left: 0,
       behavior: "smooth"
     });
-    // this.scrollState.container.scrollTop = this.scrollState.maxScrollTop;
+  } else {
+    this.scrollState.thumbOffset =
+      this.scrollState.scrollTop * this.scrollState.containerToContentRatio;
   }
-  this.scrollState.thumbOffset =
-    this.scrollState.scrollTop * this.scrollState.containerToContentRatio;
-  scrollbarThumb.style.setProperty(
-    "--thumb-offset",
-    this.scrollState.thumbOffset + "px"
-  );
-  scrollbarThumb.style.setProperty("--thumb-height", scrollbarHeight + "px");
+
+  requestAnimationFrame(() => {
+    scrollbarThumb.style.setProperty(
+      "--thumb-offset",
+      this.scrollState.thumbOffset + "px"
+    );
+    // scrollbarThumb.style.setProperty(
+    //   "--ratio",
+    //   this.scrollState.containerToContentRatio
+    // );
+    // scrollbarThumb.classList.add("scrollbar-track__thumb--transforming");
+    scrollbarThumb.style.setProperty("--thumb-height", scrollbarHeight + "px");
+  });
 }
 
 function createCheckboxSvg() {

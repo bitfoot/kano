@@ -87,18 +87,6 @@ function filter() {
 
   prepareFilteredTabObjects(state.orderedTabObjects);
 
-  // scroll to the top of the list
-  // console.log(
-  //   `FROM FILTER! Current scrollTop is ${this.scrollState.scrollTop
-  //   }, ratio is ${this.scrollState.containerToContentRatio}`
-  // );
-  // state.scrollState.container.scroll({
-  //   top: 0,
-  //   left: 0,
-  //   behavior: "smooth"
-  // });
-  // state.scrollState.container.scroll(0, 0);
-
   const hideTab = tab => {
     tab.ariaHidden = "true";
     if (!tab.classList.contains("tab--filtered-out")) {
@@ -157,9 +145,6 @@ function filter() {
 
     const getTransformDuration = tabObj => {
       let transformDuration = 0;
-      // if (!tabObj.isNewlyFilteredIn) {
-      //   transformDuration = 1000;
-      // }
       if (!tabObj.isFilteredOut && !tabObj.isNewlyFilteredIn) {
         transformDuration = 200;
       }
@@ -209,53 +194,39 @@ function filter() {
       const transformDuration = getTransformDuration(filteredTabObject);
       const opacityDuration = getOpacityDuration(filteredTabObject);
 
-      state.tabs[index].style.setProperty(
-        "--trans-delay",
-        transformDelay + "ms"
-      );
-      state.tabs[index].style.setProperty(
-        "--opacity-delay",
-        opacityDelay + "ms"
-      );
-      state.tabs[index].style.setProperty(
-        "--trans-duration",
-        transformDuration + "ms"
-      );
-      state.tabs[index].style.setProperty(
-        "--opacity-duration",
-        opacityDuration + "ms"
-      );
-      state.tabs[index].style.setProperty(
-        "--y-offset",
-        filteredTabObject.filterOffset + "px"
-      );
-      if (filteredTabObject.isFilteredOut) {
-        hideTab(state.tabs[index]);
-      } else {
-        unhideTab(state.tabs[index]);
-      }
+      requestAnimationFrame(() => {
+        state.tabs[index].style.setProperty(
+          "--trans-delay",
+          transformDelay + "ms"
+        );
+        state.tabs[index].style.setProperty(
+          "--opacity-delay",
+          opacityDelay + "ms"
+        );
+        state.tabs[index].style.setProperty(
+          "--trans-duration",
+          transformDuration + "ms"
+        );
+        state.tabs[index].style.setProperty(
+          "--opacity-duration",
+          opacityDuration + "ms"
+        );
+        state.tabs[index].style.setProperty(
+          "--y-offset",
+          filteredTabObject.filterOffset + "px"
+        );
+        if (filteredTabObject.isFilteredOut) {
+          hideTab(state.tabs[index]);
+        } else {
+          unhideTab(state.tabs[index]);
+        }
+      });
     });
   };
 
-  // console.log(
-  //   `Filtered out ${state.orderedTabObjects.length -
-  //   filterState.numOfFilteredTabs} tabs, numOfFilteredTabs: ${this.filterState.numOfFilteredTabs
-  //   }`
-  // );
-
-  // state.scrollState.container.scroll(0, 0);
-  if (state.scrollState.scrollTop > 0) {
-    state.filterState.scrollingUp = true;
-  }
   util.adjustScrollbar.call(state);
   styleTabs(state.orderedTabObjects);
   adjustMenu.call(state);
-  // state.scrollState.container.scroll({
-  //   top: 0,
-  //   left: 0,
-  //   behavior: "smooth"
-  // });
-  // requestAnimationFrame(util.adjustScrollbar.bind(state));
 }
 
 // function filter() {

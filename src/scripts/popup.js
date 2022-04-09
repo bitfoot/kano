@@ -66,7 +66,8 @@ const state = {
     lastNewlyFilteredOutTabIndex: null,
     firstNewlyFilteredInTabIndex: null,
     lastNewlyFilteredInTabIndex: null,
-    lastMatchedTabIndex: null
+    lastMatchedTabIndex: null,
+    scrollingUp: false
   },
   scrollState: {
     containerToContentRatio: null,
