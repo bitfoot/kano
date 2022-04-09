@@ -1,4 +1,6 @@
-*, ::before, ::after {
+*,
+::before,
+::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -27,7 +29,7 @@
   // --color-two-hover: #395179;
   --color-two-hover: #3C5580;
 
-  
+
   --color-three: #eee;
   --color-four: #ccc;
   --golden-ratio: 1.61803398875;
@@ -55,7 +57,8 @@
 
 }
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
@@ -127,16 +130,16 @@ button {
   padding: 0 var(--lesser-padding);
 
   &__thumb {
-    position: relative;
-    // margin-bottom: 506px;
     --ratio: 1;
     --thumb-height: 0;
     --thumb-offset: 0;
+    position: relative;
     height: var(--thumb-height);
     transform: translateY(var(--thumb-offset));
     width: var(--lesser-padding);
     background: var(--color-two);
     border-radius: var(--greater-padding);
+    transition: background-color 400ms ease-in-out;
 
     &:hover {
       background: var(--color-two-hover);
@@ -145,14 +148,16 @@ button {
 
     &--transforming {
       transform-origin: top;
+      // transform-origin: center;
       transform: translateY(var(--thumb-offset)) scaleY(var(--ratio));
-      transition: background-color 100ms ease-in-out, transform 200ms ease-in-out;
+      transition: background-color 200ms ease-in-out, transform 200ms ease-in-out;
       background: purple;
     }
   }
 
   &--hidden {
     visibility: hidden;
+    transition: none;
     // display: none;
   }
 }
