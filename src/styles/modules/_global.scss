@@ -152,6 +152,13 @@ button {
       transform: translateY(var(--thumb-offset)) scaleY(var(--ratio));
       transition: background-color 200ms ease-in-out, transform 200ms ease-in-out;
       background: purple;
+
+      &:hover {
+        transform-origin: top;
+        transform: translateY(var(--thumb-offset)) scaleY(var(--ratio));
+        transition: background-color 200ms ease-in-out, transform 200ms ease-in-out;
+        background: purple;
+      }
     }
   }
 

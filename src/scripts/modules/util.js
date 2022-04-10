@@ -42,10 +42,15 @@ function getContainerToContentRatio() {
   return containerToContentRatio;
 }
 
-function getScrollbarHeight() {
+function getScrollbarTrackSpace() {
   const margin = 6;
   const scrollbarTrackSpace =
     this.scrollState.scrollbarTrack.offsetHeight - margin;
+  return scrollbarTrackSpace;
+}
+
+function getScrollbarHeight() {
+  const scrollbarTrackSpace = getScrollbarTrackSpace.call(this);
   const containerToContentRatio = getContainerToContentRatio.call(this);
   const scrollbarHeight = Math.min(
     scrollbarTrackSpace,
@@ -83,9 +88,7 @@ function adjustScrollbar() {
     this
   );
 
-  const scrollbarWasHidden = prevContainerToContentRatio > 1;
-  const shouldTransformScrollbar =
-    scrollbarWasHidden === false && prevContainerToContentRatio !== null;
+  const shouldTransformScrollbar = prevContainerToContentRatio !== null;
 
   if (this.scrollState.containerToContentRatio > 1) {
     container.classList.add("tab-list-container--no-scroll");
@@ -101,6 +104,7 @@ function adjustScrollbar() {
   const scrollbarThumb = this.scrollState.scrollbarThumb;
   let prevScrollbarHeight = this.scrollState.scrollbarHeight;
   this.scrollState.scrollbarHeight = getScrollbarHeight.call(this);
+  this.scrollState.scrollbarTrackSpace = getScrollbarTrackSpace.call(this);
   if (prevScrollbarHeight === null) {
     prevScrollbarHeight = this.scrollState.scrollbarHeight;
   }
@@ -108,9 +112,7 @@ function adjustScrollbar() {
     this.scrollState.scrollbarHeight / prevScrollbarHeight;
 
   this.scrollState.maxScrollbarThumbOffset =
-    this.scrollState.maxContainerHeight -
-    margin -
-    this.scrollState.scrollbarHeight;
+    this.scrollState.scrollbarTrackSpace - this.scrollState.scrollbarHeight;
   this.scrollState.maxScrollTop = getMaxScrollTop.call(this);
 
   if (this.scrollState.scrollTop > this.scrollState.maxScrollTop) {
@@ -139,6 +141,7 @@ function adjustScrollbar() {
       scrollbarThumb.style.setProperty("--ratio", scrollbarThumbChange);
       scrollbarThumb.classList.add("scrollbar-track__thumb--transforming");
       scrollbarThumb.ontransitionend = () => {
+        scrollbarThumb.ontransitionend = "";
         scrollbarThumb.classList.remove("scrollbar-track__thumb--transforming");
         scrollbarThumb.style.setProperty(
           "--thumb-height",

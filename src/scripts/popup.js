@@ -2,7 +2,7 @@ const util = require("./modules/util");
 const renderTabComponents = require("./modules/renderTabComponents");
 const addTab = require("./modules/addTab");
 const initializeTabDrag = require("./modules/initializeTabDrag");
-const initializeScrollbarDrag = require("./modules/initializeTabDrag");
+const initializeScrollbarDrag = require("./modules/initializeScrollbarDrag");
 const scroll = require("./modules/scroll");
 const filter = require("./modules/filter");
 const onScroll = require("./modules/onScroll");
@@ -70,6 +70,7 @@ const state = {
     scrollingUp: false
   },
   scrollState: {
+    maxScrollbarThumbOffset: null,
     containerToContentRatio: null,
     maxContainerHeight: 506,
     container: document.getElementById("tab-list-container"),
@@ -151,24 +152,7 @@ document.addEventListener(`input`, e => {
   }
 });
 
-const tabListContainer = document.getElementById("tab-list-container");
-// const scrollBarTrack = document.getElementById("scrollbar-track");
-
-tabListContainer.addEventListener("scroll", onScroll.bind(state));
-// tabListContainer.addEventListener(
-//   "wheel",
-//   function (e) {
-//     e.preventDefault();
-//     const container = tabListContainer;
-//     this.dragState.tabList.style.setProperty("--y-offset", 0 + "px");
-//     this.dragState.tabList.classList.remove("tab-list--scroll");
-//     const scrollTo =
-//       this.scrollState.scrollTop + this.scrollState.tabListOffset;
-//     container.scrollBy(0, scrollTo);
-//   }.bind(state)
-// );
-// scrollBarTrack.addEventListener("scroll", onScroll.bind(state));
-// document.addEventListener("scroll", onScroll.bind(state));
+state.scrollState.container.addEventListener("scroll", onScroll.bind(state));
 
 document.addEventListener("pointerdown", e => {
   // if a tab is clicked
@@ -192,11 +176,11 @@ document.addEventListener("contextmenu", e => {
   }
 });
 
-document.addEventListener("keyup", e => {
-  if (e.target.id == "filter-input") {
-    if (e.key != "Tab") {
-      filter.call(state);
-    }
-  }
-  // console.log(e.key);
-});
+// document.addEventListener("keyup", e => {
+//   if (e.target.id == "filter-input") {
+//     if (e.key != "Tab") {
+//       filter.call(state);
+//     }
+//   }
+//   // console.log(e.key);
+// });

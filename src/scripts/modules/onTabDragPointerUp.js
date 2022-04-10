@@ -174,7 +174,7 @@ function onTabDragPointerUp(event) {
   });
 
   if (dragState.tabListOffset !== 0) {
-    dragState.tabListContainer.scrollBy(0, dragState.tabListOffset);
+    dragState.tabListContainer.scrollBy(0, this.scrollState.tabListOffset * 1);
     console.log(
       `Scrolling BY ${dragState.tabListOffset} from within onDragPointerUp`
     );

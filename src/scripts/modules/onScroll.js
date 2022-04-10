@@ -3,6 +3,7 @@
 const scroll = require("./scroll");
 
 function onScroll(e) {
+  console.log(`Scrolling!`);
   let newScrollTop = e.target.scrollTop;
   let prevScrolltop = this.scrollState.scrollTop;
   // const difference = newScrollTop - prevScrolltop;
