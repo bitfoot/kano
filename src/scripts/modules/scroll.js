@@ -31,30 +31,28 @@ function scroll(options = {}) {
   if (dragState || this.scrollState.thumbDragState) {
     // if scrolling using drag (from onTabDragPointerMove)
     if (!scrollBarOnly) {
-      dragState.tabListOffset += distance;
-      dragState.tabListOffset = Math.min(
-        dragState.tabListOffset,
-        dragState.maxScrollTop - this.scrollState.scrollTop
+      this.scrollState.tabListOffset += distance;
+      this.scrollState.tabListOffset = Math.min(
+        this.scrollState.tabListOffset,
+        this.scrollState.maxScrollTop - this.scrollState.scrollTop
       );
-      dragState.tabListOffset = Math.max(
-        dragState.tabListOffset,
+      this.scrollState.tabListOffset = Math.max(
+        this.scrollState.tabListOffset,
         this.scrollState.scrollTop * -1
       );
-      this.scrollState.tabListOffset = dragState.tabListOffset;
       tabList.classList.add("tab-list--scroll");
-      const newOffset = dragState.tabListOffset * -1;
+      const newOffset = this.scrollState.tabListOffset * -1;
       tabList.style.setProperty("--y-offset", newOffset + "px");
     } else {
-      dragState.tabListOffset = Math.min(
-        dragState.tabListOffset,
-        dragState.maxScrollTop - this.scrollState.scrollTop
+      this.scrollState.tabListOffset = Math.min(
+        this.scrollState.tabListOffset,
+        this.scrollState.maxScrollTop - this.scrollState.scrollTop
       );
-      dragState.tabListOffset = Math.max(
-        dragState.tabListOffset,
+      this.scrollState.tabListOffset = Math.max(
+        this.scrollState.tabListOffset,
         this.scrollState.scrollTop * -1
       );
-      this.scrollState.tabListOffset = dragState.tabListOffset;
-      const newOffset = dragState.tabListOffset * -1;
+      const newOffset = this.scrollState.tabListOffset * -1;
       tabList.style.setProperty("--y-offset", newOffset + "px");
     }
   }

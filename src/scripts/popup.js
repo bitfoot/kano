@@ -176,11 +176,11 @@ document.addEventListener("contextmenu", e => {
   }
 });
 
-// document.addEventListener("keyup", e => {
-//   if (e.target.id == "filter-input") {
-//     if (e.key != "Tab") {
-//       filter.call(state);
-//     }
-//   }
-//   // console.log(e.key);
-// });
+document.addEventListener("keyup", e => {
+  if (e.target.id == "filter-input") {
+    if (e.key != "Tab") {
+      filter.call(state);
+    }
+  }
+  // console.log(e.key);
+});

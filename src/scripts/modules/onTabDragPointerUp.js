@@ -173,12 +173,12 @@ function onTabDragPointerUp(event) {
     tab.classList.remove("tab--moving", "tab--moveable");
   });
 
-  if (dragState.tabListOffset !== 0) {
-    dragState.tabListContainer.scrollBy(0, this.scrollState.tabListOffset * 1);
+  if (this.scrollState.tabListOffset !== 0) {
+    dragState.tabListContainer.scrollBy(0, this.scrollState.tabListOffset);
     console.log(
       `Scrolling BY ${dragState.tabListOffset} from within onDragPointerUp`
     );
-    dragState.tabListOffset = 0;
+    // dragState.tabListOffset = 0;
   }
 
   const tabButton = dragState.draggedTab.querySelector(".tab__tab-button");
