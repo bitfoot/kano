@@ -88,9 +88,11 @@ function adjustScrollbar() {
     this
   );
 
-  const shouldTransformScrollbar = prevContainerToContentRatio !== null;
+  const shouldTransformScrollbar =
+    prevContainerToContentRatio !== null &&
+    prevContainerToContentRatio !== this.scrollState.containerToContentRatio;
 
-  if (this.scrollState.containerToContentRatio > 1) {
+  if (this.scrollState.containerToContentRatio >= 1) {
     container.classList.add("tab-list-container--no-scroll");
     container.children[0].classList.remove("tab-list--scrollable");
     scrollbarTrack.classList.add("scrollbar-track--hidden");
@@ -100,11 +102,12 @@ function adjustScrollbar() {
     scrollbarTrack.classList.remove("scrollbar-track--hidden");
   }
 
-  const margin = 6;
   const scrollbarThumb = this.scrollState.scrollbarThumb;
   let prevScrollbarHeight = this.scrollState.scrollbarHeight;
   this.scrollState.scrollbarHeight = getScrollbarHeight.call(this);
   this.scrollState.scrollbarTrackSpace = getScrollbarTrackSpace.call(this);
+  this.scrollState.trackSpaceToContainerHeightRatio =
+    this.scrollState.scrollbarTrackSpace / this.scrollState.maxContainerHeight;
   if (prevScrollbarHeight === null) {
     prevScrollbarHeight = this.scrollState.scrollbarHeight;
   }
@@ -128,7 +131,9 @@ function adjustScrollbar() {
     });
   } else {
     this.scrollState.thumbOffset =
-      this.scrollState.scrollTop * this.scrollState.containerToContentRatio;
+      this.scrollState.scrollTop *
+      this.scrollState.containerToContentRatio *
+      this.scrollState.trackSpaceToContainerHeightRatio;
   }
 
   requestAnimationFrame(() => {

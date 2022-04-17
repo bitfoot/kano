@@ -72,6 +72,7 @@ const state = {
   scrollState: {
     maxScrollbarThumbOffset: null,
     containerToContentRatio: null,
+    headerHeight: 52,
     maxContainerHeight: 506,
     container: document.getElementById("tab-list-container"),
     scrollbarTrack: document.getElementById("scrollbar-track"),
@@ -102,11 +103,10 @@ document.addEventListener("click", e => {
     const tabListItemId = e.target.parentElement.id;
     state.deleteTab(tabListItemId);
     const tabId = parseInt(tabListItemId.split("-")[1]);
-    chrome.tabs.remove(tabId, () => {
-      // const tabListItem = document.getElementById(tabListItemId);
-      // tabListItem.remove();
-    });
-    // chrome.tabs.remove(39)
+    // chrome.tabs.remove(tabId, () => {
+    //   const tabListItem = document.getElementById(tabListItemId);
+    //   tabListItem.remove();
+    // });
   } else if (e.target.classList.contains("tab__tab-button")) {
     const tabId = parseInt(e.target.parentElement.id.split("-")[1]);
     chrome.tabs.get(tabId, function (tab) {
@@ -149,13 +149,14 @@ document.addEventListener(`input`, e => {
         moveDownButton.classList.add("header__menu-item-button--disabled");
       }
     }
+  } else if (e.target.id == "filter-input") {
+    filter.call(state);
   }
 });
 
 state.scrollState.container.addEventListener("scroll", onScroll.bind(state));
 
 document.addEventListener("pointerdown", e => {
-  // if a tab is clicked
   if (e.target.classList.contains("tab__tab-button")) {
     const tabButton = e.target;
     tabButton.parentElement.classList.add("tab--held-down");
@@ -164,9 +165,17 @@ document.addEventListener("pointerdown", e => {
       clearTimeout(state.dragTimer);
     };
   } else if (e.target.id === "scrollbar-thumb") {
-    console.log(`scrollbar was clicked!`);
-    // const scrollBar = e.target;
     initializeScrollbarDrag.call(state, e);
+  } else if (e.target.id == "scrollbar-track") {
+    const pointerPos = e.pageY;
+    const posOnTrack = pointerPos - state.scrollState.headerHeight;
+    const trackRatio = posOnTrack / state.scrollState.scrollbarTrackSpace;
+    const scrollDistance = state.scrollState.maxScrollTop * trackRatio;
+    state.scrollState.container.scroll({
+      top: scrollDistance,
+      left: 0,
+      behavior: "smooth"
+    });
   }
 });
 
@@ -176,11 +185,11 @@ document.addEventListener("contextmenu", e => {
   }
 });
 
-document.addEventListener("keyup", e => {
-  if (e.target.id == "filter-input") {
-    if (e.key != "Tab") {
-      filter.call(state);
-    }
-  }
-  // console.log(e.key);
-});
+// document.addEventListener("keyup", e => {
+//   if (e.target.id == "filter-input") {
+//     if (e.key !== "Tab") {
+//       filter.call(state);
+//     }
+//   }
+//   // console.log(e.key);
+// });

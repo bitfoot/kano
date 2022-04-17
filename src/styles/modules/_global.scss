@@ -139,7 +139,7 @@ button {
     width: var(--lesser-padding);
     background: var(--color-two);
     border-radius: var(--greater-padding);
-    transition: background-color 400ms ease-in-out;
+    transition: background-color 200ms ease-in-out;
 
     &:hover {
       background: var(--color-two-hover);

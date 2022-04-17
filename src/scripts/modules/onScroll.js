@@ -1,12 +1,15 @@
 "use strict";
 
 const scroll = require("./scroll");
+const onScrollbarDragPointerUp = require("./onScrollbarDragPointerUp");
 
 function onScroll(e) {
-  console.log(`Scrolling!`);
+  if (this.scrollState.thumbDragState) {
+    onScrollbarDragPointerUp.call(this);
+  }
+
   let newScrollTop = e.target.scrollTop;
   let prevScrolltop = this.scrollState.scrollTop;
-  // const difference = newScrollTop - prevScrolltop;
 
   if (this.scrollState.adjustingScrollbar == true) {
     if (newScrollTop <= this.scrollState.maxScrollTop) {
