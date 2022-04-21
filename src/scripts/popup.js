@@ -91,6 +91,7 @@ chrome.tabs.query({ windowId: chrome.windows.WINDOW_ID_CURRENT }, function (
   tabs.forEach(tab => state.addTab(tab));
   renderTabComponents.call(state);
   util.adjustScrollbar.call(state);
+  adjustMenu.call(state);
 });
 
 // document.addEventListener("pointermove", e => {
@@ -131,24 +132,30 @@ document.addEventListener("click", e => {
 document.addEventListener(`input`, e => {
   if (e.target.classList.contains("tab__checkbox")) {
     const label = e.target.parentElement;
+    const tabId = label.parentElement.id;
+    const tabIndex = state.tabIndices[tabId];
     if (e.target.checked) {
       label.classList.add(`tab__checkbox-label--checked`);
-      const moveDownButton = document.getElementById("move-to-bottom-btn");
-      moveDownButton.removeAttribute("disabled");
-      moveDownButton.classList.remove("header__menu-item-button--disabled");
-      state.selectedTabs = [...state.selectedTabs, e.target.parentElement];
+      state.orderedTabObjects[tabIndex].isChecked = true;
+      // const moveDownButton = document.getElementById("move-to-bottom-btn");
+      // moveDownButton.removeAttribute("disabled");
+      // moveDownButton.classList.remove("menu-item-btn--disabled");
+      // state.selectedTabs = [...state.selectedTabs, e.target.parentElement];
     } else {
       label.classList.remove(`tab__checkbox-label--checked`);
-      state.selectedTabs = state.selectedTabs.filter(
-        t => t.id != e.target.parentElement.id
-      );
-      if (state.selectedTabs.length < 1) {
-        // console.log("less than 1");
-        const moveDownButton = document.getElementById("move-to-bottom-btn");
-        moveDownButton.setAttribute("disabled", true);
-        moveDownButton.classList.add("header__menu-item-button--disabled");
-      }
+      state.orderedTabObjects[tabIndex].isChecked = false;
+      // state.selectedTabs = state.selectedTabs.filter(
+      //   t => t.id != e.target.parentElement.id
+      // );
+      // if (state.selectedTabs.length < 1) {
+      //   // console.log("less than 1");
+      //   const moveDownButton = document.getElementById("move-to-bottom-btn");
+      //   moveDownButton.setAttribute("disabled", true);
+      //   moveDownButton.classList.add("menu-item-button--disabled");
+      // }
     }
+
+    adjustMenu.call(state);
   } else if (e.target.id == "filter-input") {
     filter.call(state);
   }

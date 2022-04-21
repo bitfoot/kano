@@ -22,31 +22,53 @@ function adjustMenu() {
 
   // get the buttons
   const menuButtons = [...document.getElementsByClassName(`menu-item-btn`)];
-  // const moveToTopBtn = document.getElementById("move-to-top-btn");
-  // const moveToBottomBtn = document.getElementById("move-to-bottom-btn");
-  // const closeSeletedBtn = document.getElementById("close-selected-btn");
-  // const closeDuplicatesBtn = document.getElementById("close-duplicates-btn");
+  const moveToTopBtn = document.getElementById("move-to-top-btn");
+  const moveToBottomBtn = document.getElementById("move-to-bottom-btn");
+  const closeSeletedBtn = document.getElementById("close-selected-btn");
+  const closeDuplicatesBtn = document.getElementById("close-duplicates-btn");
   const selectDeselectAllBtn = document.getElementById(
     "select-deselect-all-btn"
   );
 
-  // get currently visible tabs
-  const tabs = document.getElementsByClassName("tab");
-  // const tabs = state.tabs;
-  const numOfVisibleTabs = [...tabs].reduce((a, t) => {
-    if (!t.classList.contains("tab--hidden")) {
-      a += 1;
-    }
-    return a;
-  }, 0);
-  // console.log(listedTabs.length, state.filteredOutTabs);
-  // if there are no listed tabs (such as when they are all filtered out), disable all buttons
-  if (numOfVisibleTabs < 1) {
-    menuButtons.forEach(btn => {
-      disableButton(btn);
-    });
+  const allTabsAreHidden = this.filterState.numOfFilteredTabs === 0;
+  const filterWasUsed = this.filterState.numOfFilteredTabs !== null;
+  let visibleTabObjects = null;
+  let duplicateVisibleTabObjects = null;
+  if (filterWasUsed) {
+    visibleTabObjects = this.orderedTabObjects.filter(
+      tab => this.filterState.tabs[tab.id].isFilteredOut === false
+    );
+  } else {
+    visibleTabObjects = this.orderedTabObjects;
+  }
+  duplicateVisibleTabObjects = visibleTabObjects.filter(tab => tab.isDuplicate);
+  const duplicateTabObjects = this.orderedTabObjects.filter(
+    tab => tab.isDuplicate
+  );
+  const checkedTabObjects = this.orderedTabObjects.filter(tab => tab.isChecked);
+  // console.log(duplicateVisibleTabObjects);
+
+  // if there are no visible tabs (when they are all filtered out), disable selectDeselectAllBtn
+  if (allTabsAreHidden) {
+    disableButton(selectDeselectAllBtn);
   } else {
     enableButton(selectDeselectAllBtn);
+  }
+  // if there are duplicate tabs, enable the "Close Duplicates" button
+  if (duplicateVisibleTabObjects.length > 0) {
+    enableButton(closeDuplicatesBtn);
+  } else {
+    disableButton(closeDuplicatesBtn);
+  }
+  // if some tabs are checked, enable move & delete buttons
+  if (checkedTabObjects.length > 0) {
+    [moveToTopBtn, moveToBottomBtn, closeSeletedBtn].forEach(btn =>
+      enableButton(btn)
+    );
+  } else {
+    [moveToTopBtn, moveToBottomBtn, closeSeletedBtn].forEach(btn =>
+      disableButton(btn)
+    );
   }
 }
 

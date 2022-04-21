@@ -31,6 +31,7 @@ function addTab(tab) {
       title: tab.title,
       isActive: tab.active,
       isDuplicate,
+      isChecked: false,
       favIconUrl: tab.favIconUrl,
       isVisible: true
     };
