@@ -4,24 +4,23 @@
 // const getNewDuplicateColor = require("./util").getNewDuplicateColor;
 
 function addTab(tab) {
-  const state = this;
   const id = `tab-${tab.id}`;
-  let isDuplicate;
+  let isDuplicate = null;
 
   // If entry doesn't already exist for this tab's URL, create a new entry
-  if (state.tabIdsByURL[tab.url] == undefined) {
-    state.tabIdsByURL[tab.url] = [id];
+  if (this.tabIdsByURL[tab.url] == undefined) {
+    this.tabIdsByURL[tab.url] = [id];
     isDuplicate = false;
   } else {
     // If entry already exists, it means tab is a duplicate.
     isDuplicate = true;
     // Add current tab ID to the URL entry.
-    state.tabIdsByURL[tab.url].push(id);
+    this.tabIdsByURL[tab.url].push(id);
 
     // The first tab with the same URL just became a duplicate, so it needs to be marked as such
-    const duplicateTabId = state.tabIdsByURL[tab.url][0];
-    const duplicateTabIndex = state.tabIndices[duplicateTabId];
-    state.orderedTabObjects[duplicateTabIndex].isDuplicate = true;
+    const duplicateTabId = this.tabIdsByURL[tab.url][0];
+    const duplicateTabIndex = this.tabIndices[duplicateTabId];
+    this.orderedTabObjects[duplicateTabIndex].isDuplicate = true;
   }
 
   const createTabObj = tab => {
@@ -37,10 +36,10 @@ function addTab(tab) {
     };
   };
 
-  state.orderedTabObjects[tab.index] = createTabObj(tab);
-  state.tabIndices[id] = tab.index;
-
-  // renderTabComponent.call(state, tab);
+  this.orderedTabObjects[tab.index] = createTabObj(tab);
+  this.tabIndices[id] = tab.index;
+  this.numOfVisibleTabs += 1;
+  // renderTabComponent.call(this, tab);
 }
 
 module.exports = addTab;

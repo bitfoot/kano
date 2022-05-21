@@ -9,10 +9,11 @@ function renderTabComponents() {
 
   // orderedTabObjects items should be in the same order as actual tabs on screen
   // that means when tab is dragged or moved, you need to loop through tabIndices object, get updated indices for each tab id, and then reorder orderedTabObjects objects.
-  state.orderedTabObjects.forEach(tab => {
+  state.orderedTabObjects.forEach((tab, i) => {
     const tabComponent = createTabComponent.call(state, tab);
     fragment.appendChild(tabComponent);
-    state.tabs.push(tabComponent);
+    state.tabs[i] = tabComponent;
+    state.visibleTabs[i] = tabComponent;
   });
 
   state.tabList.appendChild(fragment);

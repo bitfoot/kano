@@ -12,6 +12,7 @@
   white-space: nowrap;
   margin-left: var(--lesser-padding);
   transition: background-color 100ms ease-in-out, box-shadow 100ms ease-in-out;
+  box-shadow: 0 0 0 2px var(--color-one);
 
   &:hover {
     background: var(--color-two-hover);
@@ -19,11 +20,13 @@
   }
 
   &:focus {
+    box-shadow: inset 0 0 0 2px lime, 0 0 0 2px var(--color-one);
+    // box-shadow: 0 0 0 2px var(--color-one);
     transition: background-color 100ms ease-in-out, box-shadow 100ms ease-in-out;
   }
 
   &:active {
-    & > .header__icon {
+    &>.header__icon {
       // transform: translateY(0.1rem);
       transform: scale(0.986) translateY(1px);
     }

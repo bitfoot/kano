@@ -9,20 +9,22 @@ const onScroll = require("./modules/onScroll");
 const adjustMenu = require("./modules/adjustMenu");
 
 const state = {
+  numOfVisibleTabs: 0,
   tabList: document.getElementById("tab-list"),
   orderedTabObjects: [],
   tabs: [],
+  visibleTabs: [],
   tabIndices: {},
   tabIdsByURL: {
     // "https://www.google.com" : ["tab-1", "tab-2", "tab-3"]
   },
   addTab,
   deleteTab(id) {
-    const tabListContainer = document.getElementById("tab-list-container");
-    this.scrollTop = tabListContainer.scrollTop;
-    const tabUrl = this.tabsById[id].url;
+    const tabIndex = this.tabIndices[id];
+    const tabUrl = this.orderedTabObjects[tabIndex].url;
+    delete this.tabIndices[id];
     // remove ID of deleted tab from the list of ids associated with tab URL
-    this.tabsByURL[tabUrl].ids = this.tabsByURL[tabUrl].ids.filter(
+    this.tabIdsByURL[tabUrl] = this.tabIdsByURL[tabUrl].filter(
       tabId => tabId != id
     );
     const tabsList = document.getElementById("tab-list");
@@ -36,7 +38,7 @@ const state = {
       util.adjustBodyPadding();
       util.adjustScrollbar.call(this);
       setTimeout(() => tabsList.classList.remove("tab-list--deleting"), 1400);
-      this.scrollTop -= 40;
+      // this.scrollTop -= 40;
     }, 1400);
     // if there are no more tabs with this title, tab object can be removed
     if (this.tabsByURL[tabUrl].ids.length == 0) {
@@ -60,6 +62,8 @@ const state = {
     input: document.getElementById("filter-input"),
     tabs: {},
     numOfFilteredTabs: null,
+    firstHiddenTabIndex: null,
+    lastHiddenTabIndex: null,
     firstVisibleTabIndex: null,
     lastVisibleTabIndex: null,
     firstNewlyFilteredOutTabIndex: null,
@@ -101,9 +105,9 @@ chrome.tabs.query({ windowId: chrome.windows.WINDOW_ID_CURRENT }, function (
 document.addEventListener("click", e => {
   if (e.target.classList.contains("tab__delete-button")) {
     // alert(e.target.parentElement.id);
-    const tabListItemId = e.target.parentElement.id;
-    state.deleteTab(tabListItemId);
-    const tabId = parseInt(tabListItemId.split("-")[1]);
+    const tab = e.target.parentElement.id;
+    state.deleteTab(tab);
+    const tabId = parseInt(tab.split("-")[1]);
     // chrome.tabs.remove(tabId, () => {
     //   const tabListItem = document.getElementById(tabListItemId);
     //   tabListItem.remove();
@@ -114,10 +118,21 @@ document.addEventListener("click", e => {
       chrome.tabs.highlight({ tabs: tab.index }, function () { });
     });
     // chrome.browserAction.openPopup()
-  } else if (e.target.id == "move-to-bottom") {
-    const tabs = [...document.getElementsByClassName("tab")];
-    const selectedTabs = tabs.filter(t => t.children[1].checked);
-    selectedTabs.forEach(t => (t.style.background = "red"));
+  } else if (e.target.id === "select-deselect-all-btn") {
+    const allVisibleTabsAreChecked = state.visibleTabs.every(tab => {
+      const tabIndex = state.tabIndices[tab.id];
+      if (state.orderedTabObjects[tabIndex].isChecked) {
+        return true;
+      }
+    });
+
+    const shouldBeChecked = allVisibleTabsAreChecked ? false : true;
+    state.visibleTabs.forEach(tab => {
+      const tabIndex = state.tabIndices[tab.id];
+      const checkbox = tab.querySelector(".tab__checkbox");
+      state.orderedTabObjects[tabIndex].isChecked = shouldBeChecked;
+      checkbox.checked = state.orderedTabObjects[tabIndex].isChecked;
+    });
   } else if (e.target.id == "remove-filter-text-btn") {
     const filterInput = document.getElementById("filter-input");
     filterInput.classList.add("filter__input--cleared");
@@ -137,24 +152,10 @@ document.addEventListener(`input`, e => {
     if (e.target.checked) {
       label.classList.add(`tab__checkbox-label--checked`);
       state.orderedTabObjects[tabIndex].isChecked = true;
-      // const moveDownButton = document.getElementById("move-to-bottom-btn");
-      // moveDownButton.removeAttribute("disabled");
-      // moveDownButton.classList.remove("menu-item-btn--disabled");
-      // state.selectedTabs = [...state.selectedTabs, e.target.parentElement];
     } else {
       label.classList.remove(`tab__checkbox-label--checked`);
       state.orderedTabObjects[tabIndex].isChecked = false;
-      // state.selectedTabs = state.selectedTabs.filter(
-      //   t => t.id != e.target.parentElement.id
-      // );
-      // if (state.selectedTabs.length < 1) {
-      //   // console.log("less than 1");
-      //   const moveDownButton = document.getElementById("move-to-bottom-btn");
-      //   moveDownButton.setAttribute("disabled", true);
-      //   moveDownButton.classList.add("menu-item-button--disabled");
-      // }
     }
-
     adjustMenu.call(state);
   } else if (e.target.id == "filter-input") {
     filter.call(state);
