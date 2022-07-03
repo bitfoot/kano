@@ -1,51 +1,37 @@
 .tab {
-  user-select: none; 
+  user-select: none;
   position: relative;
   display: flex;
   align-items: stretch;
   height: var(--block-height);
-  // background: var(--color-three);
   background: var(--color-two);
   color: var(--color-three);
-  // margin: 0 0 var(--lesser-padding) 0;
   margin: 0 0 var(--lesser-padding) 0;
   padding: var(--greater-padding);
   border-radius: var(--lesser-padding);
-  // width: 100%;
-  --duplicate-indicator-color: none;
-  // --y-pos: null;
-  --y-offset: 0;
+  --y-offset: 0px;
   --delay: 0;
   --trans-delay: 0ms;
   --opacity-delay: 0ms;
   --trans-duration: 0ms;
   --opacity-duration: 0ms;
-  // --speed: 0ms;
-  // --offset-speed: 0;
-  // --active-indicator-space: calc(var(--greater-padding) + var(--lesser-padding));
   --opacity: 1;
-  // --scale: 1;
   --scale: 0.99;
-  // transform: translateY(0);
-  // transform: translateY(var(--y-offset));
-  // transition: background-color 1400ms ease-in-out, transform 6000ms ease-in-out, opacity 1400ms ease-out;
-  // transition: background-color 1400ms ease-in-out, transform 0ms, opacity 1400ms ease-out;
   visibility: visible;
-  // transition: opacity 1000ms ease-in, visibility 0ms 1000ms;
-  // transition: none;
   touch-action: none;
-  // overflow: hidden;
   box-shadow: 0 0 0 2px var(--color-one);
+  // opacity: 1;
+  // transition: opacity 2000ms ease-out;
 
   // &:last-child {
   //   margin-bottom: 0;
   // }
-  
+
   &:hover {
     // background: #D4D4D4;
     background: var(--color-two-hover);
     // transition: background-color 140ms ease-in-out, opacity 140ms ease-out;
-    transition: background-color 100ms ease-in-out, transform 60ms ease-out, opacity 140ms ease-in-out, box-shadow 100ms ease-in-out;
+    transition: background-color 200ms ease-in-out, transform 60ms ease-out, opacity 200ms ease-in-out, box-shadow 2000ms ease-in-out;
   }
 
   /* when tab gets hidden:
@@ -92,7 +78,7 @@
 
   &--active {
 
-    overflow:visible;
+    overflow: visible;
 
     &::before {
       content: "";
@@ -131,42 +117,11 @@
   }
 
   &__checkbox-label {
-    // background: green;
     position: relative;
     z-index: 1;
     width: 1rem;
     height: 1rem;
     margin-right: var(--greater-padding);
-
-    // &--checked {
-    //   & path {
-    //     stroke: red;
-    //   }
-    // }
-
-    // &::before {
-    //   content: "";
-    //   position: absolute;
-    //   width: 140%;
-    //   height: 140%;
-    //   top: -0.2rem;
-    //   left: -0.2rem;
-    //   border-radius: var(--lesser-padding);
-    //   z-index: -1;
-    //   pointer-events: none;
-    //   transition: background-color 120ms ease-in-out;
-    // }
-
-    // &:focus {
-    //   box-shadow: none;
-
-    //   &::before {
-    //     box-shadow: inset 0 0 0 2px lime;
-    //     transition: box-shadow 120ms ease-in-out;
-    //   }
-      
-    // }
-
   }
 
   &__checkbox {
@@ -175,16 +130,15 @@
     height: 1rem;
     opacity: 0;
 
-    &:focus + svg {
+    &:focus+svg {
       box-shadow: inset 0 0 0 2px lime;
     }
 
-    &:checked + svg .tab__svg-checkbox-box {
-      // fill: var(--color-two);
+    &:checked+svg .tab__svg-checkbox-box {
       fill: var(--color-four);
     }
 
-    &:checked + svg .tab__svg-checkbox-checkmark {
+    &:checked+svg .tab__svg-checkbox-checkmark {
       stroke: var(--color-two);
     }
   }
@@ -252,7 +206,7 @@
         box-shadow: inset 0 0 0 2px lime;
         transition: box-shadow 120ms ease-in-out;
       }
-      
+
     }
 
     &:hover {
@@ -283,37 +237,7 @@
 
   }
 
-  &--scroll-drag {
-    // z-index: 1000;
-    cursor: grabbing;
-    transform: translateY(var(--y-offset)) scale(1.01);
-    // transition: transform 30ms ease-in-out;
-    transition: transform var(--scroll-drag-speed) ease-in-out;
-    // transition: transform 8000ms ease-in-out;
-
-    &:hover {
-      // transition: transform 30ms ease-in-out;
-      transition: transform var(--scroll-drag-speed) ease-in-out;
-      background: white;
-    }
-
-    & .tab__tab-button {
-      cursor: grabbing;
-    }
-
-    // & ~ li {
-    //   transform: translateY(calc(100% + var(--lesser-padding)));
-    //   transition: none;
-    // }
-  }
-
-  // &--moveable {
-  //   transform: scale(0.99);
-  //   transition: transform 140ms ease-in-out, opacity 140ms ease-in-out;
-  //   z-index: -1000;
-  // }
-
-  &--moving { 
+  &--moving {
     opacity: var(--opacity);
     background: var(--color-two-hover);
     transform: translateY(var(--y-offset)) scale(var(--scale));
@@ -332,32 +256,45 @@
 
   &--deleted {
     opacity: 0;
-    // margin-bottom: calc(var(--block-height) * -1);
-    transition: opacity 1400ms ease-out;
+    // background: red;
+    // margin-bottom: calc((var(--block-height) - var(--lesser-padding)) * -1);
+    transition: opacity 100ms ease-in-out;
 
-    & + li {
-      margin-top: calc(var(--block-height) * -1);
-      transition: none;
+    &:hover {
+      opacity: 0;
+      transition: opacity 100ms ease-in-out;
     }
 
-    & ~ li {
-      transform: translateY(var(--block-height));
+    // &+li {
+    //   margin-top: calc(var(--block-height) * -1);
+    //   transition: none;
+    // }
+
+    &~li {
+      // background: red;
+      // transform: translateY(calc((var(--block-height) + var(--lesser-padding)) * -1));
+      // transform: translateY(calc(var(--y-offset) - var(--block-height) - var(--lesser-padding)));
       // transform: translateY(calc(var(--block-height) + var(--greater-padding)));
-      transition: none;
+      // transition: transform 200ms 100ms ease-out;
+      animation: 200ms 100ms linear belowDeleted;
 
-      // &:first-of-type {
-      //   margin-top: var(--block-height);
-      //   background: red;
-      // }
-
-      // &:last-of-type {
-      //   margin-bottom: var(--block-height);
-      //   background: red;
-      // }
+      &:hover {
+        // transform: translateY(calc(var(--y-offset) - var(--block-height) - var(--lesser-padding)));
+        // transition: transform 200ms 100ms ease-out;
+      }
     }
   }
 }
 
+@keyframes belowDeleted {
+  from {
+    transform: translateY(var(--y-offset));
+  }
+
+  to {
+    transform: translateY(calc(var(--y-offset) - var(--block-height) - var(--lesser-padding)));
+  }
+}
 
 @keyframes filteredIn {
 
@@ -365,26 +302,6 @@
     transform: translateY(var(--y-offset));
   }
 
-  100% {
-    transform: translateY(0);
-  }
-
-}
-
-@keyframes float {
-
-  0% {
-    transform: translateY(0);
-  }
-
-  30% {
-    transform: translateY(var(--float-y-from));
-  }
-  
-  80% {
-    transform: translateY(var(--float-y-to));
-  }
-  
   100% {
     transform: translateY(0);
   }

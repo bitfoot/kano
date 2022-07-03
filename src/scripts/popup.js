@@ -19,34 +19,65 @@ const state = {
     // "https://www.google.com" : ["tab-1", "tab-2", "tab-3"]
   },
   addTab,
-  deleteTab(id) {
-    const tabIndex = this.tabIndices[id];
+  deleteTab(idOfDeletedTab) {
+    const tabIndex = this.tabIndices[idOfDeletedTab];
+    // console.log(`deleting ${tabIndex}`);
     const tabUrl = this.orderedTabObjects[tabIndex].url;
-    delete this.tabIndices[id];
     // remove ID of deleted tab from the list of ids associated with tab URL
     this.tabIdsByURL[tabUrl] = this.tabIdsByURL[tabUrl].filter(
-      tabId => tabId != id
+      tabId => tabId !== idOfDeletedTab
     );
-    const tabsList = document.getElementById("tab-list");
-    const tabsListItem = document.getElementById(id);
+    const reorderedTabObjects = [];
+    this.orderedTabObjects.forEach(tabObj => {
+      if (tabObj.id !== idOfDeletedTab) {
+        if (this.tabIdsByURL[tabObj.url].length < 2) {
+          tabObj.isDuplicate = false;
+          const tabComponent = document.getElementById(tabObj.id);
+          tabComponent.classList.remove("tab--duplicate");
+        }
+        this.tabIndices[tabObj.id] = reorderedTabObjects.length;
+        reorderedTabObjects[this.tabIndices[tabObj.id]] = tabObj;
+      }
+    });
+    this.orderedTabObjects = reorderedTabObjects;
+    delete this.tabIndices[idOfDeletedTab];
+    // const tabsList = this.tabList;
+    const tabsListItem = document.getElementById(idOfDeletedTab);
 
     tabsListItem.classList.add("tab--deleted");
-    tabsList.classList.add("tab-list--deleting");
+    // tabsList.classList.add("tab-list--deleting");
     setTimeout(() => {
-      // tabsList.classList.add("tab-list--deleting");
       tabsListItem.remove();
-      util.adjustBodyPadding();
+      const filterWasUsed = this.filterState.numOfFilteredTabs !== null;
+      if (filterWasUsed) {
+        if (this.filterState.tabs[idOfDeletedTab] !== undefined) {
+          this.filterState.numOfFilteredTabs -= 1;
+          delete this.filterState.tabs[idOfDeletedTab];
+        }
+        // const tabsBelow = this.tabs.slice(tabIndex + 1);
+        // tabsBelow.forEach(tab => {
+        //   this.filterState.tabs[tab.id].filterOffset -= 46;
+        //   tab.style.setProperty(
+        //     "--y-offset",
+        //     this.filterState.tabs[tab.id].filterOffset + "px"
+        //   );
+        // });
+      }
+      // the filter offset of all tabs that follow needs to be reduced by 46, as is their --y-offset
+
+      // const updateFilterOffset = () => { };
+
+      this.tabs = this.tabs.filter(tab => tab.id != idOfDeletedTab);
+      this.visibleTabs = this.visibleTabs.filter(
+        tab => tab.id != idOfDeletedTab
+      );
       util.adjustScrollbar.call(this);
-      setTimeout(() => tabsList.classList.remove("tab-list--deleting"), 1400);
-      // this.scrollTop -= 40;
-    }, 1400);
-    // if there are no more tabs with this title, tab object can be removed
-    if (this.tabsByURL[tabUrl].ids.length == 0) {
-      delete this.tabsByURL[tabUrl];
-      // if there are fewer than 2 tabs with this title, they are no longer duplicates and don't need their color
-    } else if (this.tabsByURL[tabUrl].ids.length < 2) {
-      this.availableColors.push(this.tabsByURL[tabUrl].color);
-      // remove color and uplicate class from the one remaining tab (the DOM element) with this title
+      adjustMenu.call(this);
+      // setTimeout(() => tabsList.classList.remove("tab-list--deleting"), 1400);
+    }, 300);
+    // if there are no more tabs with this URL, tab object can be removed
+    if (this.tabIdsByURL[tabUrl].length == 0) {
+      delete this.tabIdsByURL[tabUrl];
     }
   },
   // have to keep order of all tab Ids so that they can be moved on UI (before actual browser tabs are moved)
@@ -59,6 +90,7 @@ const state = {
   filterIsActive: false,
   selectedTabs: [],
   filterState: {
+    filterIsActive: false,
     input: document.getElementById("filter-input"),
     tabs: {},
     numOfFilteredTabs: null,
@@ -105,9 +137,11 @@ chrome.tabs.query({ windowId: chrome.windows.WINDOW_ID_CURRENT }, function (
 document.addEventListener("click", e => {
   if (e.target.classList.contains("tab__delete-button")) {
     // alert(e.target.parentElement.id);
-    const tab = e.target.parentElement.id;
-    state.deleteTab(tab);
-    const tabId = parseInt(tab.split("-")[1]);
+    const tab = e.target.parentElement;
+    if (!tab.classList.contains("tab--deleted")) {
+      state.deleteTab(tab.id);
+    }
+    // const tabId = parseInt(tab.split("-")[1]);
     // chrome.tabs.remove(tabId, () => {
     //   const tabListItem = document.getElementById(tabListItemId);
     //   tabListItem.remove();

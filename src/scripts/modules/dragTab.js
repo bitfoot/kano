@@ -9,6 +9,9 @@ function dragTab(options = {}) {
     dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset += distance;
 
     // ensure that offset does not exceed current max or min offset
+    console.log(
+      `from dragTab, currentMaxOffset is ${dragState.currentMaxOffset}`
+    );
     dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset = Math.max(
       dragState.currentMinOffset,
       Math.min(

@@ -12,7 +12,7 @@ function adjustMenu() {
     btn.classList.add("menu-item-btn--disabled");
   };
 
-  console.log("poop");
+  // console.log("poop");
   const enableButton = btn => {
     btn.removeAttribute("disabled");
     btn.classList.remove("menu-item-btn--disabled");
@@ -167,6 +167,11 @@ function adjustMenu() {
     enableButton(moveToBottomBtn);
   } else {
     disableButton(moveToBottomBtn);
+  }
+  if (checkedVisibleTabsExist) {
+    enableButton(closeSelectedBtn);
+  } else {
+    disableButton(closeSelectedBtn);
   }
 }
 

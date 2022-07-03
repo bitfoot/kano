@@ -6,13 +6,13 @@ const adjustMenu = require("./adjustMenu");
 function filter() {
   const state = this;
   const filterState = state.filterState;
-  const filter = filterState.input.value.toLowerCase();
+  const filterString = filterState.input.value.toLowerCase();
   state.visibleTabs = [];
   this.numOfVisibleTabs = 0;
   const TAB_HEIGHT = 46;
 
-  const matchesFilter = (title, filter) => {
-    return title.toLowerCase().includes(filter);
+  const matchesFilter = (title, filterString) => {
+    return title.toLowerCase().includes(filterString);
   };
 
   const prepareFilteredTabObjects = tabObjects => {
@@ -45,7 +45,7 @@ function filter() {
         wasFilteredOut = filterState.tabs[obj.id].isFilteredOut;
       }
 
-      const matches = matchesFilter(obj.title, filter);
+      const matches = matchesFilter(obj.title, filterString);
 
       if (matches) {
         obj.isVisible = true;
@@ -190,7 +190,7 @@ function filter() {
       return opacityDelay;
     };
 
-    tabs.forEach(tab => {
+    state.tabs.forEach(tab => {
       const filteredTabObject = filterState.tabs[tab.id];
       const transformDelay = getTransformDelay(filteredTabObject);
       const opacityDelay = getOpacityDelay(filteredTabObject);
@@ -206,7 +206,7 @@ function filter() {
           "--y-offset",
           filteredTabObject.filterOffset + "px"
         );
-        if (filteredTabObject.isFilteredOut) {
+        if (filteredTabObject.isFilteredOut == true) {
           hideTab(tab);
         } else {
           state.visibleTabs.push(tab);

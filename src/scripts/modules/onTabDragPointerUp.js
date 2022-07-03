@@ -17,12 +17,12 @@ function onTabDragPointerUp(event) {
   const draggedTabIdInBrowser = +dragState.draggedTab.id.split("-")[1];
   const draggedTabIndex = state.tabIndices[dragState.draggedTab.id];
   const midPoint = (dragState.tabHeight + dragState.margin) / 2;
+  const halfTabHeight = dragState.tabHeight / 2;
   let isMoved = false;
 
   // if tab was dragged above where it was originally
   if (draggedTabTopPos < dragState.initialTabPos) {
     const replacedTab = dragState.tabsAbove.find(tab => {
-      const halfTabHeight = dragState.tabHeight / 2;
       const tabOffsetMiddle =
         dragState.tabsPosInfo[tab.id].initialPos + halfTabHeight;
       let isFilteredOut = false;
@@ -48,7 +48,7 @@ function onTabDragPointerUp(event) {
       const replacedTabIndex = state.tabIndices[replacedTab.id];
       // update tab indices
       state.tabIndices[dragState.draggedTab.id] = replacedTabIndex;
-      console.log(`The new tab index is ${replacedTabIndex}`);
+      // console.log(`The new tab index is ${replacedTabIndex}`);
       dragState.tabsAbove.slice(replacedTabIndex).forEach(tab => {
         // tab.style.background = "red";
         state.tabIndices[tab.id] += 1;
@@ -64,6 +64,9 @@ function onTabDragPointerUp(event) {
         }
       }
 
+      console.log(`Tab was moved above. The new tab offset is ${newTabOffset}`);
+      console.log(replacedTab);
+
       dragState.tabList.insertBefore(dragState.draggedTab, replacedTab);
       dragState.draggedTab.style.setProperty("--y-offset", newTabOffset + "px");
 
@@ -76,7 +79,6 @@ function onTabDragPointerUp(event) {
   } else {
     // if tab was dragged below where it was originally.
     const replacedTab = dragState.tabsBelow.find(tab => {
-      const halfTabHeight = dragState.tabHeight / 2;
       const tabOffsetMiddle =
         dragState.tabsPosInfo[tab.id].initialPos + halfTabHeight;
       const draggedTabBottom = draggedTabTopPos + dragState.tabHeight;
@@ -137,32 +139,38 @@ function onTabDragPointerUp(event) {
 
   // reset style values of all the tabs to their defaults
   dragState.listedTabs.forEach(tab => {
-    if (tab.id === draggedTabId) {
-      if (isMoved) {
-        return;
-      } else {
-        // tab.style.setProperty(
-        //   "--y-offset",
-        //   dragState.tabsPosInfo[tab.id].filterOffset + "px"
-        // );
-      }
+    if (tab.id === draggedTabId && isMoved) {
+      return;
     }
     let filterOffset = dragState.tabsPosInfo[tab.id].filterOffset;
     let dragOffset = dragState.tabsPosInfo[tab.id].dragOffset;
 
-    if (dragOffset > 0) {
-      if (dragOffset > midPoint) {
-        dragOffset = dragState.tabHeight + dragState.margin;
-      } else {
-        dragOffset = 0;
+    // if (dragOffset > 0) {
+    //   if (dragOffset > midPoint && isMoved) {
+    //     dragOffset = dragState.tabHeight + dragState.margin;
+    //   } else {
+    //     dragOffset = 0;
+    //   }
+    // } else {
+    //   if (Math.abs(dragOffset) > midPoint && isMoved) {
+    //     dragOffset = (dragState.tabHeight + dragState.margin) * -1;
+    //   } else {
+    //     dragOffset = 0;
+    //   }
+    // }
+
+    if (isMoved) {
+      if (dragOffset !== 0) {
+        if (dragOffset > midPoint) {
+          dragOffset = dragState.tabHeight + dragState.margin;
+        } else {
+          dragOffset = (dragState.tabHeight + dragState.margin) * -1;
+        }
       }
     } else {
-      if (Math.abs(dragOffset) > midPoint) {
-        dragOffset = (dragState.tabHeight + dragState.margin) * -1;
-      } else {
-        dragOffset = 0;
-      }
+      dragOffset = 0;
     }
+
     let newOffset = filterOffset + dragOffset;
     if (state.filterState.tabs[tab.id]) {
       state.filterState.tabs[tab.id].filterOffset = newOffset;

@@ -1,24 +1,21 @@
 "use strict";
 
-// const renderTabComponent = require("./renderTabComponent");
-// const getNewDuplicateColor = require("./util").getNewDuplicateColor;
-
-function addTab(tab) {
-  const id = `tab-${tab.id}`;
+function addTab(browserTab) {
+  const id = `tab-${browserTab.id}`;
   let isDuplicate = null;
 
   // If entry doesn't already exist for this tab's URL, create a new entry
-  if (this.tabIdsByURL[tab.url] == undefined) {
-    this.tabIdsByURL[tab.url] = [id];
+  if (this.tabIdsByURL[browserTab.url] == undefined) {
+    this.tabIdsByURL[browserTab.url] = [id];
     isDuplicate = false;
   } else {
     // If entry already exists, it means tab is a duplicate.
     isDuplicate = true;
     // Add current tab ID to the URL entry.
-    this.tabIdsByURL[tab.url].push(id);
+    this.tabIdsByURL[browserTab.url].push(id);
 
     // The first tab with the same URL just became a duplicate, so it needs to be marked as such
-    const duplicateTabId = this.tabIdsByURL[tab.url][0];
+    const duplicateTabId = this.tabIdsByURL[browserTab.url][0];
     const duplicateTabIndex = this.tabIndices[duplicateTabId];
     this.orderedTabObjects[duplicateTabIndex].isDuplicate = true;
   }
@@ -36,8 +33,8 @@ function addTab(tab) {
     };
   };
 
-  this.orderedTabObjects[tab.index] = createTabObj(tab);
-  this.tabIndices[id] = tab.index;
+  this.orderedTabObjects[browserTab.index] = createTabObj(browserTab);
+  this.tabIndices[id] = browserTab.index;
   this.numOfVisibleTabs += 1;
   // renderTabComponent.call(this, tab);
 }

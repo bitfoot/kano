@@ -20,6 +20,7 @@ function initializeTabDrag(event) {
   const filterWasUsed = state.filterState.numOfFilteredTabs !== null;
   if (filterWasUsed) {
     wholeContentHeight = state.filterState.numOfFilteredTabs * 46;
+    // wholeContentHeight = state.visibleTabs.length * 46;
   } else {
     wholeContentHeight = state.orderedTabObjects.length * 46;
   }
@@ -56,7 +57,6 @@ function initializeTabDrag(event) {
   const tabsBelow = listedTabs.slice(tabIndex + 1);
   const headerHeight = document.getElementById("header").offsetHeight;
   const tabHeight = draggedTab.offsetHeight;
-  const tabListOffset = this.scrollState.tabListOffset;
   const initialTabPos = tabsPosInfo[draggedTab.id].initialPos;
 
   const initialTopPosInViewport =
