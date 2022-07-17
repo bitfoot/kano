@@ -9,11 +9,11 @@ const onScroll = require("./modules/onScroll");
 const adjustMenu = require("./modules/adjustMenu");
 
 const state = {
-  numOfVisibleTabs: 0,
   tabList: document.getElementById("tab-list"),
   orderedTabObjects: [],
   tabs: [],
-  visibleTabs: [],
+  // { id, indexInTabs}
+  visibleTabObjects: [],
   tabIndices: {},
   tabIdsByURL: {
     // "https://www.google.com" : ["tab-1", "tab-2", "tab-3"]
@@ -68,8 +68,8 @@ const state = {
       // const updateFilterOffset = () => { };
 
       this.tabs = this.tabs.filter(tab => tab.id != idOfDeletedTab);
-      this.visibleTabs = this.visibleTabs.filter(
-        tab => tab.id != idOfDeletedTab
+      this.visibleTabObjects = this.visibleTabObjects.filter(
+        obj => obj.id != idOfDeletedTab
       );
       util.adjustScrollbar.call(this);
       adjustMenu.call(this);
