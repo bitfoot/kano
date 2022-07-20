@@ -15,22 +15,13 @@ function initializeTabDrag(event) {
   const scrollState = this.scrollState;
   const scrollTop = this.scrollState.scrollTop;
   const tabListHeight = tabList.offsetHeight;
-
-  let wholeContentHeight = null;
-  const filterWasUsed = state.filterState.numOfFilteredTabs !== null;
-  if (filterWasUsed) {
-    wholeContentHeight = state.filterState.numOfFilteredTabs * 46;
-    // wholeContentHeight = state.visibleTabs.length * 46;
-  } else {
-    wholeContentHeight = state.orderedTabObjects.length * 46;
-  }
-  // const maxScrollTop = tabListHeight - container.offsetHeight;
-  // let maxScrollTop = this.scrollState.maxScrollTop;
-  // if (maxScrollTop < 0) {
-  //   maxScrollTop = 0;
-  // }
-
+  const headerHeight = document.getElementById("header").offsetHeight;
+  const tabHeight = draggedTab.offsetHeight;
   const margin = 6;
+
+  const wholeContentHeight =
+    state.visibleTabObjects.length * (tabHeight + margin);
+
   const listedTabs = state.tabs;
 
   const tabsPosInfo = listedTabs.reduce((a, t) => {
@@ -55,8 +46,6 @@ function initializeTabDrag(event) {
   const tabIndex = state.tabIndices[draggedTab.id];
   const tabsAbove = listedTabs.slice(0, tabIndex);
   const tabsBelow = listedTabs.slice(tabIndex + 1);
-  const headerHeight = document.getElementById("header").offsetHeight;
-  const tabHeight = draggedTab.offsetHeight;
   const initialTabPos = tabsPosInfo[draggedTab.id].initialPos;
 
   const initialTopPosInViewport =

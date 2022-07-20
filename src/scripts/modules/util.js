@@ -25,15 +25,9 @@ function getFilteredTabs() {
 }
 
 function getContentHeight() {
-  let contentHeight = null;
-  const filterWasUsed = this.filterState.numOfFilteredTabs !== null;
-  if (filterWasUsed) {
-    // contentHeight = this.visibleTabs.length * 46;
-    contentHeight = this.filterState.numOfFilteredTabs * 46;
-  } else {
-    contentHeight = this.orderedTabObjects.length * 46;
-  }
-  // console.log(`Content height is ${contentHeight}`);
+  const tabHeight = 40;
+  const margin = 6;
+  const contentHeight = this.visibleTabObjects.length * (tabHeight + margin);
   return contentHeight;
 }
 

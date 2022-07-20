@@ -21,7 +21,7 @@
   touch-action: none;
   box-shadow: 0 0 0 2px var(--color-one);
   // opacity: 1;
-  // transition: opacity 2000ms ease-out;
+  // transition: transform 100ms linear;
 
   // &:last-child {
   //   margin-bottom: 0;
@@ -276,7 +276,7 @@
       // transform: translateY(calc(var(--y-offset) - var(--block-height) - var(--lesser-padding)));
       // transform: translateY(calc(var(--block-height) + var(--greater-padding)));
       // transition: transform 200ms 100ms ease-out;
-      animation: 200ms 100ms linear belowDeleted;
+      animation: 100ms 100ms ease-in-out forwards belowDeleted;
 
       &:hover {
         // transform: translateY(calc(var(--y-offset) - var(--block-height) - var(--lesser-padding)));

@@ -46,35 +46,39 @@ const state = {
 
     tabsListItem.classList.add("tab--deleted");
     // tabsList.classList.add("tab-list--deleting");
+
     setTimeout(() => {
-      tabsListItem.remove();
-      const filterWasUsed = this.filterState.numOfFilteredTabs !== null;
-      if (filterWasUsed) {
-        if (this.filterState.tabs[idOfDeletedTab] !== undefined) {
-          this.filterState.numOfFilteredTabs -= 1;
-          delete this.filterState.tabs[idOfDeletedTab];
+      requestAnimationFrame(() => {
+        tabsListItem.remove();
+        const filterWasUsed = this.filterState.numOfFilteredTabs !== null;
+        if (filterWasUsed) {
+          if (this.filterState.tabs[idOfDeletedTab] !== undefined) {
+            this.filterState.numOfFilteredTabs -= 1;
+            delete this.filterState.tabs[idOfDeletedTab];
+          }
+          // const tabsBelow = this.tabs.slice(tabIndex + 1);
+          // tabsBelow.forEach(tab => {
+          //   this.filterState.tabs[tab.id].filterOffset -= 46;
+          //   tab.style.setProperty(
+          //     "--y-offset",
+          //     this.filterState.tabs[tab.id].filterOffset + "px"
+          //   );
+          // });
         }
-        // const tabsBelow = this.tabs.slice(tabIndex + 1);
-        // tabsBelow.forEach(tab => {
-        //   this.filterState.tabs[tab.id].filterOffset -= 46;
-        //   tab.style.setProperty(
-        //     "--y-offset",
-        //     this.filterState.tabs[tab.id].filterOffset + "px"
-        //   );
-        // });
-      }
-      // the filter offset of all tabs that follow needs to be reduced by 46, as is their --y-offset
+        // the filter offset of all tabs that follow needs to be reduced by 46, as is their --y-offset
 
-      // const updateFilterOffset = () => { };
+        // const updateFilterOffset = () => { };
 
-      this.tabs = this.tabs.filter(tab => tab.id != idOfDeletedTab);
-      this.visibleTabObjects = this.visibleTabObjects.filter(
-        obj => obj.id != idOfDeletedTab
-      );
-      util.adjustScrollbar.call(this);
-      adjustMenu.call(this);
+        this.tabs = this.tabs.filter(tab => tab.id != idOfDeletedTab);
+        this.visibleTabObjects = this.visibleTabObjects.filter(
+          obj => obj.id != idOfDeletedTab
+        );
+        util.adjustScrollbar.call(this);
+        adjustMenu.call(this);
+      });
+
       // setTimeout(() => tabsList.classList.remove("tab-list--deleting"), 1400);
-    }, 300);
+    }, 200);
     // if there are no more tabs with this URL, tab object can be removed
     if (this.tabIdsByURL[tabUrl].length == 0) {
       delete this.tabIdsByURL[tabUrl];
