@@ -19,8 +19,7 @@ function initializeTabDrag(event) {
   const tabHeight = draggedTab.offsetHeight;
   const margin = 6;
 
-  const wholeContentHeight =
-    state.visibleTabObjects.length * (tabHeight + margin);
+  const wholeContentHeight = state.visibleTabIds.length * (tabHeight + margin);
 
   const listedTabs = state.tabs;
 

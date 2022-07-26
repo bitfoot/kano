@@ -20,14 +20,14 @@ function getListedTabs() {
   return [...document.getElementsByClassName("tab")] || [];
 }
 
-function getFilteredTabs() {
-  return [...document.getElementsByClassName("tab")] || [];
-}
+// function getFilteredTabs() {
+//   return [...document.getElementsByClassName("tab")] || [];
+// }
 
 function getContentHeight() {
   const tabHeight = 40;
   const margin = 6;
-  const contentHeight = this.visibleTabObjects.length * (tabHeight + margin);
+  const contentHeight = this.visibleTabIds.length * (tabHeight + margin);
   return contentHeight;
 }
 

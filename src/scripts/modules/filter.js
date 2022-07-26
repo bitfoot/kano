@@ -7,7 +7,7 @@ function filter() {
   const state = this;
   const filterState = state.filterState;
   const filterString = filterState.input.value.toLowerCase();
-  state.visibleTabObjects = [];
+  state.visibleTabIds = [];
   this.numOfVisibleTabs = 0;
   const TAB_HEIGHT = 46;
 
@@ -55,13 +55,13 @@ function filter() {
       }
 
       if (matches) {
-        state.visibleTabObjects.push({ id: obj.id, indexInTabs: index });
+        // state.visibleTabIds.push(obj.id);
         obj.isVisible = true;
         newFilteredTabObj.filteredIndex = filteredIndex;
         filteredIndex += 1;
         filterState.lastMatchedTabIndex = index;
         filterState.numOfFilteredTabs += 1;
-        this.numOfVisibleTabs = filterState.numOfFilteredTabs;
+        // this.numOfVisibleTabs = filterState.numOfFilteredTabs;
         // determine if tab moved up or down
         newFilteredTabObj.isMovedUp = previousFilterOffset > newFilterOffset;
         newFilteredTabObj.isMovedDown = previousFilterOffset < newFilterOffset;
@@ -88,6 +88,7 @@ function filter() {
         }
       } else {
         obj.isVisible = false;
+        // state.hiddenTabIds.push(obj.id);
         newFilteredTabObj.isFilteredOut = true;
         filteredOutAbove += 1;
         filterState.lastHiddenTabIndex = index;
@@ -195,40 +196,24 @@ function filter() {
         if (filterState.lastVisibleTabIndex !== null) {
           // test it with y and v in filter
           // if NEXT VISIBLE TAB INDEX changes, then it needs 400 delay, otherwise it does not
-          let nextVisibleTab =
-            state.visibleTabObjects[tabObj.filteredIndex + 1];
+          const nextVisibleTabId =
+            state.visibleTabIds[tabObj.filteredIndex + 1];
           let nextVisibleTabMovedDown = false;
-          if (nextVisibleTab) {
-            const nextVisibleTabId = nextVisibleTab.id;
-            const nTabIndex = nextVisibleTab.indexInTabs;
-            const nTab = state.tabs[nTabIndex];
+          if (nextVisibleTabId) {
             nextVisibleTabMovedDown =
               filterState.tabs[nextVisibleTabId].isMovedDown;
-            // if (nextVisibleTabMovedDown) {
-            //   nTab.style.background = "green";
-            // }
           }
-          let previousVisibleTab =
-            state.visibleTabObjects[tabObj.filteredIndex - 1];
+
+          const previousVisibleTabId =
+            state.visibleTabIds[tabObj.filteredIndex - 1];
           let previousVisibleTabMovedUp = false;
-          let previousVisibleTabNewlyFilteredIn = false;
-          if (previousVisibleTab) {
-            const previousVisibleTabId = previousVisibleTab.id;
-            const pTabIndex = previousVisibleTab.indexInTabs;
-            const pTab = state.tabs[pTabIndex];
-            // pTab.style.background = "red";
+          if (previousVisibleTabId) {
             previousVisibleTabMovedUp =
               filterState.tabs[previousVisibleTabId].isMovedUp;
-            // if (previousVisibleTabMovedUp) {
-            //   pTab.style.background = "red";
-            // }
-            // previousVisibleTabNewlyFilteredIn =
           }
 
           // test with y and i filter
           if (
-            // filterState.lastNewlyFilteredOutTabIndex !== null &&
-            // filterState.lastNewlyFilteredOutTabIndex !== null &&
             filterState.lastNewlyFilteredOutTabIndex !== null &&
             (filterState.lastNewlyFilteredInTabIndex == tabObj.index ||
               (previousVisibleTabMovedUp || nextVisibleTabMovedDown))
@@ -273,9 +258,9 @@ function filter() {
     });
   };
 
+  adjustMenu.call(state);
   util.adjustScrollbar.call(state);
   styleTabs(state.tabs);
-  adjustMenu.call(state);
 }
 
 module.exports = filter;

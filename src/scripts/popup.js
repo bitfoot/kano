@@ -13,76 +13,66 @@ const state = {
   orderedTabObjects: [],
   tabs: [],
   // { id, indexInTabs}
-  visibleTabObjects: [],
+  visibleTabIds: [],
+  hiddenTabIds: [],
+
   tabIndices: {},
   tabIdsByURL: {
     // "https://www.google.com" : ["tab-1", "tab-2", "tab-3"]
   },
   addTab,
-  deleteTab(idOfDeletedTab) {
-    const tabIndex = this.tabIndices[idOfDeletedTab];
-    // console.log(`deleting ${tabIndex}`);
-    const tabUrl = this.orderedTabObjects[tabIndex].url;
-    // remove ID of deleted tab from the list of ids associated with tab URL
-    this.tabIdsByURL[tabUrl] = this.tabIdsByURL[tabUrl].filter(
-      tabId => tabId !== idOfDeletedTab
-    );
+  deleteTabs(idsOfTabsToDelete) {
+    const tabsToDelete = idsOfTabsToDelete.reduce((a, id) => {
+      const index = this.tabIndices[id];
+      delete this.tabIndices[id];
+      const URL = this.orderedTabObjects[index].url;
+      this.tabIdsByURL[URL] = this.tabIdsByURL[URL].filter(
+        tabId => tabId !== id
+      );
+      if (this.tabIdsByURL[URL].length == 0) {
+        delete this.tabIdsByURL[URL];
+      }
+      a[id] = this.tabs[index];
+      return a;
+    }, {});
+
     const reorderedTabObjects = [];
-    this.orderedTabObjects.forEach(tabObj => {
-      if (tabObj.id !== idOfDeletedTab) {
-        if (this.tabIdsByURL[tabObj.url].length < 2) {
-          tabObj.isDuplicate = false;
-          const tabComponent = document.getElementById(tabObj.id);
-          tabComponent.classList.remove("tab--duplicate");
+
+    this.orderedTabObjects.forEach((obj, i) => {
+      if (!tabsToDelete[obj.id]) {
+        if (this.tabIdsByURL[obj.url].length < 2) {
+          obj.isDuplicate = false;
+          this.tabs[i].classList.remove("tab--duplicate");
         }
-        this.tabIndices[tabObj.id] = reorderedTabObjects.length;
-        reorderedTabObjects[this.tabIndices[tabObj.id]] = tabObj;
+        this.tabIndices[obj.id] = reorderedTabObjects.length;
+        reorderedTabObjects[this.tabIndices[obj.id]] = obj;
+      } else {
+        this.tabs[i].classList.add("tab--deleted");
       }
     });
-    this.orderedTabObjects = reorderedTabObjects;
-    delete this.tabIndices[idOfDeletedTab];
-    // const tabsList = this.tabList;
-    const tabsListItem = document.getElementById(idOfDeletedTab);
 
-    tabsListItem.classList.add("tab--deleted");
-    // tabsList.classList.add("tab-list--deleting");
+    this.orderedTabObjects = reorderedTabObjects;
 
     setTimeout(() => {
-      requestAnimationFrame(() => {
-        tabsListItem.remove();
+      Object.entries(tabsToDelete).forEach(entry => {
+        const id = entry[0];
+        const tab = entry[1];
+        requestAnimationFrame(() => {
+          tab.remove();
+        });
         const filterWasUsed = this.filterState.numOfFilteredTabs !== null;
         if (filterWasUsed) {
-          if (this.filterState.tabs[idOfDeletedTab] !== undefined) {
+          if (this.filterState.tabs[id] !== undefined) {
             this.filterState.numOfFilteredTabs -= 1;
-            delete this.filterState.tabs[idOfDeletedTab];
+            delete this.filterState.tabs[id];
           }
-          // const tabsBelow = this.tabs.slice(tabIndex + 1);
-          // tabsBelow.forEach(tab => {
-          //   this.filterState.tabs[tab.id].filterOffset -= 46;
-          //   tab.style.setProperty(
-          //     "--y-offset",
-          //     this.filterState.tabs[tab.id].filterOffset + "px"
-          //   );
-          // });
         }
-        // the filter offset of all tabs that follow needs to be reduced by 46, as is their --y-offset
-
-        // const updateFilterOffset = () => { };
-
-        this.tabs = this.tabs.filter(tab => tab.id != idOfDeletedTab);
-        this.visibleTabObjects = this.visibleTabObjects.filter(
-          obj => obj.id != idOfDeletedTab
-        );
-        util.adjustScrollbar.call(this);
-        adjustMenu.call(this);
       });
-
-      // setTimeout(() => tabsList.classList.remove("tab-list--deleting"), 1400);
+      this.tabs = this.tabs.filter(tab => !tabsToDelete[tab.id]);
+      this.visibleTabIds = this.visibleTabIds.filter(id => !tabsToDelete[id]);
+      adjustMenu.call(this);
+      util.adjustScrollbar.call(this);
     }, 200);
-    // if there are no more tabs with this URL, tab object can be removed
-    if (this.tabIdsByURL[tabUrl].length == 0) {
-      delete this.tabIdsByURL[tabUrl];
-    }
   },
   // have to keep order of all tab Ids so that they can be moved on UI (before actual browser tabs are moved)
   dragState: null,
@@ -143,7 +133,7 @@ document.addEventListener("click", e => {
     // alert(e.target.parentElement.id);
     const tab = e.target.parentElement;
     if (!tab.classList.contains("tab--deleted")) {
-      state.deleteTab(tab.id);
+      state.deleteTabs([tab.id]);
     }
     // const tabId = parseInt(tab.split("-")[1]);
     // chrome.tabs.remove(tabId, () => {
@@ -157,20 +147,30 @@ document.addEventListener("click", e => {
     });
     // chrome.browserAction.openPopup()
   } else if (e.target.id === "select-deselect-all-btn") {
-    const allVisibleTabsAreChecked = state.visibleTabs.every(tab => {
-      const tabIndex = state.tabIndices[tab.id];
+    const allVisibleTabsAreChecked = state.visibleTabIds.every(id => {
+      const tabIndex = state.tabIndices[id];
       if (state.orderedTabObjects[tabIndex].isChecked) {
         return true;
       }
     });
 
     const shouldBeChecked = allVisibleTabsAreChecked ? false : true;
-    state.visibleTabs.forEach(tab => {
-      const tabIndex = state.tabIndices[tab.id];
-      const checkbox = tab.querySelector(".tab__checkbox");
+    state.visibleTabIds.forEach(id => {
+      const tabIndex = state.tabIndices[id];
+      // const checkbox = state.tabs[tabIndex].children[1].firstChild;
+      const checkbox = state.tabs[tabIndex].querySelector(".tab__checkbox");
       state.orderedTabObjects[tabIndex].isChecked = shouldBeChecked;
-      checkbox.checked = state.orderedTabObjects[tabIndex].isChecked;
+      checkbox.checked = shouldBeChecked;
     });
+    adjustMenu.call(state);
+  } else if (e.target.id == "close-selected-btn") {
+    const tabIds = state.visibleTabIds.filter(id => {
+      const obj = state.orderedTabObjects[state.tabIndices[id]];
+      if (obj.isChecked) {
+        return true;
+      }
+    });
+    state.deleteTabs(tabIds);
   } else if (e.target.id == "remove-filter-text-btn") {
     const filterInput = document.getElementById("filter-input");
     filterInput.classList.add("filter__input--cleared");

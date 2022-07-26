@@ -1,5 +1,7 @@
 "use strict";
 
+const adjustMenu = require("./adjustMenu");
+
 function onTabDragPointerUp(event) {
   const state = this;
   const dragState = this.dragState;
@@ -145,20 +147,6 @@ function onTabDragPointerUp(event) {
     let filterOffset = dragState.tabsPosInfo[tab.id].filterOffset;
     let dragOffset = dragState.tabsPosInfo[tab.id].dragOffset;
 
-    // if (dragOffset > 0) {
-    //   if (dragOffset > midPoint && isMoved) {
-    //     dragOffset = dragState.tabHeight + dragState.margin;
-    //   } else {
-    //     dragOffset = 0;
-    //   }
-    // } else {
-    //   if (Math.abs(dragOffset) > midPoint && isMoved) {
-    //     dragOffset = (dragState.tabHeight + dragState.margin) * -1;
-    //   } else {
-    //     dragOffset = 0;
-    //   }
-    // }
-
     if (isMoved) {
       if (dragOffset !== 0) {
         if (dragOffset > midPoint) {
@@ -195,12 +183,16 @@ function onTabDragPointerUp(event) {
   // tab order has changed, so it should be changed in the "tabs" and "orderedTabObjects" lists in state
   state.tabs = [...document.getElementsByClassName(`tab`)];
   const reorderedTabObjects = [];
+  // const reorderedVisibleTabIds = [];
+  // const reorderedHiddenTabIds = [];
   state.orderedTabObjects.forEach(tabObj => {
     const newIndex = state.tabIndices[tabObj.id];
     reorderedTabObjects[newIndex] = tabObj;
   });
   state.orderedTabObjects = reorderedTabObjects;
+  // for ()
   this.dragState = null;
+  adjustMenu.call(state);
 }
 
 module.exports = onTabDragPointerUp;

@@ -11,7 +11,7 @@ function renderTabComponents() {
     const tabComponent = createTabComponent.call(state, obj);
     fragment.appendChild(tabComponent);
     state.tabs[i] = tabComponent;
-    state.visibleTabObjects[i] = { id: obj.id, indexInTabs: i };
+    state.visibleTabIds[i] = obj.id;
   });
 
   state.tabList.appendChild(fragment);
