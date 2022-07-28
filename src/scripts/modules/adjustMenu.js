@@ -143,33 +143,35 @@ function adjustMenu() {
       if any hidden OR visible unchecked tab exists below the first checked visible tab (if index of last visible checked tab < its normal index, OR if firstUncheckedVisibleIndex < lastCheckedVisibleIndex)
   */
 
-  const checkedVisibleTabsExist = menuData.checkedVisibleTabs.length > 0;
+  const checkedVisibleTabsExist = menuData.lastCheckedVisibleIndex !== null;
+  let enableMoveToTopBtn = false;
+  let enableMoveToBottomBtn = false;
+  let enableCloseSelectedBtn = false;
 
-  const uncheckedVisibleTabsAboveExist =
-    checkedVisibleTabsExist &&
-    menuData.firstUncheckedVisibleIndex < menuData.lastCheckedVisibleIndex;
+  if (checkedVisibleTabsExist) {
+    enableCloseSelectedBtn = true;
 
-  const hiddenTabsAboveExist =
-    checkedVisibleTabsExist &&
-    menuData.firstHiddenTabIndex !== null &&
-    menuData.lastCheckedVisibleIndex > menuData.firstHiddenTabIndex;
+    const uncheckedVisibleTabsAboveExist =
+      menuData.firstUncheckedVisibleIndex !== null &&
+      menuData.firstUncheckedVisibleIndex < menuData.lastCheckedVisibleIndex;
 
-  const enableMoveToTopBtn =
-    uncheckedVisibleTabsAboveExist || hiddenTabsAboveExist;
+    const hiddenTabsAboveExist =
+      menuData.firstHiddenTabIndex !== null &&
+      menuData.firstHiddenTabIndex < menuData.lastCheckedVisibleIndex;
 
-  // console.log(
-  //   `lastUncheckedVisibleIndex: ${menuData.lastUncheckedVisibleIndex
-  //   }, firstCheckedVisibleIndex: ${menuData.firstCheckedVisibleIndex}`
-  // );
-  const uncheckedVisibleTabsBelowExist =
-    checkedVisibleTabsExist &&
-    menuData.lastUncheckedVisibleIndex > menuData.firstCheckedVisibleIndex;
-  const hiddenTabsBelowExist =
-    checkedVisibleTabsExist &&
-    menuData.lastHiddenTabIndex !== null &&
-    menuData.lastHiddenTabIndex > menuData.firstCheckedVisibleIndex;
-  const enableMoveToBottomBtn =
-    uncheckedVisibleTabsBelowExist || hiddenTabsBelowExist;
+    enableMoveToTopBtn = uncheckedVisibleTabsAboveExist || hiddenTabsAboveExist;
+
+    const uncheckedVisibleTabsBelowExist =
+      menuData.lastUncheckedVisibleIndex !== null &&
+      menuData.lastUncheckedVisibleIndex > menuData.firstCheckedVisibleIndex;
+
+    const hiddenTabsBelowExist =
+      menuData.lastHiddenTabIndex !== null &&
+      menuData.lastHiddenTabIndex > menuData.firstCheckedVisibleIndex;
+
+    enableMoveToBottomBtn =
+      uncheckedVisibleTabsBelowExist || hiddenTabsBelowExist;
+  }
 
   // if there are no visible tabs (when they are all filtered out), disable selectDeselectAllBtn
   if (allTabsAreHidden) {
@@ -194,7 +196,7 @@ function adjustMenu() {
   } else {
     disableButton(moveToBottomBtn);
   }
-  if (checkedVisibleTabsExist) {
+  if (enableCloseSelectedBtn) {
     enableButton(closeSelectedBtn);
   } else {
     disableButton(closeSelectedBtn);

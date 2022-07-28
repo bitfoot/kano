@@ -37,7 +37,7 @@ const state = {
     }, {});
 
     const reorderedTabObjects = [];
-
+    let numDeleted = 0;
     this.orderedTabObjects.forEach((obj, i) => {
       if (!tabsToDelete[obj.id]) {
         if (this.tabIdsByURL[obj.url].length < 2) {
@@ -46,7 +46,10 @@ const state = {
         }
         this.tabIndices[obj.id] = reorderedTabObjects.length;
         reorderedTabObjects[this.tabIndices[obj.id]] = obj;
+        const deletedOffset = numDeleted * -46 + "px";
+        this.tabs[i].style.setProperty("--deleted-offset", deletedOffset);
       } else {
+        numDeleted += 1;
         this.tabs[i].classList.add("tab--deleted");
       }
     });

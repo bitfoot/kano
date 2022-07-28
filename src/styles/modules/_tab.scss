@@ -9,6 +9,7 @@
   margin: 0 0 var(--lesser-padding) 0;
   padding: var(--greater-padding);
   border-radius: var(--lesser-padding);
+  --deleted-offset: 0px;
   --y-offset: 0px;
   --delay: 0;
   --trans-delay: 0ms;
@@ -271,6 +272,7 @@
     // }
 
     &~li {
+      // --deleted-offset: 0px;
       // background: red;
       // transform: translateY(calc((var(--block-height) + var(--lesser-padding)) * -1));
       // transform: translateY(calc(var(--y-offset) - var(--block-height) - var(--lesser-padding)));
@@ -292,7 +294,8 @@
   }
 
   to {
-    transform: translateY(calc(var(--y-offset) - var(--block-height) - var(--lesser-padding)));
+    // transform: translateY(calc(var(--y-offset) - var(--block-height) - var(--lesser-padding)));
+    transform: translateY(calc(var(--y-offset) + var(--deleted-offset)));
   }
 }
 
