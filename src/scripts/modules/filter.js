@@ -55,7 +55,7 @@ function filter() {
       }
 
       if (matches) {
-        // state.visibleTabIds.push(obj.id);
+        state.visibleTabIds.push(obj.id);
         obj.isVisible = true;
         newFilteredTabObj.filteredIndex = filteredIndex;
         filteredIndex += 1;

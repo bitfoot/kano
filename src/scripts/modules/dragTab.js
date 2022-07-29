@@ -3,15 +3,12 @@
 function dragTab(options = {}) {
   const { distance = 0, speed = 0 } = options;
   const dragState = this.dragState;
-  console.log(`distance inside dragTab: ${distance}`);
+  // console.log(`distance inside dragTab: ${distance}`);
 
   if (dragState) {
     dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset += distance;
 
     // ensure that offset does not exceed current max or min offset
-    console.log(
-      `from dragTab, currentMaxOffset is ${dragState.currentMaxOffset}`
-    );
     dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset = Math.max(
       dragState.currentMinOffset,
       Math.min(

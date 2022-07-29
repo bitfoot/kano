@@ -28,10 +28,9 @@ function adjustMenu() {
     "select-deselect-all-btn"
   );
 
-  const filterWasUsed = this.filterState.numOfFilteredTabs !== null;
-  const allTabsAreHidden = this.filterState.numOfFilteredTabs === 0;
-  this.visibleTabIds = [];
-  this.hiddenTabIds = [];
+  const allTabsAreHidden = this.visibleTabIds.length === 0;
+  // this.visibleTabIds = [];
+  // this.hiddenTabIds = [];
 
   /* what I need: 
 
@@ -53,10 +52,10 @@ function adjustMenu() {
     uncheckedVisibleTabs: [],
     firstUncheckedVisibleIndex: null,
     lastCheckedVisibleIndex: null,
-    firstHiddenTabIndex: null,
+    firstHiddenTabIndex: this.filterState.firstHiddenTabIndex,
     lastUncheckedVisibleIndex: null,
     firstCheckedVisibleIndex: null,
-    lastHiddenTabIndex: null,
+    lastHiddenTabIndex: this.filterState.lastHiddenTabIndex,
     duplicateVisibleTabIds: []
   };
 
@@ -71,61 +70,61 @@ function adjustMenu() {
   //   `firstHiddenTabIndex: ${accumulator.firstHiddenTabIndex
   //   }, lastHiddenTabIndex: ${accumulator.lastHiddenTabIndex}`
   // );
-  const menuData = this.orderedTabObjects.reduce((a, o, i) => {
-    if (o.isVisible) {
-      this.visibleTabIds.push(o.id);
-      if (o.isDuplicate) {
-        a.duplicateVisibleTabIds.push(o.id);
-      }
-      a.visibleIndices[o.id] = i;
-
-      if (o.isChecked) {
-        if (a.firstCheckedVisibleIndex === null) {
-          a.firstCheckedVisibleIndex = i;
-        }
-        a.lastCheckedVisibleIndex = i;
-        a.checkedVisibleTabs.push(o);
-      } else {
-        if (a.firstUncheckedVisibleIndex === null) {
-          a.firstUncheckedVisibleIndex = i;
-        }
-        a.lastUncheckedVisibleIndex = i;
-        a.uncheckedVisibleTabs.push(o);
-      }
-    } else {
-      this.hiddenTabIds.push(o.id);
-      a.visibleIndices[o.id] = null;
-      a.lastHiddenTabIndex = i;
-      if (a.firstHiddenTabIndex === null) {
-        a.firstHiddenTabIndex = i;
-      }
-    }
-    return a;
-  }, accumulator);
-
-  // const menuData = this.visibleTabIds.reduce((a, id) => {
-  //   const indexInBrowser = this.tabIndices[id];
-  //   const tabObject = this.orderedTabObjects[indexInBrowser];
-  //   if (tabObject.isDuplicate) {
-  //     a.duplicateVisibleTabIds.push(tabObject.id);
-  //   }
-
-  //   if (tabObject.isChecked) {
-  //     if (a.firstCheckedVisibleIndex === null) {
-  //       a.firstCheckedVisibleIndex = indexInBrowser;
+  // const menuData = this.orderedTabObjects.reduce((a, o, i) => {
+  //   if (o.isVisible) {
+  //     this.visibleTabIds.push(o.id);
+  //     if (o.isDuplicate) {
+  //       a.duplicateVisibleTabIds.push(o.id);
   //     }
-  //     a.lastCheckedVisibleIndex = indexInBrowser;
-  //     a.checkedVisibleTabs.push(this.tabs[indexInBrowser]);
+  //     a.visibleIndices[o.id] = i;
+
+  //     if (o.isChecked) {
+  //       if (a.firstCheckedVisibleIndex === null) {
+  //         a.firstCheckedVisibleIndex = i;
+  //       }
+  //       a.lastCheckedVisibleIndex = i;
+  //       a.checkedVisibleTabs.push(o);
+  //     } else {
+  //       if (a.firstUncheckedVisibleIndex === null) {
+  //         a.firstUncheckedVisibleIndex = i;
+  //       }
+  //       a.lastUncheckedVisibleIndex = i;
+  //       a.uncheckedVisibleTabs.push(o);
+  //     }
   //   } else {
-  //     if (a.firstUncheckedVisibleIndex === null) {
-  //       a.firstUncheckedVisibleIndex = indexInBrowser;
+  //     this.hiddenTabIds.push(o.id);
+  //     a.visibleIndices[o.id] = null;
+  //     a.lastHiddenTabIndex = i;
+  //     if (a.firstHiddenTabIndex === null) {
+  //       a.firstHiddenTabIndex = i;
   //     }
-  //     a.lastUncheckedVisibleIndex = indexInBrowser;
-  //     a.uncheckedVisibleTabs.push(this.tabs[indexInBrowser]);
   //   }
-
   //   return a;
   // }, accumulator);
+
+  const menuData = this.visibleTabIds.reduce((a, id) => {
+    const indexInBrowser = this.tabIndices[id];
+    const tabObject = this.orderedTabObjects[indexInBrowser];
+    if (tabObject.isDuplicate) {
+      a.duplicateVisibleTabIds.push(tabObject.id);
+    }
+
+    if (tabObject.isChecked) {
+      if (a.firstCheckedVisibleIndex === null) {
+        a.firstCheckedVisibleIndex = indexInBrowser;
+      }
+      a.lastCheckedVisibleIndex = indexInBrowser;
+      a.checkedVisibleTabs.push(this.tabs[indexInBrowser]);
+    } else {
+      if (a.firstUncheckedVisibleIndex === null) {
+        a.firstUncheckedVisibleIndex = indexInBrowser;
+      }
+      a.lastUncheckedVisibleIndex = indexInBrowser;
+      a.uncheckedVisibleTabs.push(this.tabs[indexInBrowser]);
+    }
+
+    return a;
+  }, accumulator);
 
   // move up button should be enabled when:
   /* 
