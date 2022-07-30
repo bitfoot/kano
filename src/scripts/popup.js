@@ -144,11 +144,14 @@ document.addEventListener("click", e => {
     //   tabListItem.remove();
     // });
   } else if (e.target.classList.contains("tab__tab-button")) {
-    const tabId = parseInt(e.target.parentElement.id.split("-")[1]);
-    chrome.tabs.get(tabId, function (tab) {
-      chrome.tabs.highlight({ tabs: tab.index }, function () { });
-    });
-    // chrome.browserAction.openPopup()
+    const tabId = e.target.parentElement.id;
+    const index = state.tabIndices[tabId];
+    if (!state.orderedTabObjects[index].isActive) {
+      const browserTabId = parseInt(e.target.parentElement.id.split("-")[1]);
+      chrome.tabs.get(browserTabId, function (tab) {
+        chrome.tabs.highlight({ tabs: tab.index }, function () { });
+      });
+    }
   } else if (e.target.id === "select-deselect-all-btn") {
     const allVisibleTabsAreChecked = state.visibleTabIds.every(id => {
       const tabIndex = state.tabIndices[id];
@@ -212,6 +215,7 @@ document.addEventListener("pointerdown", e => {
     state.dragTimer = setTimeout(initializeTabDrag.bind(state, e), 300);
     tabButton.onpointerup = () => {
       clearTimeout(state.dragTimer);
+      tabButton.parentElement.classList.remove("tab--held-down");
     };
   } else if (e.target.id === "scrollbar-thumb") {
     initializeScrollbarDrag.call(state, e);

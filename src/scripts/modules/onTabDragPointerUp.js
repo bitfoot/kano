@@ -20,7 +20,11 @@ function onTabDragPointerUp(event) {
   const draggedTabIndex = state.tabIndices[dragState.draggedTab.id];
   const midPoint = (dragState.tabHeight + dragState.margin) / 2;
   const halfTabHeight = dragState.tabHeight / 2;
-  let isMoved = false;
+  // let isMoved = false;
+  let movedDirection = null;
+  const draggedTabVisibleIndex = draggedTabInitialPos / 46;
+  console.log(`draggedTabVisibleIndex is ${draggedTabVisibleIndex}`);
+  let replacedTabVisibleIndex = null;
 
   // if tab was dragged above where it was originally
   if (draggedTabTopPos < dragState.initialTabPos) {
@@ -46,8 +50,12 @@ function onTabDragPointerUp(event) {
     });
 
     if (replacedTab) {
-      isMoved = true;
+      // isMoved = true;
+      movedDirection = "up";
       const replacedTabIndex = state.tabIndices[replacedTab.id];
+      replacedTabVisibleIndex =
+        dragState.tabsPosInfo[replacedTab.id].initialPos / 46;
+      console.log(`replacedTabVisibleIndex is ${replacedTabVisibleIndex}`);
       // update tab indices
       state.tabIndices[dragState.draggedTab.id] = replacedTabIndex;
       // console.log(`The new tab index is ${replacedTabIndex}`);
@@ -104,8 +112,12 @@ function onTabDragPointerUp(event) {
     });
 
     if (replacedTab) {
-      isMoved = true;
+      // isMoved = true;
+      movedDirection = "up";
       const replacedTabIndex = state.tabIndices[replacedTab.id];
+      replacedTabVisibleIndex =
+        dragState.tabsPosInfo[replacedTab.id].initialPos / 46;
+      console.log(`replacedTabVisibleIndex is ${replacedTabVisibleIndex}`);
       state.tabIndices[dragState.draggedTab.id] = replacedTabIndex;
       dragState.tabsBelow
         .slice(0, replacedTabIndex - draggedTabIndex)
@@ -141,13 +153,13 @@ function onTabDragPointerUp(event) {
 
   // reset style values of all the tabs to their defaults
   dragState.listedTabs.forEach(tab => {
-    if (tab.id === draggedTabId && isMoved) {
+    if (tab.id === draggedTabId && movedDirection !== null) {
       return;
     }
     let filterOffset = dragState.tabsPosInfo[tab.id].filterOffset;
     let dragOffset = dragState.tabsPosInfo[tab.id].dragOffset;
 
-    if (isMoved) {
+    if (movedDirection !== null) {
       if (dragOffset !== 0) {
         if (dragOffset > midPoint) {
           dragOffset = dragState.tabHeight + dragState.margin;
@@ -181,18 +193,31 @@ function onTabDragPointerUp(event) {
   tabButton.focus();
 
   // tab order has changed, so it should be changed in the "tabs" and "orderedTabObjects" lists in state
-  state.tabs = [...document.getElementsByClassName(`tab`)];
-  const reorderedTabObjects = [];
-  // const reorderedVisibleTabIds = [];
-  // const reorderedHiddenTabIds = [];
-  state.orderedTabObjects.forEach(tabObj => {
-    const newIndex = state.tabIndices[tabObj.id];
-    reorderedTabObjects[newIndex] = tabObj;
-  });
-  state.orderedTabObjects = reorderedTabObjects;
-  // for ()
+  if (movedDirection !== null) {
+    state.tabs = [...document.getElementsByClassName(`tab`)];
+    const reorderedTabObjects = [];
+    state.orderedTabObjects.forEach(tabObj => {
+      const newIndex = state.tabIndices[tabObj.id];
+      reorderedTabObjects[newIndex] = tabObj;
+    });
+    state.orderedTabObjects = reorderedTabObjects;
+
+    // reorder visibleTabIds
+    const visibleIndexDifference =
+      replacedTabVisibleIndex - draggedTabVisibleIndex;
+
+    const sign = visibleIndexDifference / Math.abs(visibleIndexDifference);
+    for (let i = 1; i <= visibleIndexDifference * sign; i++) {
+      const displacedIdIndex = draggedTabVisibleIndex + i * sign;
+      const adjacentIndex = displacedIdIndex - 1 * sign;
+      const displacedId = state.visibleTabIds[displacedIdIndex];
+      state.visibleTabIds[adjacentIndex] = displacedId;
+    }
+    state.visibleTabIds[replacedTabVisibleIndex] = draggedTabId;
+    adjustMenu.call(state);
+  }
+
   this.dragState = null;
-  adjustMenu.call(state);
 }
 
 module.exports = onTabDragPointerUp;
