@@ -145,13 +145,10 @@ document.addEventListener("click", e => {
     // });
   } else if (e.target.classList.contains("tab__tab-button")) {
     const tabId = e.target.parentElement.id;
-    const index = state.tabIndices[tabId];
-    if (!state.orderedTabObjects[index].isActive) {
-      const browserTabId = parseInt(e.target.parentElement.id.split("-")[1]);
-      chrome.tabs.get(browserTabId, function (tab) {
-        chrome.tabs.highlight({ tabs: tab.index }, function () { });
-      });
-    }
+    const browserTabId = parseInt(tabId.split("-")[1]);
+    chrome.tabs.get(browserTabId, function (tab) {
+      chrome.tabs.highlight({ tabs: tab.index }, function () { });
+    });
   } else if (e.target.id === "select-deselect-all-btn") {
     const allVisibleTabsAreChecked = state.visibleTabIds.every(id => {
       const tabIndex = state.tabIndices[id];
