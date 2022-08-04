@@ -16,7 +16,7 @@ function addTab(browserTab) {
 
     // The first tab with the same URL just became a duplicate, so it needs to be marked as such
     const duplicateTabId = this.tabIdsByURL[browserTab.url][0];
-    const duplicateTabIndex = this.tabIndices[duplicateTabId];
+    const duplicateTabIndex = this.tabIndices[duplicateTabId][0];
     this.orderedTabObjects[duplicateTabIndex].isDuplicate = true;
   }
 
@@ -29,12 +29,14 @@ function addTab(browserTab) {
       isDuplicate,
       isChecked: false,
       favIconUrl: tab.favIconUrl,
-      isVisible: true
+      isVisible: true,
+      isPinned: tab.pinned,
+      lastAccessed: tab.lastAccessed
     };
   };
 
   this.orderedTabObjects[browserTab.index] = createTabObj(browserTab);
-  this.tabIndices[id] = browserTab.index;
+  this.tabIndices[id] = [browserTab.index, browserTab.index];
   this.numOfVisibleTabs += 1;
   // renderTabComponent.call(this, tab);
 }

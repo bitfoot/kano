@@ -20,6 +20,7 @@ function filter() {
     filterState.firstMovedTabIndex = null;
     filterState.lastMovedTabIndex = null;
     filterState.firstHiddenTabIndex = null;
+    filterState.lastHiddenTabIndex = null;
     filterState.firstVisibleTabIndex = null;
     filterState.lastVisibleTabIndex = null;
     filterState.firstNewlyFilteredOutTabIndex = null;
@@ -61,6 +62,7 @@ function filter() {
 
       if (matches) {
         state.visibleTabIds.push(obj.id);
+        state.tabIndices[obj.id][1] = filteredIndex;
         obj.isVisible = true;
         newFilteredTabObj.filteredIndex = filteredIndex;
         filteredIndex += 1;
@@ -188,60 +190,7 @@ function filter() {
         // if current tab is newly filtered in (getting unhidden)
         if (filterState.lastVisibleTabIndex !== null) {
           // if some tabs are filtered out between it and the next visible tab, it needs 400 delay
-          // const nextVisibleTabId =
-          //   state.visibleTabIds[tabObj.filteredIndex + 1];
-          const nextVisibleTabId = state.visibleTabIds
-            .slice(tabObj.filteredIndex + 1)
-            .find(id => filterState.tabs[id].isNewlyFilteredIn == false);
-          // const nextVisibleTabIndex = state.tabIndices[nextVisibleTabIndex];
-          // const nextVisibleTab = state.tabs[nextVisibleTabIndex];
-          // nextVisibleTab.style.backgroundColor = "red";
-          // const difference = tabObj.movedBy - filterState.tabs[nextVisibleTabId].movedBy
-          let newlyFilteredOutBeforeNextVisible = false;
-          // let newlyFilteredInBeforeNextVisible = false;
-          let nextVisibleTabMovedDown = false;
-          let nextVisibleTabHasNewlyFilteredOutBelow = false;
-          let nextVisibleTab;
-          if (nextVisibleTabId) {
-            // const nextVisibleTabIndex = state.tabIndices[nextVisibleTabId];
-            // nextVisibleTab = state.tabs[nextVisibleTabIndex];
-            nextVisibleTab = filterState.tabs[nextVisibleTabId];
-            // nextVisibleTab.style.backgroundColor = "red";
-            nextVisibleTabMovedDown = nextVisibleTab.isMovedDown;
-            nextVisibleTabHasNewlyFilteredOutBelow =
-              filterState.newlyFilteredOut >
-              nextVisibleTab.newlyFilteredOutAbove;
-            newlyFilteredOutBeforeNextVisible =
-              nextVisibleTab.newlyFilteredOutAbove >
-              tabObj.newlyFilteredOutAbove;
-          }
-
-          // const nextNewlyHiddenTabId = null;
-
-          const previousVisibleTabId =
-            state.visibleTabIds[tabObj.filteredIndex - 1];
-          let previousVisibleTabMovedUp = false;
-          if (previousVisibleTabId) {
-            previousVisibleTabMovedUp =
-              filterState.tabs[previousVisibleTabId].isMovedUp;
-          }
-
-          // test it with v and n in filter
-          // test it with g and c in filter
-          const id = state.orderedTabObjects[tabObj.index].id;
-          if (id == "tab-261") {
-            console.log(
-              `nextVisibleTabHasNewlyFilteredOutBelow: ${nextVisibleTabHasNewlyFilteredOutBelow}, nextVisibleTabId: ${nextVisibleTabId}, filterState.newlyFilteredOut: ${filterState.newlyFilteredOut
-              }, nextVisibleTab.newlyFilteredOutAbove ; ${nextVisibleTab.newlyFilteredOutAbove
-              }`
-            );
-          }
           if (
-            // filterState.lastNewlyFilteredOutTabIndex !== null &&
-            // (filterState.lastNewlyFilteredInTabIndex == tabObj.index ||
-            //   (previousVisibleTabMovedUp || nextVisibleTabMovedDown))
-            // nextVisibleTabMovedDown &&
-            // nextVisibleTabHasNewlyFilteredOutBelow
             tabObj.newlyFilteredOutAbove ||
             filterState.newlyFilteredOut > tabObj.newlyFilteredOutAbove
           ) {

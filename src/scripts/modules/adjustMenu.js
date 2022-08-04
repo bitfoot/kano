@@ -29,25 +29,8 @@ function adjustMenu() {
   );
 
   const allTabsAreHidden = this.visibleTabIds.length === 0;
-  // this.visibleTabIds = [];
-  // this.hiddenTabIds = [];
-
-  /* what I need: 
-
-  checkedVisibleTabs
-  uncheckedVisibleTabs
-
-  firstUncheckedVisibleIndex, 
-  lastCheckedVisibleIndex, 
-  firstHiddenTabIndex,
-
-  lastUncheckedVisibleIndex, 
-  firstCheckedVisibleIndex, 
-  lastHiddenTabIndex,
-  */
 
   const accumulator = {
-    visibleIndices: {},
     checkedVisibleTabs: [],
     uncheckedVisibleTabs: [],
     firstUncheckedVisibleIndex: null,
@@ -103,7 +86,7 @@ function adjustMenu() {
   // }, accumulator);
 
   const menuData = this.visibleTabIds.reduce((a, id) => {
-    const indexInBrowser = this.tabIndices[id];
+    const indexInBrowser = this.tabIndices[id][0];
     const tabObject = this.orderedTabObjects[indexInBrowser];
     if (tabObject.isDuplicate) {
       a.duplicateVisibleTabIds.push(tabObject.id);
@@ -141,6 +124,27 @@ function adjustMenu() {
     } else if (Filter IS active):
       if any hidden OR visible unchecked tab exists below the first checked visible tab (if index of last visible checked tab < its normal index, OR if firstUncheckedVisibleIndex < lastCheckedVisibleIndex)
   */
+
+  // checkedVisibleTabsExist
+  // uncheckedVisibleTabsAboveExist
+  //    firstUncheckedVisibleIndex
+  //    lastCheckedVisibleIndex
+  // hiddenTabsAboveExist
+  //    firstHiddenTabIndex
+  //    lastCheckedVisibleIndex
+  // uncheckedVisibleTabsBelowExist
+  //    lastUncheckedVisibleIndex
+  //    firstCheckedVisibleIndex
+  // hiddenTabsBelowExist
+  //    lastHiddenTabIndex
+  //    firstCheckedVisibleIndex
+
+  // firstUncheckedVisibleIndex
+  // lastCheckedVisibleIndex
+  // firstHiddenTabIndex
+  // lastUncheckedVisibleIndex
+  // firstCheckedVisibleIndex
+  // lastHiddenTabIndex
 
   const checkedVisibleTabsExist = menuData.lastCheckedVisibleIndex !== null;
   let enableMoveToTopBtn = false;

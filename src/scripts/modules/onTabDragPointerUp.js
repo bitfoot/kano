@@ -17,7 +17,7 @@ function onTabDragPointerUp(event) {
   const draggedTabTopPos = dragState.tabPosInList;
   const draggedTabInitialPos = dragState.initialTabPos;
   const draggedTabIdInBrowser = +dragState.draggedTab.id.split("-")[1];
-  const draggedTabIndex = state.tabIndices[dragState.draggedTab.id];
+  const draggedTabIndex = state.tabIndices[draggedTabId][0];
   const midPoint = (dragState.tabHeight + dragState.margin) / 2;
   const halfTabHeight = dragState.tabHeight / 2;
   // let isMoved = false;
@@ -52,18 +52,13 @@ function onTabDragPointerUp(event) {
     if (replacedTab) {
       // isMoved = true;
       movedDirection = "up";
-      const replacedTabIndex = state.tabIndices[replacedTab.id];
+      const replacedTabIndex = state.tabIndices[replacedTab.id][0];
       replacedTabVisibleIndex =
         dragState.tabsPosInfo[replacedTab.id].initialPos / 46;
-      console.log(`replacedTabVisibleIndex is ${replacedTabVisibleIndex}`);
       // update tab indices
-      state.tabIndices[dragState.draggedTab.id] = replacedTabIndex;
-      // console.log(`The new tab index is ${replacedTabIndex}`);
+      state.tabIndices[draggedTabId][0] = replacedTabIndex;
       dragState.tabsAbove.slice(replacedTabIndex).forEach(tab => {
-        // tab.style.background = "red";
-        state.tabIndices[tab.id] += 1;
-        // const title = tab.querySelector(".tab__title");
-        // title.innerText += ` INDEX: ${state.tabIndices[tab.id]}`;
+        state.tabIndices[tab.id][0] += 1;
       });
 
       let newTabOffset = 0;
@@ -114,15 +109,14 @@ function onTabDragPointerUp(event) {
     if (replacedTab) {
       // isMoved = true;
       movedDirection = "up";
-      const replacedTabIndex = state.tabIndices[replacedTab.id];
+      const replacedTabIndex = state.tabIndices[replacedTab.id][0];
       replacedTabVisibleIndex =
         dragState.tabsPosInfo[replacedTab.id].initialPos / 46;
-      console.log(`replacedTabVisibleIndex is ${replacedTabVisibleIndex}`);
-      state.tabIndices[dragState.draggedTab.id] = replacedTabIndex;
+      state.tabIndices[draggedTabId][0] = replacedTabIndex;
       dragState.tabsBelow
         .slice(0, replacedTabIndex - draggedTabIndex)
         .forEach(tab => {
-          state.tabIndices[tab.id] -= 1;
+          state.tabIndices[tab.id][0] -= 1;
         });
 
       let newTabOffset = 0;
@@ -197,7 +191,7 @@ function onTabDragPointerUp(event) {
     state.tabs = [...document.getElementsByClassName(`tab`)];
     const reorderedTabObjects = [];
     state.orderedTabObjects.forEach(tabObj => {
-      const newIndex = state.tabIndices[tabObj.id];
+      const newIndex = state.tabIndices[tabObj.id][0];
       reorderedTabObjects[newIndex] = tabObj;
     });
     state.orderedTabObjects = reorderedTabObjects;
@@ -212,8 +206,10 @@ function onTabDragPointerUp(event) {
       const adjacentIndex = displacedIdIndex - 1 * sign;
       const displacedId = state.visibleTabIds[displacedIdIndex];
       state.visibleTabIds[adjacentIndex] = displacedId;
+      state.tabIndices[displacedId][1] = adjacentIndex;
     }
     state.visibleTabIds[replacedTabVisibleIndex] = draggedTabId;
+    state.tabIndices[draggedTabId][1] = replacedTabVisibleIndex;
     adjustMenu.call(state);
   }
 

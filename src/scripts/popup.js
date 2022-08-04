@@ -1,6 +1,7 @@
 const util = require("./modules/util");
 const renderTabComponents = require("./modules/renderTabComponents");
 const addTab = require("./modules/addTab");
+const deleteTabs = require("./modules/deleteTabs");
 const initializeTabDrag = require("./modules/initializeTabDrag");
 const initializeScrollbarDrag = require("./modules/initializeScrollbarDrag");
 const scroll = require("./modules/scroll");
@@ -21,62 +22,7 @@ const state = {
     // "https://www.google.com" : ["tab-1", "tab-2", "tab-3"]
   },
   addTab,
-  deleteTabs(idsOfTabsToDelete) {
-    const tabsToDelete = idsOfTabsToDelete.reduce((a, id) => {
-      const index = this.tabIndices[id];
-      delete this.tabIndices[id];
-      const URL = this.orderedTabObjects[index].url;
-      this.tabIdsByURL[URL] = this.tabIdsByURL[URL].filter(
-        tabId => tabId !== id
-      );
-      if (this.tabIdsByURL[URL].length == 0) {
-        delete this.tabIdsByURL[URL];
-      }
-      a[id] = this.tabs[index];
-      return a;
-    }, {});
-
-    const reorderedTabObjects = [];
-    let numDeleted = 0;
-    this.orderedTabObjects.forEach((obj, i) => {
-      if (!tabsToDelete[obj.id]) {
-        if (this.tabIdsByURL[obj.url].length < 2) {
-          obj.isDuplicate = false;
-          this.tabs[i].classList.remove("tab--duplicate");
-        }
-        this.tabIndices[obj.id] = reorderedTabObjects.length;
-        reorderedTabObjects[this.tabIndices[obj.id]] = obj;
-        const deletedOffset = numDeleted * -46 + "px";
-        this.tabs[i].style.setProperty("--deleted-offset", deletedOffset);
-      } else {
-        numDeleted += 1;
-        this.tabs[i].classList.add("tab--deleted");
-      }
-    });
-
-    this.orderedTabObjects = reorderedTabObjects;
-
-    setTimeout(() => {
-      Object.entries(tabsToDelete).forEach(entry => {
-        const id = entry[0];
-        const tab = entry[1];
-        requestAnimationFrame(() => {
-          tab.remove();
-        });
-        const filterWasUsed = this.filterState.numOfFilteredTabs !== null;
-        if (filterWasUsed) {
-          if (this.filterState.tabs[id] !== undefined) {
-            this.filterState.numOfFilteredTabs -= 1;
-            delete this.filterState.tabs[id];
-          }
-        }
-      });
-      this.tabs = this.tabs.filter(tab => !tabsToDelete[tab.id]);
-      this.visibleTabIds = this.visibleTabIds.filter(id => !tabsToDelete[id]);
-      adjustMenu.call(this);
-      util.adjustScrollbar.call(this);
-    }, 200);
-  },
+  deleteTabs,
   // have to keep order of all tab Ids so that they can be moved on UI (before actual browser tabs are moved)
   dragState: null,
   dragTimer: null,
@@ -121,7 +67,9 @@ const state = {
 chrome.tabs.query({ windowId: chrome.windows.WINDOW_ID_CURRENT }, function (
   tabs
 ) {
-  tabs.forEach(tab => state.addTab(tab));
+  tabs.forEach(tab => {
+    state.addTab(tab);
+  });
   renderTabComponents.call(state);
   util.adjustScrollbar.call(state);
   adjustMenu.call(state);
@@ -132,17 +80,60 @@ chrome.tabs.query({ windowId: chrome.windows.WINDOW_ID_CURRENT }, function (
 // });
 
 document.addEventListener("click", e => {
-  if (e.target.classList.contains("tab__delete-button")) {
-    // alert(e.target.parentElement.id);
+  if (e.target.id === "close-duplicates-btn") {
+    const tabIdsToDelete = [];
+    const idsByURL = state.visibleTabIds.reduce((a, id) => {
+      const browserIndex = state.tabIndices[id][0];
+      const URL = state.orderedTabObjects[browserIndex].url;
+      if (!a[URL]) {
+        a[URL] = [id];
+      } else {
+        a[URL].push(id);
+      }
+      return a;
+    }, {});
+    // Object.values(idsByURL).forEach(ids => {
+    //   tabIdsToDelete.push(...ids.slice(1));
+    // });
+    Object.values(idsByURL).forEach(idsArr => {
+      if (idsArr.length > 1) {
+        const duplicatesInfo = idsArr.reduce((a, id) => {
+          const index = state.tabIndices[id][0];
+          const tabObj = {
+            id,
+            isActive: state.orderedTabObjects[index].isActive,
+            isPinned: state.orderedTabObjects[index].isPinned,
+            lastAccessed: state.orderedTabObjects[index].lastAccessed
+          };
+          if (a.luckyTabInfo === undefined) {
+            a.luckyTabInfo = tabObj;
+            a.unluckyTabIds = [];
+          } else {
+            if (a.luckyTabInfo.isActive) {
+              a.unluckyTabIds.push(id);
+            } else if (tabObj.isActive) {
+              a.unluckyTabIds.push(a.luckyTabInfo.id);
+              a.luckyTabInfo = tabObj;
+            } else if (
+              Number(a.luckyTabInfo.isPinned) >= Number(tabObj.isPinned)
+            ) {
+              a.unluckyTabIds.push(id);
+            } else {
+              a.unluckyTabIds.push(a.luckyTabInfo.id);
+              a.luckyTabInfo = tabObj;
+            }
+          }
+          return a;
+        }, {});
+        tabIdsToDelete.push(...duplicatesInfo.unluckyTabIds);
+      }
+    });
+    deleteTabs.call(state, tabIdsToDelete);
+  } else if (e.target.classList.contains("tab__delete-button")) {
     const tab = e.target.parentElement;
     if (!tab.classList.contains("tab--deleted")) {
-      state.deleteTabs([tab.id]);
+      deleteTabs.call(state, [tab.id]);
     }
-    // const tabId = parseInt(tab.split("-")[1]);
-    // chrome.tabs.remove(tabId, () => {
-    //   const tabListItem = document.getElementById(tabListItemId);
-    //   tabListItem.remove();
-    // });
   } else if (e.target.classList.contains("tab__tab-button")) {
     const tabId = e.target.parentElement.id;
     const browserTabId = parseInt(tabId.split("-")[1]);
@@ -151,7 +142,7 @@ document.addEventListener("click", e => {
     });
   } else if (e.target.id === "select-deselect-all-btn") {
     const allVisibleTabsAreChecked = state.visibleTabIds.every(id => {
-      const tabIndex = state.tabIndices[id];
+      const tabIndex = state.tabIndices[id][0];
       if (state.orderedTabObjects[tabIndex].isChecked) {
         return true;
       }
@@ -159,7 +150,7 @@ document.addEventListener("click", e => {
 
     const shouldBeChecked = allVisibleTabsAreChecked ? false : true;
     state.visibleTabIds.forEach(id => {
-      const tabIndex = state.tabIndices[id];
+      const tabIndex = state.tabIndices[id][0];
       // const checkbox = state.tabs[tabIndex].children[1].firstChild;
       const checkbox = state.tabs[tabIndex].querySelector(".tab__checkbox");
       state.orderedTabObjects[tabIndex].isChecked = shouldBeChecked;
@@ -168,20 +159,20 @@ document.addEventListener("click", e => {
     adjustMenu.call(state);
   } else if (e.target.id == "close-selected-btn") {
     const tabIds = state.visibleTabIds.filter(id => {
-      const obj = state.orderedTabObjects[state.tabIndices[id]];
+      const obj = state.orderedTabObjects[state.tabIndices[id][0]];
       if (obj.isChecked) {
         return true;
       }
     });
-    state.deleteTabs(tabIds);
+    deleteTabs.call(state, tabIds);
   } else if (e.target.id == "remove-filter-text-btn") {
-    const filterInput = document.getElementById("filter-input");
+    const filterInput = state.filterState.input;
     filterInput.classList.add("filter__input--cleared");
     setTimeout(() => {
       filterInput.value = "";
       filter.call(state);
       filterInput.classList.remove("filter__input--cleared");
-    }, 140);
+    }, 100);
   }
 });
 
@@ -189,7 +180,7 @@ document.addEventListener(`input`, e => {
   if (e.target.classList.contains("tab__checkbox")) {
     const label = e.target.parentElement;
     const tabId = label.parentElement.id;
-    const tabIndex = state.tabIndices[tabId];
+    const tabIndex = state.tabIndices[tabId][0];
     if (e.target.checked) {
       label.classList.add(`tab__checkbox-label--checked`);
       state.orderedTabObjects[tabIndex].isChecked = true;
@@ -208,10 +199,13 @@ state.scrollState.container.addEventListener("scroll", onScroll.bind(state));
 document.addEventListener("pointerdown", e => {
   if (e.target.classList.contains("tab__tab-button")) {
     const tabButton = e.target;
+    const pointerId = e.pointerId;
+    tabButton.setPointerCapture(pointerId);
     tabButton.parentElement.classList.add("tab--held-down");
     state.dragTimer = setTimeout(initializeTabDrag.bind(state, e), 300);
     tabButton.onpointerup = () => {
       clearTimeout(state.dragTimer);
+      tabButton.releasePointerCapture(pointerId);
       tabButton.parentElement.classList.remove("tab--held-down");
     };
   } else if (e.target.id === "scrollbar-thumb") {

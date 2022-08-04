@@ -27,7 +27,7 @@
     border-radius: var(--lesser-padding);
     box-shadow: 0 0 0 2px var(--color-one);
     transition: background-color 100ms ease-in-out, box-shadow 100ms ease-in-out;
-  
+
     &:hover {
       background: var(--color-two-hover);
       transition: background-color 100ms ease-in-out, box-shadow 100ms ease-in-out;
@@ -40,7 +40,7 @@
 
     &--cleared {
       color: transparent;
-      transition: color 140ms ease-out;
+      transition: color 100ms ease-out;
     }
   }
 

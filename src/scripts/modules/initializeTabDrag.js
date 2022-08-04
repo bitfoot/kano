@@ -15,7 +15,8 @@ function initializeTabDrag(event) {
   const scrollState = this.scrollState;
   const scrollTop = this.scrollState.scrollTop;
   const tabListHeight = tabList.offsetHeight;
-  const headerHeight = document.getElementById("header").offsetHeight;
+  // const headerHeight = document.getElementById("header").offsetHeight;
+  const headerHeight = this.scrollState.headerHeight;
   const tabHeight = draggedTab.offsetHeight;
   const margin = 6;
 
@@ -42,7 +43,7 @@ function initializeTabDrag(event) {
     return a;
   }, {});
 
-  const tabIndex = state.tabIndices[draggedTab.id];
+  const tabIndex = state.tabIndices[draggedTab.id][0];
   const tabsAbove = listedTabs.slice(0, tabIndex);
   const tabsBelow = listedTabs.slice(tabIndex + 1);
   const initialTabPos = tabsPosInfo[draggedTab.id].initialPos;
@@ -66,7 +67,7 @@ function initializeTabDrag(event) {
     down: 420
   };
 
-  draggedTab.setPointerCapture(event.pointerId);
+  // draggedTab.setPointerCapture(event.pointerId);
   draggedTab.classList.add("tab--draggable");
   draggedTab.classList.remove("tab--held-down");
   resetTransitionVariables.call(this);

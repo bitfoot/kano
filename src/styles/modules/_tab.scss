@@ -18,6 +18,7 @@
   --opacity-duration: 0ms;
   --opacity: 1;
   --scale: 0.99;
+  // --below-deleted-animation-duration: 100ms;
   visibility: visible;
   touch-action: none;
   box-shadow: 0 0 0 2px var(--color-one);
@@ -278,7 +279,7 @@
       // transform: translateY(calc(var(--y-offset) - var(--block-height) - var(--lesser-padding)));
       // transform: translateY(calc(var(--block-height) + var(--greater-padding)));
       // transition: transform 200ms 100ms ease-out;
-      animation: 100ms 100ms ease-in-out forwards belowDeleted;
+      animation: var(--below-deleted-animation-duration) 100ms ease-in-out forwards belowDeleted;
 
       &:hover {
         // transform: translateY(calc(var(--y-offset) - var(--block-height) - var(--lesser-padding)));
