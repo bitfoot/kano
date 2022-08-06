@@ -81,7 +81,7 @@ chrome.tabs.query({ windowId: chrome.windows.WINDOW_ID_CURRENT }, function (
 
 document.addEventListener("click", e => {
   if (e.target.id === "close-duplicates-btn") {
-    const tabIdsToDelete = [];
+    // const tabIdsToDelete = [];
     const idsByURL = state.visibleTabIds.reduce((a, id) => {
       const browserIndex = state.tabIndices[id][0];
       const URL = state.orderedTabObjects[browserIndex].url;
@@ -92,42 +92,40 @@ document.addEventListener("click", e => {
       }
       return a;
     }, {});
-    // Object.values(idsByURL).forEach(ids => {
-    //   tabIdsToDelete.push(...ids.slice(1));
-    // });
-    Object.values(idsByURL).forEach(idsArr => {
+
+    const unluckyTabIds = Object.values(idsByURL).reduce((a, idsArr) => {
       if (idsArr.length > 1) {
-        const duplicatesInfo = idsArr.reduce((a, id) => {
+        let luckyTabInfo = null;
+        idsArr.forEach(id => {
           const index = state.tabIndices[id][0];
           const tabObj = {
             id,
             isActive: state.orderedTabObjects[index].isActive,
-            isPinned: state.orderedTabObjects[index].isPinned,
-            lastAccessed: state.orderedTabObjects[index].lastAccessed
+            isPinned: state.orderedTabObjects[index].isPinned
           };
-          if (a.luckyTabInfo === undefined) {
-            a.luckyTabInfo = tabObj;
-            a.unluckyTabIds = [];
+          if (luckyTabInfo === null) {
+            luckyTabInfo = tabObj;
           } else {
-            if (a.luckyTabInfo.isActive) {
-              a.unluckyTabIds.push(id);
+            if (luckyTabInfo.isActive) {
+              a[id] = true;
             } else if (tabObj.isActive) {
-              a.unluckyTabIds.push(a.luckyTabInfo.id);
-              a.luckyTabInfo = tabObj;
+              a[luckyTabInfo.id] = true;
+              luckyTabInfo = tabObj;
             } else if (
-              Number(a.luckyTabInfo.isPinned) >= Number(tabObj.isPinned)
+              Number(luckyTabInfo.isPinned) >= Number(tabObj.isPinned)
             ) {
-              a.unluckyTabIds.push(id);
+              a[id] = true;
             } else {
-              a.unluckyTabIds.push(a.luckyTabInfo.id);
-              a.luckyTabInfo = tabObj;
+              a[luckyTabInfo.id] = true;
+              luckyTabInfo = tabObj;
             }
           }
-          return a;
-        }, {});
-        tabIdsToDelete.push(...duplicatesInfo.unluckyTabIds);
+        });
       }
-    });
+      return a;
+    }, {});
+    const tabIdsToDelete = state.visibleTabIds.filter(id => unluckyTabIds[id]);
+    // console.log(tabIdsToDelete);
     deleteTabs.call(state, tabIdsToDelete);
   } else if (e.target.classList.contains("tab__delete-button")) {
     const tab = e.target.parentElement;
@@ -135,11 +133,12 @@ document.addEventListener("click", e => {
       deleteTabs.call(state, [tab.id]);
     }
   } else if (e.target.classList.contains("tab__tab-button")) {
-    const tabId = e.target.parentElement.id;
-    const browserTabId = parseInt(tabId.split("-")[1]);
-    chrome.tabs.get(browserTabId, function (tab) {
-      chrome.tabs.highlight({ tabs: tab.index }, function () { });
-    });
+    console.log(e.target.parentElement);
+    // const tabId = e.target.parentElement.id;
+    // const browserTabId = parseInt(tabId.split("-")[1]);
+    // chrome.tabs.get(browserTabId, function (tab) {
+    //   chrome.tabs.highlight({ tabs: tab.index }, function () { });
+    // });
   } else if (e.target.id === "select-deselect-all-btn") {
     const allVisibleTabsAreChecked = state.visibleTabIds.every(id => {
       const tabIndex = state.tabIndices[id][0];
@@ -207,6 +206,13 @@ document.addEventListener("pointerdown", e => {
       clearTimeout(state.dragTimer);
       tabButton.releasePointerCapture(pointerId);
       tabButton.parentElement.classList.remove("tab--held-down");
+      // if (!tabButton.parentElement.classList.contains("tab--draggable")) {
+      //   const tabId = e.target.parentElement.id;
+      //   const browserTabId = parseInt(tabId.split("-")[1]);
+      //   chrome.tabs.get(browserTabId, function (tab) {
+      //     chrome.tabs.highlight({ tabs: tab.index }, function () { });
+      //   });
+      // }
     };
   } else if (e.target.id === "scrollbar-thumb") {
     initializeScrollbarDrag.call(state, e);

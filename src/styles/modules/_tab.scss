@@ -18,31 +18,16 @@
   --opacity-duration: 0ms;
   --opacity: 1;
   --scale: 0.99;
-  // --below-deleted-animation-duration: 100ms;
   visibility: visible;
   touch-action: none;
   box-shadow: 0 0 0 2px var(--color-one);
-  // opacity: 1;
-  // transition: transform 100ms linear;
-
-  // &:last-child {
-  //   margin-bottom: 0;
-  // }
 
   &:hover {
-    // background: #D4D4D4;
     background: var(--color-two-hover);
-    // transition: background-color 140ms ease-in-out, opacity 140ms ease-out;
     transition: background-color 200ms ease-in-out, transform 60ms ease-out, opacity 200ms ease-in-out, box-shadow 200ms ease-in-out;
   }
 
-  /* when tab gets hidden:
-  - its opacity should start decreasing without delay, regardless of tabs above
-  - if any tab above is unhidden, hidden tab will need to move immediately, before it reaches opacity 0. In this case its trans-delay should be set to 0 and trans-duration should be set to 160ms.
-  - otherwise, whether tabs above are also hidden or unaffected, it should have trans-delay set to 160ms and trans-duration to 0ms 
-  */
   &--filtered-out {
-    // background: green;
     visibility: hidden;
     opacity: 0;
     transition: opacity var(--opacity-duration) var(--opacity-delay) ease-in-out, transform var(--trans-duration) var(--trans-delay) ease-in-out, visibility var(--opacity-duration) var(--opacity-delay);
@@ -53,16 +38,7 @@
     }
   }
 
-  /* when tab gets unhidden:
-  - it should move into proper place without delay and with speed 0, so transform should have speed 0 and delay 0
-  - its opacity increase should be delayed ONLY IF some tabs below are visible Otherwise, no opacity-delay needed.
-  */
-  /* when tab is already visible:
-  - it should move into place with speed 1000ms and with delay ONLY if filteredOutTabs > 0, so transform should have speed 1000ms and delay 1000ms
-  - its opacity should start increasing with delay ONLY IF some tabs above are getting unhidden
-  */
   &--filtered {
-    // background: purple;
     opacity: 1;
     transform: translateY(var(--y-offset));
     transition: transform var(--trans-duration) var(--trans-delay) ease-in-out, opacity var(--opacity-duration) var(--opacity-delay) ease-in-out;
@@ -75,7 +51,8 @@
 
   &--held-down {
     transform: translateY(var(--y-offset)) scale(0.99);
-    transition: background-color 1400ms ease-in-out, transform 60ms ease-in-out, opacity 1400ms ease-out;
+    // transition: background-color 1400ms ease-in-out, transform 60ms ease-in-out, opacity 1400ms ease-out;
+    transition: background-color 300ms ease-in-out, transform 300ms ease-in-out, opacity 300ms ease-out;
   }
 
   &--active {
@@ -220,11 +197,18 @@
     & img {
       pointer-events: none;
     }
+
+    &:active {
+      transform: scale(0.97);
+      transition: transform 30ms ease-in-out;
+    }
   }
 
   &--draggable {
+    animation: 50ms ease-in-out forwards draggable;
     cursor: grabbing;
-    transform: translateY(var(--y-offset)) scale(1.01);
+    // transform: translateY(var(--y-offset)) scale(1.01);
+    transform: translateY(var(--y-offset));
     transition: none;
     box-shadow: none;
 
@@ -243,7 +227,7 @@
     opacity: var(--opacity);
     background: var(--color-two-hover);
     transform: translateY(var(--y-offset)) scale(var(--scale));
-    transition: transform 140ms ease-in-out, opacity 140ms ease-in-out;
+    transition: transform 50ms ease-in-out, opacity 50ms ease-in-out, background-color 50ms ease-in-out;
     z-index: -1000;
   }
 
@@ -297,6 +281,16 @@
   to {
     // transform: translateY(calc(var(--y-offset) - var(--block-height) - var(--lesser-padding)));
     transform: translateY(calc(var(--y-offset) + var(--deleted-offset)));
+  }
+}
+
+@keyframes draggable {
+  from {
+    transform: translateY(var(--y-offset)) scale(0.99)
+  }
+
+  to {
+    transform: translateY(var(--y-offset)) scale(1.01)
   }
 }
 

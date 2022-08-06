@@ -23,7 +23,6 @@ function onTabDragPointerUp(event) {
   // let isMoved = false;
   let movedDirection = null;
   const draggedTabVisibleIndex = draggedTabInitialPos / 46;
-  console.log(`draggedTabVisibleIndex is ${draggedTabVisibleIndex}`);
   let replacedTabVisibleIndex = null;
 
   // if tab was dragged above where it was originally
@@ -68,9 +67,6 @@ function onTabDragPointerUp(event) {
           state.filterState.tabs[draggedTabId].filterOffset = newTabOffset;
         }
       }
-
-      console.log(`Tab was moved above. The new tab offset is ${newTabOffset}`);
-      console.log(replacedTab);
 
       dragState.tabList.insertBefore(dragState.draggedTab, replacedTab);
       dragState.draggedTab.style.setProperty("--y-offset", newTabOffset + "px");
@@ -177,10 +173,6 @@ function onTabDragPointerUp(event) {
 
   if (this.scrollState.tabListOffset !== 0) {
     dragState.tabListContainer.scrollBy(0, this.scrollState.tabListOffset);
-    console.log(
-      `Scrolling BY ${dragState.tabListOffset} from within onDragPointerUp`
-    );
-    // dragState.tabListOffset = 0;
   }
 
   const tabButton = dragState.draggedTab.querySelector(".tab__tab-button");

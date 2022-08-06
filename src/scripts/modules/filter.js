@@ -97,6 +97,7 @@ function filter() {
         }
       } else {
         obj.isVisible = false;
+        state.tabIndices[obj.id][1] = null;
         // state.hiddenTabIds.push(obj.id);
         newFilteredTabObj.isFilteredOut = true;
         filteredOutAbove += 1;
