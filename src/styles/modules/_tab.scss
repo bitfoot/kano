@@ -24,6 +24,7 @@
 
   &:hover {
     background: var(--color-two-hover);
+    // color: white;
     transition: background-color 200ms ease-in-out, transform 60ms ease-out, opacity 200ms ease-in-out, box-shadow 200ms ease-in-out;
   }
 
@@ -52,7 +53,15 @@
   &--held-down {
     transform: translateY(var(--y-offset)) scale(0.99);
     // transition: background-color 1400ms ease-in-out, transform 60ms ease-in-out, opacity 1400ms ease-out;
+    // background-color: #293856;
+    background-color: var(--color-two);
     transition: background-color 300ms ease-in-out, transform 300ms ease-in-out, opacity 300ms ease-out;
+
+    &:hover {
+      // background-color: #293856;
+      background-color: var(--color-two);
+      transition: background-color 300ms ease-in-out, transform 300ms ease-in-out, opacity 300ms ease-out;
+    }
   }
 
   &--active {
@@ -190,7 +199,7 @@
 
     &:hover {
       &::before {
-        background: var(--color-two);
+        background: var(--color-two-pressed);
       }
     }
 
@@ -207,6 +216,7 @@
   &--draggable {
     animation: 50ms ease-in-out forwards draggable;
     cursor: grabbing;
+    background: var(--color-two-hover);
     // transform: translateY(var(--y-offset)) scale(1.01);
     transform: translateY(var(--y-offset));
     transition: none;
@@ -257,12 +267,6 @@
     // }
 
     &~li {
-      // --deleted-offset: 0px;
-      // background: red;
-      // transform: translateY(calc((var(--block-height) + var(--lesser-padding)) * -1));
-      // transform: translateY(calc(var(--y-offset) - var(--block-height) - var(--lesser-padding)));
-      // transform: translateY(calc(var(--block-height) + var(--greater-padding)));
-      // transition: transform 200ms 100ms ease-out;
       animation: var(--below-deleted-animation-duration) 100ms ease-in-out forwards belowDeleted;
 
       &:hover {

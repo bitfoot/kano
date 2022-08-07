@@ -5,6 +5,7 @@ const resetTransitionVariables = require("./util").resetTransitionVariables;
 
 function initializeTabDrag(event) {
   const state = this;
+  state.canGoToTab = false;
   const draggedTab = event.target.parentElement;
   const pointerPosition = event.pageY;
   const container = this.scrollState.container;

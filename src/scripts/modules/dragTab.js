@@ -47,9 +47,11 @@ function dragTab(options = {}) {
 
       const midPoint = (dragState.tabHeight + dragState.margin) / 2;
       const ratioToMidPoint = Math.abs(Math.abs(offset) - midPoint) / midPoint;
-      tab.style.setProperty("--opacity", Math.max(ratioToMidPoint, 0.62));
+      // tab.style.setProperty("--opacity", Math.max(ratioToMidPoint, 0.62));
+      tab.style.setProperty("--opacity", Math.max(ratioToMidPoint, 0.4));
       // the largest sale for moving tab is 0.99. Smallest is 0.98.
-      tab.style.setProperty("--scale", Math.max(ratioToMidPoint - 0.01, 0.98));
+      // tab.style.setProperty("--scale", Math.max(ratioToMidPoint - 0.01, 0.98));
+      tab.style.setProperty("--scale", Math.max(ratioToMidPoint - 0.01, 0.97));
     });
 
     dragState.tabsBelow.forEach(tab => {
@@ -74,9 +76,9 @@ function dragTab(options = {}) {
 
       const midPoint = (dragState.tabHeight + dragState.margin) / 2;
       const ratioToMidPoint = Math.abs(Math.abs(offset) - midPoint) / midPoint;
-      tab.style.setProperty("--opacity", Math.max(ratioToMidPoint, 0.62));
-      // the largest scale of a moving tab is 0.99. Smallest is 0.98.
-      tab.style.setProperty("--scale", Math.max(ratioToMidPoint - 0.01, 0.98));
+      tab.style.setProperty("--opacity", Math.max(ratioToMidPoint, 0.4));
+      // tab.style.setProperty("--scale", Math.max(ratioToMidPoint - 0.01, 0.98));
+      tab.style.setProperty("--scale", Math.max(ratioToMidPoint - 0.01, 0.97));
     });
   } else {
     throw new Error("dragState object is not initialized");

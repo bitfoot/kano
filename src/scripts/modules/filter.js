@@ -140,10 +140,9 @@ function filter() {
     if (tab.classList.contains("tab--filtered-out")) {
       tab.classList.remove("tab--filtered-out");
     }
-    tab.setAttribute("disabled", false);
+    tab.removeAttribute("disabled");
   };
 
-  // 120ms
   const styleTabs = tabs => {
     const getTransformDelay = tabObj => {
       let transformDelay = 0;
@@ -234,6 +233,21 @@ function filter() {
       });
     });
   };
+
+  requestAnimationFrame(() => {
+    if (filterString.length > 0) {
+      filterState.clearFilterBtn.classList.remove(
+        "filter__remove-text-btn--disabled"
+      );
+      filterState.clearFilterBtn.removeAttribute("disabled");
+    } else {
+      filterState.clearFilterBtn.classList.add(
+        "filter__remove-text-btn--disabled"
+      );
+      filterState.clearFilterBtn.setAttribute("disabled", true);
+      filterState.input.focus();
+    }
+  });
 
   adjustMenu.call(state);
   util.adjustScrollbar.call(state);

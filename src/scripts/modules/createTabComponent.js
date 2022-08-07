@@ -34,6 +34,16 @@ function createTabComponent(tab) {
     // get back to this part after Chrome implements the new favicon API for manifest v3
     // favIcon.src = "chrome://favicon/" + tab.url;
     favIcon.src = "images/default20.png";
+    // const url = tab.url;
+    // const getFaviconUrl = url => {
+    //   let faviconUrl = new URL(
+    //     `chrome-extension://${chrome.runtime.id}/_favicon/`
+    //   );
+    //   faviconUrl.searchParams.append("pageUrl", url);
+    //   faviconUrl.searchParams.append("size", "32");
+    //   return faviconUrl.href;
+    // };
+    // favIcon.src = getFaviconUrl(url);
   }
 
   const domainName = tab.url.match(/(?<=:\/\/).+?(?=\/|$)/);

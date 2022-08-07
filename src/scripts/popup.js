@@ -10,6 +10,7 @@ const onScroll = require("./modules/onScroll");
 const adjustMenu = require("./modules/adjustMenu");
 
 const state = {
+  canGoToTab: false,
   tabList: document.getElementById("tab-list"),
   orderedTabObjects: [],
   tabs: [],
@@ -34,6 +35,7 @@ const state = {
   selectedTabs: [],
   filterState: {
     filterIsActive: false,
+    clearFilterBtn: document.getElementById("remove-filter-text-btn"),
     input: document.getElementById("filter-input"),
     tabs: {},
     numOfFilteredTabs: null,
@@ -133,7 +135,17 @@ document.addEventListener("click", e => {
       deleteTabs.call(state, [tab.id]);
     }
   } else if (e.target.classList.contains("tab__tab-button")) {
-    console.log(e.target.parentElement);
+    const tabButton = e.target;
+    // console.log(tabButton.parentElement, state.canGoToTab);
+    if (tabButton.parentElement.classList.contains("tab--held-down")) {
+      tabButton.parentElement.classList.remove("tab--held-down");
+      const tabId = e.target.parentElement.id;
+      const browserTabId = parseInt(tabId.split("-")[1]);
+      chrome.tabs.get(browserTabId, function (tab) {
+        chrome.tabs.highlight({ tabs: tab.index }, function () { });
+      });
+    }
+    // state.dragTimer = null;
     // const tabId = e.target.parentElement.id;
     // const browserTabId = parseInt(tabId.split("-")[1]);
     // chrome.tabs.get(browserTabId, function (tab) {
@@ -175,6 +187,22 @@ document.addEventListener("click", e => {
   }
 });
 
+document.addEventListener(`keydown`, e => {
+  if (e.code === "Space") {
+    if (e.target.classList.contains("tab__tab-button")) {
+      const tabButton = e.target;
+      // const pointerId = e.pointerId;
+      // tabButton.setPointerCapture(pointerId);
+      tabButton.parentElement.classList.add("tab--held-down");
+      state.dragTimer = setTimeout(initializeTabDrag.bind(state, e), 300);
+      tabButton.onkeyup = () => {
+        clearTimeout(state.dragTimer);
+        // tabButton.releasePointerCapture(pointerId);
+      };
+    }
+  }
+});
+
 document.addEventListener(`input`, e => {
   if (e.target.classList.contains("tab__checkbox")) {
     const label = e.target.parentElement;
@@ -205,14 +233,6 @@ document.addEventListener("pointerdown", e => {
     tabButton.onpointerup = () => {
       clearTimeout(state.dragTimer);
       tabButton.releasePointerCapture(pointerId);
-      tabButton.parentElement.classList.remove("tab--held-down");
-      // if (!tabButton.parentElement.classList.contains("tab--draggable")) {
-      //   const tabId = e.target.parentElement.id;
-      //   const browserTabId = parseInt(tabId.split("-")[1]);
-      //   chrome.tabs.get(browserTabId, function (tab) {
-      //     chrome.tabs.highlight({ tabs: tab.index }, function () { });
-      //   });
-      // }
     };
   } else if (e.target.id === "scrollbar-thumb") {
     initializeScrollbarDrag.call(state, e);
