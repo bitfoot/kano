@@ -26,19 +26,13 @@
   }
 
   &:active {
-    &>.header__icon {
-      // transform: translateY(0.1rem);
-      // transform: scale(0.986) translateY(1px);
-    }
 
-    transform: scale(0.97);
-    // background-image: linear-gradient(rgba(38, 38, 44, 0.5), transparent 50%);
-    // background-image: linear-gradient(rgba(38, 38, 44, 0.5), transparent 50%);
-    background: transparent;
+    transform: scale(0.96);
+    background: var(--color-two-pressed);
     box-shadow: inset 0 0 0 2px lime;
     // background: radial-gradient(circle at 50% 120%, var(--color-one), rgba(38, 38, 44, 0.5) 120%);
-    transition: background-color 30ms ease-in-out,
-    transform 30ms ease-in-out;
+    transition: background-color 20ms ease-in-out,
+      transform 20ms ease-in-out;
   }
 
   &--disabled {

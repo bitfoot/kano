@@ -2,10 +2,17 @@
 const onTabDragPointerMove = require("./onTabDragPointerMove");
 const onTabDragPointerUp = require("./onTabDragPointerUp");
 const resetTransitionVariables = require("./util").resetTransitionVariables;
+const dragTab = require("./dragTab");
 
 function initializeTabDrag(event) {
+  const eventType = event.type;
+  if (eventType == "pointerdown") {
+    console.log(`drag initiated from pointerdown event.`);
+  } else {
+    console.log(`drag initiated from keydown event.`);
+  }
+
   const state = this;
-  state.canGoToTab = false;
   const draggedTab = event.target.parentElement;
   const pointerPosition = event.pageY;
   const container = this.scrollState.container;
@@ -79,6 +86,17 @@ function initializeTabDrag(event) {
     });
 
   this.dragState = {
+    distance: 0,
+    eventType,
+    start: null,
+    previousTimeStamp: null,
+    done: null,
+    distanceDraggedViaKb: 0,
+    kbDragProgress: 0,
+    // get kbDragProgress() {
+    //   return this.distanceDraggedViaKb / 46;
+    // },
+    kbDragAnimation: null,
     tabsPosInfo,
     scrollState,
     animation: null,
@@ -221,8 +239,21 @@ function initializeTabDrag(event) {
     }
   };
 
-  draggedTab.onpointermove = onTabDragPointerMove.bind(this);
-  draggedTab.onpointerup = onTabDragPointerUp.bind(this);
+  if (eventType == "pointerdown") {
+    draggedTab.onpointermove = onTabDragPointerMove.bind(this);
+    draggedTab.onpointerup = onTabDragPointerUp.bind(this);
+  } else {
+    draggedTab.onkeydown = e => {
+      if (e.code === "ArrowDown" || e.code === "ArrowUp") {
+        onTabDragPointerMove.call(this, e);
+      }
+    };
+    draggedTab.onkeyup = e => {
+      if (e.code === "Space") {
+        onTabDragPointerUp.call(this);
+      }
+    };
+  }
 }
 
 module.exports = initializeTabDrag;

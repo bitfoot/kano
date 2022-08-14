@@ -18,11 +18,10 @@ function deleteTabs(idsOfTabsToDelete) {
 
   const reorderedTabObjects = [];
   let numDeleted = 0;
-  let consecutiveDeletedTabs = 1;
-  let mostConsecutiveDeletedTabs = consecutiveDeletedTabs;
-  let firstDeletedTabVisibleIndex = null;
+  let consecutiveDeletedTabs = 0;
+  let mostConsecutiveDeletedTabs = 0;
+  let mostConsecutiveDeletedTabsBeforeVisibleTab = 0;
   let lastDeletedTabVisibleIndex = null;
-  let lastVisibleTabIndex = null;
 
   this.orderedTabObjects.forEach((obj, i) => {
     if (!tabsToDelete[obj.id]) {
@@ -32,7 +31,7 @@ function deleteTabs(idsOfTabsToDelete) {
       }
       // if tab is not hidden, save its visible index to a variable and update that index
       if (this.tabIndices[obj.id][1] !== null) {
-        lastVisibleTabIndex = this.tabIndices[obj.id][1];
+        mostConsecutiveDeletedTabsBeforeVisibleTab = mostConsecutiveDeletedTabs;
         this.tabIndices[obj.id][1] -= numDeleted;
       }
       // update tab's browser index
@@ -43,10 +42,10 @@ function deleteTabs(idsOfTabsToDelete) {
     } else {
       numDeleted += 1;
       const visibleIndex = this.tabIndices[obj.id][1];
-      if (firstDeletedTabVisibleIndex === null) {
-        firstDeletedTabVisibleIndex = visibleIndex;
-      }
-      if (visibleIndex - lastDeletedTabVisibleIndex === 1) {
+      if (
+        visibleIndex - lastDeletedTabVisibleIndex === 1 ||
+        lastDeletedTabVisibleIndex === null
+      ) {
         consecutiveDeletedTabs += 1;
         if (consecutiveDeletedTabs > mostConsecutiveDeletedTabs) {
           mostConsecutiveDeletedTabs = consecutiveDeletedTabs;
@@ -59,19 +58,14 @@ function deleteTabs(idsOfTabsToDelete) {
       delete this.tabIndices[obj.id];
     }
   });
-  // console.log(`consecutiveDeletedTabs: ${consecutiveDeletedTabs}`);
+
   let animationDuration = 100;
   this.orderedTabObjects = reorderedTabObjects;
   this.visibleTabIds = this.visibleTabIds.filter(id => !tabsToDelete[id]);
-  if (
-    lastVisibleTabIndex !== null &&
-    lastVisibleTabIndex > firstDeletedTabVisibleIndex
-  ) {
-    animationDuration = Math.min(50 + mostConsecutiveDeletedTabs * 50, 400);
-  }
 
-  console.log(
-    `mostConsecutiveDeletedTabs: ${mostConsecutiveDeletedTabs}, animationDuration: ${animationDuration}`
+  animationDuration = Math.min(
+    60 + Math.max(1, mostConsecutiveDeletedTabsBeforeVisibleTab) * 40,
+    380
   );
 
   const timeoutDuration = 100 + animationDuration;
@@ -104,6 +98,14 @@ function deleteTabs(idsOfTabsToDelete) {
     // adjustMenu.call(this);
     // adjustScrollbar.call(this);
     // chrome.tabs.remove(browserTabIds);
+    // requestAnimationFrame(() => {
+    //   const containerHeight = this.scrollState.container.offsetHeight;
+    //   const headerHeight = this.scrollState.headerHeight;
+    //   if (containerHeight < this.scrollState.maxContainerHeight) {
+    //     document.documentElement.style.height =
+    //       containerHeight + headerHeight + "px";
+    //   }
+    // });
   }, timeoutDuration);
 }
 

@@ -11,6 +11,11 @@ function onTabDragPointerUp(event) {
     dragState.animation = null;
   }
 
+  if (dragState.kbDragAnimation) {
+    cancelAnimationFrame(dragState.kbDragAnimation);
+    dragState.kbDragAnimation = null;
+  }
+
   dragState.tabListContainer.classList.remove("tab-list-container--no-scroll");
 
   const draggedTabId = state.dragState.draggedTab.id;
@@ -139,6 +144,8 @@ function onTabDragPointerUp(event) {
   dragState.tabList.classList.remove("tab-list--scroll");
   dragState.draggedTab.onpointermove = null;
   dragState.draggedTab.onpointerup = null;
+  dragState.draggedTab.onkeydown = null;
+  dragState.draggedTab.onkeyup = null;
   dragState.draggedTab.classList.remove("tab--draggable");
 
   // reset style values of all the tabs to their defaults

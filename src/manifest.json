@@ -7,8 +7,8 @@
   },
   "permissions": [
     "tabs",
-    "storage"
-    // "favicon"
+    "storage",
+    "favicon"
   ],
   "action": {
     "default_icon": "images/tabble16.png",

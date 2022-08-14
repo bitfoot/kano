@@ -81,23 +81,27 @@
     height: 1.4rem;
     border-radius: var(--lesser-padding);
     background: transparent;
-    // opacity: 0.4;
+
 
     &:focus {
-      box-shadow: inset 0 0 0 0.1rem lime;
+      box-shadow: inset 0 0 0 2px lime;
     }
 
     &:hover {
       background: var(--color-two-pressed);
-      transition: background-color 140ms ease-in-out;
-      // opacity: 0.4;
+      transition: background-color 20ms ease-in-out;
+    }
+
+    &:active {
+      transform: scale(0.96);
+      transition: transform 20ms ease-in-out;
     }
 
     &--disabled {
       pointer-events: none;
       cursor: default;
       opacity: 0.5;
-      transition: opacity 80ms ease-out;
+      transition: opacity 80ms ease-out, background-color 0ms;
     }
   }
 

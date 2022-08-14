@@ -28,22 +28,20 @@ function createTabComponent(tab) {
   // create favIcon
   const favIcon = document.createElement("img");
   favIcon.classList.add("tab__favicon");
-  if (tab.favIconUrl != "" && tab.favIconUrl != undefined) {
+  if (tab.favIconUrl) {
     favIcon.src = tab.favIconUrl;
   } else {
-    // get back to this part after Chrome implements the new favicon API for manifest v3
-    // favIcon.src = "chrome://favicon/" + tab.url;
-    favIcon.src = "images/default20.png";
-    // const url = tab.url;
-    // const getFaviconUrl = url => {
-    //   let faviconUrl = new URL(
-    //     `chrome-extension://${chrome.runtime.id}/_favicon/`
-    //   );
-    //   faviconUrl.searchParams.append("pageUrl", url);
-    //   faviconUrl.searchParams.append("size", "32");
-    //   return faviconUrl.href;
-    // };
-    // favIcon.src = getFaviconUrl(url);
+    const url = tab.url;
+    const getFaviconUrl = url => {
+      let faviconUrl = new URL(
+        `chrome-extension://${chrome.runtime.id}/_favicon/`
+      );
+      faviconUrl.searchParams.append("pageUrl", url);
+      faviconUrl.searchParams.append("size", "32");
+      return faviconUrl.href;
+    };
+    const faviconUrl = getFaviconUrl(url);
+    favIcon.src = faviconUrl || "images/default20.png";
   }
 
   const domainName = tab.url.match(/(?<=:\/\/).+?(?=\/|$)/);

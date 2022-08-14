@@ -10,7 +10,6 @@ const onScroll = require("./modules/onScroll");
 const adjustMenu = require("./modules/adjustMenu");
 
 const state = {
-  canGoToTab: false,
   tabList: document.getElementById("tab-list"),
   orderedTabObjects: [],
   tabs: [],
@@ -136,7 +135,6 @@ document.addEventListener("click", e => {
     }
   } else if (e.target.classList.contains("tab__tab-button")) {
     const tabButton = e.target;
-    // console.log(tabButton.parentElement, state.canGoToTab);
     if (tabButton.parentElement.classList.contains("tab--held-down")) {
       tabButton.parentElement.classList.remove("tab--held-down");
       const tabId = e.target.parentElement.id;
@@ -189,15 +187,15 @@ document.addEventListener("click", e => {
 
 document.addEventListener(`keydown`, e => {
   if (e.code === "Space") {
-    if (e.target.classList.contains("tab__tab-button")) {
+    if (
+      e.target.classList.contains("tab__tab-button") &&
+      state.dragState === null
+    ) {
       const tabButton = e.target;
-      // const pointerId = e.pointerId;
-      // tabButton.setPointerCapture(pointerId);
       tabButton.parentElement.classList.add("tab--held-down");
       state.dragTimer = setTimeout(initializeTabDrag.bind(state, e), 300);
       tabButton.onkeyup = () => {
         clearTimeout(state.dragTimer);
-        // tabButton.releasePointerCapture(pointerId);
       };
     }
   }
@@ -248,6 +246,12 @@ document.addEventListener("pointerdown", e => {
     });
   }
 });
+
+// document.addEventListener("pointermove", e => {
+//   // const pointerId = e.pointerId;
+//   // document.documentElement.setPointerCapture(pointerId);
+//   console.log(e.pageX, e.pageY);
+// });
 
 document.addEventListener("contextmenu", e => {
   if (e.target.classList.contains("tab__tab-button")) {
