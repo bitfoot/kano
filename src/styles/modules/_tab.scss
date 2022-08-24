@@ -21,11 +21,13 @@
   visibility: visible;
   touch-action: none;
   box-shadow: 0 0 0 2px var(--color-one);
+  stroke: transparent;
+  transition: stroke 200ms ease-out;
 
   &:hover {
     background: var(--color-two-hover);
     // color: white;
-    transition: background-color 200ms ease-in-out, transform 60ms ease-out, opacity 200ms ease-in-out, box-shadow 200ms ease-in-out;
+    transition: background-color 200ms ease-in-out, transform 60ms ease-out, opacity 200ms ease-in-out, box-shadow 200ms ease-in-out, stroke 200ms ease-out;
   }
 
   &--filtered-out {
@@ -42,10 +44,12 @@
   &--filtered {
     opacity: 1;
     transform: translateY(var(--y-offset));
-    transition: transform var(--trans-duration) var(--trans-delay) ease-in-out, opacity var(--opacity-duration) var(--opacity-delay) ease-in-out;
+    transition: transform var(--trans-duration) var(--trans-delay) ease-in-out, opacity var(--opacity-duration) var(--opacity-delay) ease-in-out, stroke 200ms ease-out;
+    ;
 
     &:hover {
-      transition: transform var(--trans-duration) var(--trans-delay) ease-in-out, opacity var(--opacity-duration) var(--opacity-delay) ease-in-out;
+      transition: transform var(--trans-duration) var(--trans-delay) ease-in-out, opacity var(--opacity-duration) var(--opacity-delay) ease-in-out, stroke 200ms ease-out;
+      ;
     }
 
   }
@@ -254,11 +258,11 @@
     opacity: 0;
     // background: red;
     // margin-bottom: calc((var(--block-height) - var(--lesser-padding)) * -1);
-    transition: opacity 100ms ease-in-out;
+    transition: opacity 100ms ease-out;
 
     &:hover {
       opacity: 0;
-      transition: opacity 100ms ease-in-out;
+      transition: opacity 100ms ease-out;
     }
 
     // &+li {

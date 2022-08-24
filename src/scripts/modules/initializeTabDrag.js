@@ -86,7 +86,11 @@ function initializeTabDrag(event) {
     });
 
   this.dragState = {
+    animationStart: null,
+    animationElapsed: 0,
     distance: 0,
+    distanceToDrag: 0,
+    elapsed: 0,
     eventType,
     start: null,
     previousTimeStamp: null,
@@ -105,7 +109,11 @@ function initializeTabDrag(event) {
     pointerPosition,
     // lastPointerPos: pointerPosition,
     get imaginaryTopPos() {
-      return this.pointerPosition - this.shiftY;
+      if (this.eventType == "pointerdown") {
+        return this.pointerPosition - this.shiftY;
+      } else {
+        return this.tabPosInViewport.top + this.distanceToDrag;
+      }
     },
     headerHeight,
     tabList,

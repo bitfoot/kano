@@ -50,6 +50,12 @@ function easeInOutQuad(time, b, c, duration) {
   return (-c / 2) * (--time * (time - 2) - 1) + b;
 }
 
+function easeInQuad(time, b, c, duration) {
+  return c * (time /= duration) * time + b;
+}
+
+// easeInOutQuad(0, 0, 46, 1)
+
 function getContentHeight() {
   const tabHeight = 40;
   const margin = 6;
@@ -285,5 +291,6 @@ module.exports = {
   createDuplicateIndicatorSvg,
   getScrollbarHeight,
   resetTransitionVariables,
-  easeInOutQuad
+  easeInOutQuad,
+  easeInQuad
 };

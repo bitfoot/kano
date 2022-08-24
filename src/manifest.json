@@ -7,7 +7,6 @@
   },
   "permissions": [
     "tabs",
-    "storage",
     "favicon"
   ],
   "action": {

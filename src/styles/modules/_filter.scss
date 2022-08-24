@@ -43,7 +43,7 @@
 
     &:focus {
       box-shadow: inset 0 0 0 2px lime;
-      transition: background-color 100ms ease-in-out, box-shadow 100ms ease-in-out;
+      transition: background-color 100ms ease-in-out, box-shadow 100ms ease-in;
     }
 
     &--cleared {
@@ -85,23 +85,25 @@
 
     &:focus {
       box-shadow: inset 0 0 0 2px lime;
+      transition: background-color 30ms ease-in-out, box-shadow 100ms ease-in;
     }
 
     &:hover {
       background: var(--color-two-pressed);
-      transition: background-color 20ms ease-in-out;
+      transition: background-color 30ms ease-in-out;
     }
 
     &:active {
       transform: scale(0.96);
-      transition: transform 20ms ease-in-out;
+      transition: transform 30ms ease-out, background-color 30ms ease-in-out;
     }
 
     &--disabled {
       pointer-events: none;
       cursor: default;
       opacity: 0.5;
-      transition: opacity 80ms ease-out, background-color 0ms;
+      background: transparent;
+      transition: opacity 80ms ease-out, background-color 30ms ease-in-out;
     }
   }
 

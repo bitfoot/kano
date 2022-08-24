@@ -3,113 +3,107 @@
 const scroll = require("./scroll");
 const dragTab = require("./dragTab");
 const easeInOutQuad = require("./util").easeInOutQuad;
+const easeInQuad = require("./util").easeInQuad;
 
 function onTabDragPointerMove(event) {
   const dragState = this.dragState;
+  let sign = null;
   if (dragState.eventType == "pointerdown") {
     dragState.pointerPosition = event.pageY;
+  } else {
+    if (event.code === "ArrowDown") {
+      sign = 1;
+    } else {
+      sign = -1;
+    }
   }
 
   const getDragDistance = () => {
-    let tabPosInViewport = dragState.tabPosInViewport.top;
-    return dragState.imaginaryTopPos - tabPosInViewport;
-  };
-
-  const step = () => {
-    const tabMaxPosInViewport = dragState.tabMaxPosInViewport;
-    const tabMinPosInViewport = dragState.tabMinPosInViewport;
-    const imaginaryTopPos = dragState.imaginaryTopPos;
-    const dragDistance = getDragDistance();
-
-    if (dragState.getScrollDistance() !== 0 && dragState.animation) {
-      console.log("%cshould scroll", "color: purple");
-      scroll.call(this, { distance: dragState.getScrollDistance() });
-      dragTab.call(this, { distance: dragDistance });
-      window.requestAnimationFrame(step);
-    } else if (
-      Math.round(dragState.tabPosInViewport.top) !== imaginaryTopPos &&
-      dragState.animation &&
-      imaginaryTopPos < tabMaxPosInViewport &&
-      dragState.tabPosInViewport.top > tabMinPosInViewport
-    ) {
-      console.log("%cshould NOT scroll", "color: red");
-      dragTab.call(this, { distance: dragDistance });
-      window.requestAnimationFrame(step);
+    if (dragState.eventType == "pointerdown") {
+      let tabPosInViewport = dragState.tabPosInViewport.top;
+      return dragState.imaginaryTopPos - tabPosInViewport;
     } else {
-      console.log("cancelling animation");
-      cancelAnimationFrame(dragState.animation);
-      dragState.animation = null;
+      const progress = Math.min(1, dragState.animationElapsed / 220);
+      const prevDistance = dragState.distanceDraggedViaKb;
+      const newDistance = easeInQuad(progress, 0, 46, 1) * sign;
+      const distanceToDrag = newDistance - prevDistance;
+      dragState.distanceToDrag = distanceToDrag;
+      dragState.distanceDraggedViaKb = newDistance;
+      console.log(
+        `from getDragDistance. sign: ${sign}, progress: ${progress}, prevDistance: ${prevDistance}, newDistance: ${newDistance}`
+      );
+      if (progress === 1) {
+        dragState.animation = null;
+      }
+
+      return distanceToDrag;
+      // return dragState.distanceToDrag;
     }
   };
 
-  if (!dragState.animation) {
-    if (dragState.getScrollDistance() !== 0) {
-      console.log("%cshould scroll -- no animation running", "color: skyblue");
-      dragState.animation = window.requestAnimationFrame(step);
-    } else {
-      if (dragState.eventType == "pointerdown") {
-        dragTab.call(this, { distance: getDragDistance() });
-      } else {
-        let sign = null;
-        if (event.code === "ArrowDown") {
-          sign = 1;
-        } else {
-          sign = -1;
-        }
+  const step = timestamp => {
+    if (dragState.animationStart === null) {
+      dragState.animationStart = timestamp;
+    }
 
-        const kbStep = timestamp => {
-          // timestamp stores the value in milliseconds
-          if (dragState.start === null) {
-            dragState.start = timestamp;
-          }
+    dragState.animationElapsed = timestamp - dragState.animationStart;
 
-          // time elapsed in milliseconds
-          const elapsed = timestamp - dragState.start;
+    if (dragState.previousTimeStamp !== timestamp) {
+      dragState.previousTimeStamp = timestamp;
+      const tabMaxPosInViewport = dragState.tabMaxPosInViewport;
+      const tabMinPosInViewport = dragState.tabMinPosInViewport;
+      const imaginaryTopPos = dragState.imaginaryTopPos;
+      const dragDistance = getDragDistance();
 
-          if (dragState.previousTimeStamp !== timestamp) {
-            const progress = Math.min(1, elapsed / 220);
-            const prevDistance = dragState.distance;
-            const distance = easeInOutQuad(progress, 0, 46, 1) * sign;
-            const distanceToDrag = distance - prevDistance;
-            dragState.distance = distance;
-            // console.log(
-            //   `progress: ${progress}, distanceToDrag: ${distanceToDrag}`
-            // );
-            dragTab.call(this, { distance: distanceToDrag });
-            if (progress === 1) {
-              // dragState.done = true;
-              dragState.kbDragAnimation = null;
-            }
-          }
+      console.log(
+        `from step. getScrollDistance: ${dragState.getScrollDistance()}, dragDistance: ${dragDistance}`
+      );
 
-          if (elapsed < 220) {
-            // Stop the animation after 250ms
-            dragState.previousTimeStamp = timestamp;
-            if (!dragState.done) {
-              window.requestAnimationFrame(kbStep);
-            }
-          }
-        };
-
-        if (dragState.kbDragAnimation == null) {
-          dragState.done = false;
-          dragState.start = null;
-          dragState.distance = 0;
-          dragState.kbDragAnimation = window.requestAnimationFrame(kbStep);
-        }
-        // if (dragState.done === true) {
-        //   dragState.done = false;
-        //   dragState.start = null;
-        //   dragState.distance = 0;
-        //   dragState.kbDragAnimation = window.requestAnimationFrame(kbStep);
-        // }
-
-        // console.log(
-        //   `distanceToDrag: ${distanceToDrag}, distanceDraggedViaKb: ${dragState.distanceDraggedViaKb
-        //   }`
-        // );
-        // dragTab.call(this, { distance: distanceToDrag });
+      if (dragState.getScrollDistance() !== 0) {
+        scroll.call(this, { distance: dragState.getScrollDistance() });
       }
+
+      dragTab.call(this, { distance: dragDistance });
+
+      if (
+        dragState.eventType === "pointerdown" &&
+        (imaginaryTopPos >= tabMaxPosInViewport ||
+          dragState.tabPosInViewport.top <= tabMinPosInViewport)
+      ) {
+        dragState.animation = null;
+      }
+    }
+
+    if (dragState.eventType === "keydown") {
+      if (dragState.animationElapsed >= 220) {
+        dragState.animation = null;
+      }
+    }
+
+    if (dragState.animation) {
+      window.requestAnimationFrame(step);
+    }
+
+    // if (dragState.animation === null) {
+    //   dragState.animationStart = null;
+    //   dragState.distanceToDrag = 0;
+    //   dragState.distanceDraggedViaKb = 0;
+    // }
+  };
+
+  if (!dragState.animation) {
+    if (
+      dragState.getScrollDistance() !== 0 ||
+      dragState.eventType == "keydown"
+    ) {
+      console.log("%cshould scroll -- no animation running", "color: skyblue");
+      dragState.animationElapsed = 0;
+      dragState.distanceDraggedViaKb = 0;
+      dragState.animationStart = null;
+      dragState.distanceToDrag = 0;
+      dragState.animation = window.requestAnimationFrame(step);
+    } else if (dragState.eventType == "pointerdown") {
+      dragTab.call(this, { distance: getDragDistance() });
     }
   }
 }
