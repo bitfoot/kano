@@ -224,10 +224,26 @@ state.scrollState.container.addEventListener("scroll", onScroll.bind(state));
 document.addEventListener("pointerdown", e => {
   if (e.target.classList.contains("tab__tab-button")) {
     const tabButton = e.target;
+    const parent = tabButton.parentElement;
     const pointerId = e.pointerId;
     tabButton.setPointerCapture(pointerId);
-    tabButton.parentElement.classList.add("tab--held-down");
-    state.dragTimer = setTimeout(initializeTabDrag.bind(state, e), 300);
+    const bounds = parent.getBoundingClientRect();
+    parent.classList.add("tab--held-down");
+
+    requestAnimationFrame(() => {
+      parent.style.setProperty(
+        "--x-pos",
+        // e.clientX - 50007.5 + "px"
+        e.clientX - bounds.left + "px"
+      );
+      parent.style.setProperty(
+        "--y-pos",
+        // e.clientY - 50007.5 + "px"
+        e.clientY - bounds.top + "px"
+      );
+    });
+
+    state.dragTimer = setTimeout(initializeTabDrag.bind(state, e), 500);
     tabButton.onpointerup = () => {
       clearTimeout(state.dragTimer);
       tabButton.releasePointerCapture(pointerId);

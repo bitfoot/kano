@@ -1,49 +1,13 @@
 "use strict";
 
 function adjustBodyPadding() {
-  // if html has a vertical scrollbar, padding-right should be adjusted on the body to avoid unsightly gap
   const tabList = document.getElementById("tab-list");
-  // console.log(
-  //   `list scroll height: ${tabList.scrollHeight}, list clientHeight: ${
-  //   tabList.clientHeight
-  //   }`
-  // );
   if (tabList.scrollHeight > 554) {
     tabList.classList.add("tab-list--scroll");
   } else {
-    console.log("removing scroll class");
     tabList.classList.remove("tab-list--scroll");
   }
 }
-
-function getListedTabs() {
-  return [...document.getElementsByClassName("tab")] || [];
-}
-
-// function easeInOutQuart(progress) {
-//   return progress < 0.5
-//     ? 8 * progress * progress * progress * progress
-//     : 1 - Math.pow(-2 * progress + 2, 4) / 2;
-// }
-
-// function easeInOutQuart(progress) {
-//   return progress < 0.5 ? 8 * progress : 1 - Math.pow(-2 * progress + 2, 1) / 2;
-// }
-
-// t = 0 - Animation is just started. Zero time has passed
-// b = 200 - The starting position of the objects y-coordinate is 200
-// c = 300 - The object has to move 300 down, ending at 500
-// d = 1 - The object has one second to perform this motion from 200 to 500
-
-// You start to call the function at the beginning of the animation.
-
-// x = easeLinear(0, 200, 300, 1);
-// //x = 200
-
-// Now some time has passed, t is 0.5. This means the object is now 0.5 seconds into the animation, or you could say it's halfway through, time-wise. For a linear motion, this also applies to the position. The object has moved half its distance.
-
-// x = easeLinear(0.5, 200, 300, 1);
-// //x = 350
 
 function easeInOutQuad(time, b, c, duration) {
   if ((time /= duration / 2) < 1) return (c / 2) * time * time + b;
@@ -53,8 +17,6 @@ function easeInOutQuad(time, b, c, duration) {
 function easeInQuad(time, b, c, duration) {
   return c * (time /= duration) * time + b;
 }
-
-// easeInOutQuad(0, 0, 46, 1)
 
 function getContentHeight() {
   const tabHeight = 40;
@@ -282,7 +244,6 @@ function createDuplicateIndicatorSvg() {
 
 module.exports = {
   adjustBodyPadding,
-  getListedTabs,
   adjustScrollbar,
   getContainerToContentRatio,
   getContentHeight,

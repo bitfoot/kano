@@ -17,6 +17,9 @@
   --trans-duration: 0ms;
   --opacity-duration: 0ms;
   --opacity: 1;
+  --x-pos: 0;
+  --y-pos: 0;
+  // --scale: 0.99;
   --scale: 0.99;
   visibility: visible;
   touch-action: none;
@@ -204,47 +207,61 @@
   }
 
   &--held-down {
+    // --x-pos: 0;
+    // --y-pos: 0;
+    // overflow hidden must later be removed because of active tab
+    overflow: hidden;
+    position: relative;
     transform: translateY(var(--y-offset)) scale(0.99);
-    // transition: background-color 1400ms ease-in-out, transform 60ms ease-in-out, opacity 1400ms ease-out;
-    // background-color: #293856;
-    // background-color: var(--color-two);
     background-color: transparent;
     transition: background-color 300ms ease-in-out, transform 300ms ease-in-out, opacity 300ms ease-out;
 
+    &::before {
+      content: "";
+      position: absolute;
+      width: 800rem;
+      height: 800rem;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      // transform: translate(var(--x-pos), var(--y-pos)) scale(0.015);
+      transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%)) scale(0.1);
+      transition: none;
+      background: radial-gradient(circle at center, transparent 0.6%, var(--color-two-hover) 1.6% 100%);
+      animation: 500ms ease-in forwards heldDown;
+    }
+
     &:hover {
-      // background-color: #293856;
-      // background-color: var(--color-two);
       background-color: transparent;
-      // background: transparent;
-      // backdrop-filter: blur(8px);
       transition: background-color 300ms ease-in-out, transform 300ms ease-in-out, opacity 300ms ease-out;
     }
   }
 
   &--draggable {
-
-    &::before {
-      content: "";
-      position: absolute;
-      z-index: -1;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border-radius: var(--lesser-padding);
-      background: transparent;
-      // background: var(--color-two-hover);
-      // animation: 50ms ease-in-out forwards banana;
-      // background: rgba(110, 160, 255, 0.2);
-      backdrop-filter: blur(6px);
-    }
-
     animation: 50ms ease-in-out forwards draggable;
     cursor: grabbing;
     background: transparent;
     transform: translateY(var(--y-offset));
     transition: none;
     box-shadow: none;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      width: 100%;
+      height: 100%;
+
+      // border-radius: var(--lesser-padding);
+      background: transparent;
+      // background: radial-gradient(circle at center, transparent 10%, white 10% 100%);
+      // background: var(--color-two-hover);
+      // animation: 50ms ease-in-out forwards banana;
+      // background: rgba(110, 160, 255, 0.2);
+      backdrop-filter: blur(6px);
+    }
 
     &:hover {
       transition: none;
@@ -329,6 +346,16 @@
 
   to {
     background: transparent;
+  }
+}
+
+@keyframes heldDown {
+  from {
+    transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%)) scale(0.1);
+  }
+
+  to {
+    transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%)) scale(10);
   }
 }
 
