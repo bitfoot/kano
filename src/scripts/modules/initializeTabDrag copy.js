@@ -2,6 +2,7 @@
 const onTabDragPointerMove = require("./onTabDragPointerMove");
 const onTabDragPointerUp = require("./onTabDragPointerUp");
 const resetTransitionVariables = require("./util").resetTransitionVariables;
+const dragTab = require("./dragTab");
 
 function initializeTabDrag(event) {
   const eventType = event.type;
@@ -22,6 +23,7 @@ function initializeTabDrag(event) {
   const scrollState = this.scrollState;
   const scrollTop = this.scrollState.scrollTop;
   const tabListHeight = tabList.offsetHeight;
+  // const headerHeight = document.getElementById("header").offsetHeight;
   const headerHeight = this.scrollState.headerHeight;
   const tabHeight = draggedTab.offsetHeight;
   const margin = 6;
@@ -67,7 +69,6 @@ function initializeTabDrag(event) {
   const minTabPosInList = 0;
   const minTabOffsetInList = initialTabPos * -1;
   const maxTabOffsetInList = maxTabPosInList - initialTabPos;
-  const midPoint = (tabHeight + margin) / 2;
 
   const defaultScrollBoundary = {
     up: 184,
@@ -105,7 +106,6 @@ function initializeTabDrag(event) {
     animation: null,
     scroll: false,
     draggedTab,
-    midPoint,
     pointerPosition,
     // lastPointerPos: pointerPosition,
     get imaginaryTopPos() {

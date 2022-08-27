@@ -28,6 +28,24 @@ function dragTab(options = {}) {
 
     const currentDraggedTabPos = dragState.tabPosInList;
 
+    const setStyleVariables = options => {
+      const { tab, offset } = options;
+      const ratioToMidPoint =
+        Math.abs(Math.abs(offset) - dragState.midPoint) / dragState.midPoint;
+
+      requestAnimationFrame(() => {
+        tab.style.setProperty(
+          "--y-offset",
+          offset + dragState.tabsPosInfo[tab.id].filterOffset + "px"
+        );
+        tab.style.setProperty("--opacity", Math.max(ratioToMidPoint, 0.4));
+        tab.style.setProperty(
+          "--scale",
+          Math.max(ratioToMidPoint - 0.01, 0.97)
+        );
+      });
+    };
+
     dragState.tabsAbove.forEach(tab => {
       const totalDifference =
         dragState.tabsPosInfo[tab.id].initialPos - currentDraggedTabPos;
@@ -40,18 +58,11 @@ function dragTab(options = {}) {
         0
       );
 
-      tab.style.setProperty(
-        "--y-offset",
-        offset + dragState.tabsPosInfo[tab.id].filterOffset + "px"
-      );
-
-      const midPoint = (dragState.tabHeight + dragState.margin) / 2;
-      const ratioToMidPoint = Math.abs(Math.abs(offset) - midPoint) / midPoint;
-      // tab.style.setProperty("--opacity", Math.max(ratioToMidPoint, 0.62));
-      tab.style.setProperty("--opacity", Math.max(ratioToMidPoint, 0.4));
-      // the largest sale for moving tab is 0.99. Smallest is 0.98.
-      // tab.style.setProperty("--scale", Math.max(ratioToMidPoint - 0.01, 0.98));
-      tab.style.setProperty("--scale", Math.max(ratioToMidPoint - 0.01, 0.97));
+      const options = {
+        tab,
+        offset
+      };
+      setStyleVariables(options);
     });
 
     dragState.tabsBelow.forEach(tab => {
@@ -69,16 +80,11 @@ function dragTab(options = {}) {
         0
       );
 
-      tab.style.setProperty(
-        "--y-offset",
-        offset + dragState.tabsPosInfo[tab.id].filterOffset + "px"
-      );
-
-      const midPoint = (dragState.tabHeight + dragState.margin) / 2;
-      const ratioToMidPoint = Math.abs(Math.abs(offset) - midPoint) / midPoint;
-      tab.style.setProperty("--opacity", Math.max(ratioToMidPoint, 0.4));
-      // tab.style.setProperty("--scale", Math.max(ratioToMidPoint - 0.01, 0.98));
-      tab.style.setProperty("--scale", Math.max(ratioToMidPoint - 0.01, 0.97));
+      const options = {
+        tab,
+        offset
+      };
+      setStyleVariables(options);
     });
   } else {
     throw new Error("dragState object is not initialized");

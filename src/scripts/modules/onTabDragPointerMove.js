@@ -29,9 +29,7 @@ function onTabDragPointerMove(event) {
       const distanceToDrag = newDistance - prevDistance;
       dragState.distanceToDrag = distanceToDrag;
       dragState.distanceDraggedViaKb = newDistance;
-      console.log(
-        `from getDragDistance. sign: ${sign}, progress: ${progress}, prevDistance: ${prevDistance}, newDistance: ${newDistance}`
-      );
+
       if (progress === 1) {
         dragState.animation = null;
       }
@@ -50,25 +48,22 @@ function onTabDragPointerMove(event) {
 
     if (dragState.previousTimeStamp !== timestamp) {
       dragState.previousTimeStamp = timestamp;
-      const tabMaxPosInViewport = dragState.tabMaxPosInViewport;
-      const tabMinPosInViewport = dragState.tabMinPosInViewport;
-      const imaginaryTopPos = dragState.imaginaryTopPos;
       const dragDistance = getDragDistance();
+      const scrollDistance = dragState.getScrollDistance();
 
-      console.log(
-        `from step. getScrollDistance: ${dragState.getScrollDistance()}, dragDistance: ${dragDistance}`
-      );
-
-      if (dragState.getScrollDistance() !== 0) {
-        scroll.call(this, { distance: dragState.getScrollDistance() });
+      if (scrollDistance !== 0) {
+        scroll.call(this, { distance: scrollDistance });
       }
 
-      dragTab.call(this, { distance: dragDistance });
+      if (dragState.eventType === "keydown" || dragState.animation) {
+        dragTab.call(this, { distance: dragDistance });
+      }
 
       if (
         dragState.eventType === "pointerdown" &&
-        (imaginaryTopPos >= tabMaxPosInViewport ||
-          dragState.tabPosInViewport.top <= tabMinPosInViewport)
+        scrollDistance === 0 &&
+        (dragState.tabPosInList >= dragState.minTabPosInList ||
+          dragState.dragState <= dragState.maxTabPosInList)
       ) {
         dragState.animation = null;
       }
@@ -76,19 +71,17 @@ function onTabDragPointerMove(event) {
 
     if (dragState.eventType === "keydown") {
       if (dragState.animationElapsed >= 220) {
-        dragState.animation = null;
+        // dragState.animation = null;
+        dragState.animationElapsed = 0;
+        dragState.distanceDraggedViaKb = 0;
+        dragState.animationStart = null;
+        dragState.distanceToDrag = 0;
       }
     }
 
     if (dragState.animation) {
       window.requestAnimationFrame(step);
     }
-
-    // if (dragState.animation === null) {
-    //   dragState.animationStart = null;
-    //   dragState.distanceToDrag = 0;
-    //   dragState.distanceDraggedViaKb = 0;
-    // }
   };
 
   if (!dragState.animation) {
