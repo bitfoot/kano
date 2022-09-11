@@ -8,7 +8,7 @@ function filter() {
   const filterState = state.filterState;
   const filterString = filterState.input.value.toLowerCase();
   state.visibleTabIds = [];
-  this.numOfVisibleTabs = 0;
+  // this.numOfVisibleTabs = 0;
   const TAB_HEIGHT = 46;
 
   const matchesFilter = (title, filterString) => {

@@ -1,11 +1,13 @@
 "use strict";
 
+const getFaviconUrl = require("./util").getFaviconUrl;
+
 function addTab(browserTab) {
   const id = `tab-${browserTab.id}`;
-  let isDuplicate = null;
+  let isDuplicate;
 
   // If entry doesn't already exist for this tab's URL, create a new entry
-  if (this.tabIdsByURL[browserTab.url] == undefined) {
+  if (this.tabIdsByURL[browserTab.url] === undefined) {
     this.tabIdsByURL[browserTab.url] = [id];
     isDuplicate = false;
   } else {
@@ -21,24 +23,28 @@ function addTab(browserTab) {
   }
 
   const createTabObj = tab => {
+    let faviconUrl = tab.favIconUrl;
+    let url = tab.url;
+    if (!faviconUrl) {
+      faviconUrl = getFaviconUrl(url) || "images/default20.png";
+    }
     return {
       id,
-      url: tab.url,
+      url,
       title: tab.title,
       isActive: tab.active,
       isDuplicate,
       isChecked: false,
-      favIconUrl: tab.favIconUrl,
+      favIconUrl: faviconUrl,
       isVisible: true,
       isPinned: tab.pinned,
       lastAccessed: tab.lastAccessed
     };
   };
 
-  this.orderedTabObjects[browserTab.index] = createTabObj(browserTab);
-  this.tabIndices[id] = [browserTab.index, browserTab.index];
-  this.numOfVisibleTabs += 1;
-  // renderTabComponent.call(this, tab);
+  const index = browserTab.index;
+  this.orderedTabObjects[index] = createTabObj(browserTab);
+  this.tabIndices[id] = [index, index];
 }
 
 module.exports = addTab;

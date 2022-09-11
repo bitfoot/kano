@@ -2,42 +2,21 @@
 
 const scroll = require("./scroll");
 const dragTab = require("./dragTab");
-const easeInOutQuad = require("./util").easeInOutQuad;
-const easeInQuad = require("./util").easeInQuad;
+// const easeInOutQuad = require("./util").easeInOutQuad;
+// const easeInQuad = require("./util").easeInQuad;
 
 function onTabDragPointerMove(event) {
   const dragState = this.dragState;
-  let sign = null;
+  // let sign = null;
   if (dragState.eventType == "pointerdown") {
     dragState.pointerPosition = event.pageY;
   } else {
     if (event.code === "ArrowDown") {
-      sign = 1;
+      dragState.sign = 1;
     } else {
-      sign = -1;
+      dragState.sign = -1;
     }
   }
-
-  const getDragDistance = () => {
-    if (dragState.eventType == "pointerdown") {
-      let tabPosInViewport = dragState.tabPosInViewport.top;
-      return dragState.imaginaryTopPos - tabPosInViewport;
-    } else {
-      const progress = Math.min(1, dragState.animationElapsed / 220);
-      const prevDistance = dragState.distanceDraggedViaKb;
-      const newDistance = easeInQuad(progress, 0, 46, 1) * sign;
-      const distanceToDrag = newDistance - prevDistance;
-      dragState.distanceToDrag = distanceToDrag;
-      dragState.distanceDraggedViaKb = newDistance;
-
-      if (progress === 1) {
-        dragState.animation = null;
-      }
-
-      return distanceToDrag;
-      // return dragState.distanceToDrag;
-    }
-  };
 
   const step = timestamp => {
     if (dragState.animationStart === null) {
@@ -48,7 +27,7 @@ function onTabDragPointerMove(event) {
 
     if (dragState.previousTimeStamp !== timestamp) {
       dragState.previousTimeStamp = timestamp;
-      const dragDistance = getDragDistance();
+      const dragDistance = dragState.getDragDistance();
       const scrollDistance = dragState.getScrollDistance();
 
       if (scrollDistance !== 0) {
@@ -63,7 +42,7 @@ function onTabDragPointerMove(event) {
         dragState.eventType === "pointerdown" &&
         scrollDistance === 0 &&
         (dragState.tabPosInList >= dragState.minTabPosInList ||
-          dragState.dragState <= dragState.maxTabPosInList)
+          dragState.tabPosInList <= dragState.maxTabPosInList)
       ) {
         dragState.animation = null;
       }
@@ -96,7 +75,7 @@ function onTabDragPointerMove(event) {
       dragState.distanceToDrag = 0;
       dragState.animation = window.requestAnimationFrame(step);
     } else if (dragState.eventType == "pointerdown") {
-      dragTab.call(this, { distance: getDragDistance() });
+      dragTab.call(this, { distance: dragState.getDragDistance() });
     }
   }
 }

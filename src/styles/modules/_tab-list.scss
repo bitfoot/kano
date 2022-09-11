@@ -37,14 +37,8 @@
   }
 
   &--scroll {
-    // use max available space for offset (totalContent - visibleContent (506))
     transform: translateY(var(--y-offset));
-    // transition: transform var(--scroll-drag-speed) linear;
-    // transition: transform 400ms ease-in-out;
     transition: none;
   }
 
-  &--deleting {
-    // padding-bottom: var(--block-height);
-  }
 }

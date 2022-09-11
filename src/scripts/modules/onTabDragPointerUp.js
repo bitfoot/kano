@@ -4,31 +4,27 @@ const adjustMenu = require("./adjustMenu");
 
 function onTabDragPointerUp(event) {
   const state = this;
-  const dragState = this.dragState;
+  const dragState = state.dragState;
   if (dragState.animation) {
     console.log(`cancelled animation from within onDragPointerUp`);
     cancelAnimationFrame(dragState.animation);
     dragState.animation = null;
   }
 
-  if (dragState.kbDragAnimation) {
-    cancelAnimationFrame(dragState.kbDragAnimation);
-    dragState.kbDragAnimation = null;
-  }
-
   dragState.tabListContainer.classList.remove("tab-list-container--no-scroll");
 
   const draggedTabId = state.dragState.draggedTab.id;
   const draggedTabTopPos = dragState.tabPosInList;
-  const draggedTabInitialPos = dragState.initialTabPos;
-  const draggedTabIdInBrowser = +dragState.draggedTab.id.split("-")[1];
+  // const draggedTabInitialPos = dragState.initialTabPos;
+  const draggedTabIdInBrowser = +draggedTabId.split("-")[1];
   const draggedTabIndex = state.tabIndices[draggedTabId][0];
-  const midPoint = (dragState.tabHeight + dragState.margin) / 2;
   const halfTabHeight = dragState.tabHeight / 2;
   // let isMoved = false;
   let movedDirection = null;
-  const draggedTabVisibleIndex = draggedTabInitialPos / 46;
+  const draggedTabVisibleIndex = state.tabIndices[draggedTabId][1];
   let replacedTabVisibleIndex = null;
+  let replacedTabId = null;
+  let replacedTabTitle = null;
 
   // if tab was dragged above where it was originally
   if (draggedTabTopPos < dragState.initialTabPos) {
@@ -37,9 +33,7 @@ function onTabDragPointerUp(event) {
         dragState.tabsPosInfo[tab.id].initialPos + halfTabHeight;
       let isFilteredOut = false;
       if (state.filterState.tabs[tab.id]) {
-        if (state.filterState.tabs[tab.id].isFilteredOut) {
-          isFilteredOut = true;
-        }
+        isFilteredOut = state.filterState.tabs[tab.id].isFilteredOut;
       }
       if (
         !isFilteredOut &&
@@ -54,33 +48,38 @@ function onTabDragPointerUp(event) {
     });
 
     if (replacedTab) {
+      replacedTabTitle = replacedTab.querySelector(".tab__title").innerText;
+      replacedTabId = replacedTab.id;
       // isMoved = true;
       movedDirection = "up";
       const replacedTabIndex = state.tabIndices[replacedTab.id][0];
-      replacedTabVisibleIndex =
-        dragState.tabsPosInfo[replacedTab.id].initialPos / 46;
+      replacedTabVisibleIndex = state.tabIndices[replacedTab.id][1];
       // update tab indices
       state.tabIndices[draggedTabId][0] = replacedTabIndex;
       dragState.tabsAbove.slice(replacedTabIndex).forEach(tab => {
         state.tabIndices[tab.id][0] += 1;
       });
 
-      let newTabOffset = 0;
+      let newFilterOffset = 0;
       if (state.filterState.tabs[replacedTab.id]) {
         if (state.filterState.tabs[draggedTabId]) {
-          newTabOffset = state.filterState.tabs[replacedTab.id].filterOffset;
-          state.filterState.tabs[draggedTabId].filterOffset = newTabOffset;
+          newFilterOffset = state.filterState.tabs[replacedTab.id].filterOffset;
+          state.filterState.tabs[draggedTabId].filterOffset = newFilterOffset;
+          dragState.tabsPosInfo[draggedTabId].filterOffset = newFilterOffset;
         }
       }
 
       dragState.tabList.insertBefore(dragState.draggedTab, replacedTab);
-      dragState.draggedTab.style.setProperty("--y-offset", newTabOffset + "px");
+      dragState.draggedTab.style.setProperty(
+        "--y-offset",
+        newFilterOffset + "px"
+      );
 
       // move the actual chrome tab
-      const replacedTabId = +replacedTab.id.split("-")[1];
-      chrome.tabs.get(replacedTabId).then(tabDetails => {
-        chrome.tabs.move(draggedTabIdInBrowser, { index: tabDetails.index });
-      });
+      const replacedTabIdInBrowser = +replacedTab.id.split("-")[1];
+      // chrome.tabs.get(replacedTabIdInBrowser).then(tabDetails => {
+      //   chrome.tabs.move(draggedTabIdInBrowser, { index: tabDetails.index });
+      // });
     }
   } else {
     // if tab was dragged below where it was originally.
@@ -90,9 +89,7 @@ function onTabDragPointerUp(event) {
       const draggedTabBottom = draggedTabTopPos + dragState.tabHeight;
       let isFilteredOut = false;
       if (state.filterState.tabs[tab.id]) {
-        if (state.filterState.tabs[tab.id].isFilteredOut) {
-          isFilteredOut = true;
-        }
+        isFilteredOut = state.filterState.tabs[tab.id].isFilteredOut;
       }
       if (
         !isFilteredOut &&
@@ -108,11 +105,12 @@ function onTabDragPointerUp(event) {
     });
 
     if (replacedTab) {
+      replacedTabTitle = replacedTab.querySelector(".tab__title").innerText;
+      replacedTabId = replacedTab.id;
       // isMoved = true;
-      movedDirection = "up";
+      movedDirection = "down";
       const replacedTabIndex = state.tabIndices[replacedTab.id][0];
-      replacedTabVisibleIndex =
-        dragState.tabsPosInfo[replacedTab.id].initialPos / 46;
+      replacedTabVisibleIndex = state.tabIndices[replacedTab.id][1];
       state.tabIndices[draggedTabId][0] = replacedTabIndex;
       dragState.tabsBelow
         .slice(0, replacedTabIndex - draggedTabIndex)
@@ -120,23 +118,27 @@ function onTabDragPointerUp(event) {
           state.tabIndices[tab.id][0] -= 1;
         });
 
-      let newTabOffset = 0;
+      let newFilterOffset = 0;
       if (state.filterState.tabs[replacedTab.id]) {
         if (state.filterState.tabs[draggedTabId]) {
-          newTabOffset = state.filterState.tabs[replacedTab.id].filterOffset;
-          state.filterState.tabs[draggedTabId].filterOffset = newTabOffset;
+          newFilterOffset = state.filterState.tabs[replacedTab.id].filterOffset;
+          state.filterState.tabs[draggedTabId].filterOffset = newFilterOffset;
+          dragState.tabsPosInfo[draggedTabId].filterOffset = newFilterOffset;
         }
       }
       dragState.tabList.insertBefore(
         dragState.draggedTab,
         replacedTab.nextSibling
       );
-      dragState.draggedTab.style.setProperty("--y-offset", newTabOffset + "px");
+      dragState.draggedTab.style.setProperty(
+        "--y-offset",
+        newFilterOffset + "px"
+      );
 
-      const replacedTabId = +replacedTab.id.split("-")[1];
-      chrome.tabs.get(replacedTabId).then(tabDetails => {
-        chrome.tabs.move(draggedTabIdInBrowser, { index: tabDetails.index });
-      });
+      const replacedTabIdInBrowser = +replacedTab.id.split("-")[1];
+      // chrome.tabs.get(replacedTabIdInBrowser).then(tabDetails => {
+      //   chrome.tabs.move(draggedTabIdInBrowser, { index: tabDetails.index });
+      // });
     }
   }
 
@@ -150,32 +152,33 @@ function onTabDragPointerUp(event) {
 
   // reset style values of all the tabs to their defaults
   dragState.listedTabs.forEach(tab => {
-    if (tab.id === draggedTabId && movedDirection !== null) {
-      return;
-    }
+    // if (tab.id !== draggedTabId) {
     let filterOffset = dragState.tabsPosInfo[tab.id].filterOffset;
-    let dragOffset = dragState.tabsPosInfo[tab.id].dragOffset;
+    // let dragOffset = dragState.tabsPosInfo[tab.id].dragOffset;
+    let dragOffset;
 
-    if (movedDirection !== null) {
-      if (dragOffset !== 0) {
-        if (dragOffset > midPoint) {
-          dragOffset = dragState.tabHeight + dragState.margin;
-        } else {
-          dragOffset = (dragState.tabHeight + dragState.margin) * -1;
-        }
-      }
-    } else {
+    dragOffset = 0;
+
+    // if (tab.id === draggedTabId) {
+    //   console.log(
+    //     `movedDirection: ${movedDirection}, dragOffset: ${dragState.tabsPosInfo[tab.id].dragOffset
+    //     }, filterOffset: ${state.filterState.tabs[tab.id].filterOffset
+    //     }, replacedTabTitle: ${replacedTabTitle}`
+    //   );
+    // }
+
+    if (tab.id == draggedTabId) {
       dragOffset = 0;
     }
-
     let newOffset = filterOffset + dragOffset;
-    if (state.filterState.tabs[tab.id]) {
-      state.filterState.tabs[tab.id].filterOffset = newOffset;
-    }
-    tab.style.setProperty("--y-offset", newOffset + "px");
-    tab.style.setProperty("--opacity", 1);
-    tab.style.setProperty("--scale", 0.99);
-    tab.classList.remove("tab--moving", "tab--moveable");
+    requestAnimationFrame(() => {
+      tab.style.setProperty("--y-offset", newOffset + "px");
+      tab.style.setProperty("--opacity", 1);
+      tab.style.setProperty("--scale", 0.99);
+      tab.classList.remove("tab--moving");
+    });
+
+    // }
   });
 
   if (this.scrollState.tabListOffset !== 0) {

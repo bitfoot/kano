@@ -4,7 +4,6 @@ const addTab = require("./modules/addTab");
 const deleteTabs = require("./modules/deleteTabs");
 const initializeTabDrag = require("./modules/initializeTabDrag");
 const initializeScrollbarDrag = require("./modules/initializeScrollbarDrag");
-const scroll = require("./modules/scroll");
 const filter = require("./modules/filter");
 const onScroll = require("./modules/onScroll");
 const adjustMenu = require("./modules/adjustMenu");
@@ -13,10 +12,8 @@ const state = {
   tabList: document.getElementById("tab-list"),
   orderedTabObjects: [],
   tabs: [],
-  // { id, indexInTabs}
   visibleTabIds: [],
   hiddenTabIds: [],
-
   tabIndices: {},
   tabIdsByURL: {
     // "https://www.google.com" : ["tab-1", "tab-2", "tab-3"]
@@ -26,11 +23,11 @@ const state = {
   // have to keep order of all tab Ids so that they can be moved on UI (before actual browser tabs are moved)
   dragState: null,
   dragTimer: null,
-  maxScrollbarThumbOffset: 0,
-  totalFilteredOutTabs: 0,
-  lastFilteredOutTabs: 0,
-  filteredInTabs: 0,
-  filterIsActive: false,
+  // maxScrollbarThumbOffset: 0,
+  // totalFilteredOutTabs: 0,
+  // lastFilteredOutTabs: 0,
+  // filteredInTabs: 0,
+  // filterIsActive: false,
   selectedTabs: [],
   filterState: {
     filterIsActive: false,
@@ -214,7 +211,7 @@ document.addEventListener(`input`, e => {
       state.orderedTabObjects[tabIndex].isChecked = false;
     }
     adjustMenu.call(state);
-  } else if (e.target.id == "filter-input") {
+  } else if (e.target.id === "filter-input") {
     filter.call(state);
   }
 });
@@ -231,16 +228,8 @@ document.addEventListener("pointerdown", e => {
     parent.classList.add("tab--held-down");
 
     requestAnimationFrame(() => {
-      parent.style.setProperty(
-        "--x-pos",
-        // e.clientX - 50007.5 + "px"
-        e.clientX - bounds.left + "px"
-      );
-      parent.style.setProperty(
-        "--y-pos",
-        // e.clientY - 50007.5 + "px"
-        e.clientY - bounds.top + "px"
-      );
+      parent.style.setProperty("--x-pos", e.clientX - bounds.left + "px");
+      parent.style.setProperty("--y-pos", e.clientY - bounds.top + "px");
     });
 
     state.dragTimer = setTimeout(initializeTabDrag.bind(state, e), 500);
@@ -250,7 +239,7 @@ document.addEventListener("pointerdown", e => {
     };
   } else if (e.target.id === "scrollbar-thumb") {
     initializeScrollbarDrag.call(state, e);
-  } else if (e.target.id == "scrollbar-track") {
+  } else if (e.target.id === "scrollbar-track") {
     const pointerPos = e.pageY;
     const posOnTrack = pointerPos - state.scrollState.headerHeight;
     const trackRatio = posOnTrack / state.scrollState.scrollbarTrackSpace;

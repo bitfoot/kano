@@ -2,40 +2,41 @@
 const onTabDragPointerMove = require("./onTabDragPointerMove");
 const onTabDragPointerUp = require("./onTabDragPointerUp");
 const resetTransitionVariables = require("./util").resetTransitionVariables;
+const easeInQuad = require("./util").easeInQuad;
 
 function initializeTabDrag(event) {
   const eventType = event.type;
+  let sign;
   if (eventType == "pointerdown") {
     console.log(`drag initiated from pointerdown event.`);
   } else {
     console.log(`drag initiated from keydown event.`);
   }
 
-  const state = this;
   const draggedTab = event.target.parentElement;
   const pointerPosition = event.pageY;
   const container = this.scrollState.container;
-  const bodyHeight = document.body.offsetHeight;
+
   // disable system scrolling while tab is being dragged
   container.classList.add("tab-list-container--no-scroll");
   const tabList = this.tabList;
   const scrollState = this.scrollState;
-  const scrollTop = this.scrollState.scrollTop;
+  const scrollTop = scrollState.scrollTop;
   const tabListHeight = tabList.offsetHeight;
-  const headerHeight = this.scrollState.headerHeight;
+  const headerHeight = scrollState.headerHeight;
   const tabHeight = draggedTab.offsetHeight;
   const margin = 6;
 
-  const wholeContentHeight = state.visibleTabIds.length * (tabHeight + margin);
+  const wholeContentHeight = this.visibleTabIds.length * (tabHeight + margin);
 
-  const listedTabs = state.tabs;
+  const listedTabs = this.tabs;
 
   const tabsPosInfo = listedTabs.reduce((a, t) => {
     const offsetTop = t.offsetTop;
     const dragOffset = 0;
     let filterOffset = 0;
     if (this.filterState.tabs[t.id]) {
-      filterOffset = state.filterState.tabs[t.id].filterOffset;
+      filterOffset = this.filterState.tabs[t.id].filterOffset;
     }
     const initialPos = offsetTop + filterOffset;
 
@@ -49,7 +50,7 @@ function initializeTabDrag(event) {
     return a;
   }, {});
 
-  const tabIndex = state.tabIndices[draggedTab.id][0];
+  const tabIndex = this.tabIndices[draggedTab.id][0];
   const tabsAbove = listedTabs.slice(0, tabIndex);
   const tabsBelow = listedTabs.slice(tabIndex + 1);
   const initialTabPos = tabsPosInfo[draggedTab.id].initialPos;
@@ -58,7 +59,7 @@ function initializeTabDrag(event) {
     initialTabPos +
     headerHeight -
     scrollState.scrollTop -
-    this.scrollState.tabListOffset;
+    scrollState.tabListOffset;
   const initialBottomPosInViewport = initialTopPosInViewport + tabHeight;
 
   const shiftY = pointerPosition - initialTabPos - headerHeight + scrollTop;
@@ -75,16 +76,18 @@ function initializeTabDrag(event) {
   };
 
   // draggedTab.setPointerCapture(event.pointerId);
+  resetTransitionVariables.call(this);
   draggedTab.classList.add("tab--draggable");
   draggedTab.classList.remove("tab--held-down");
-  resetTransitionVariables.call(this);
+
   listedTabs
-    .filter(t => t.id != draggedTab.id)
+    .filter(t => t.id !== draggedTab.id)
     .forEach(t => {
-      t.classList.add("tab--moveable", "tab--moving");
+      t.classList.add("tab--moving");
     });
 
   this.dragState = {
+    sign,
     animationStart: null,
     animationElapsed: 0,
     distance: 0,
@@ -99,7 +102,7 @@ function initializeTabDrag(event) {
     // get kbDragProgress() {
     //   return this.distanceDraggedViaKb / 46;
     // },
-    kbDragAnimation: null,
+    // kbDragAnimation: null,
     tabsPosInfo,
     scrollState,
     animation: null,
@@ -113,6 +116,25 @@ function initializeTabDrag(event) {
         return this.pointerPosition - this.shiftY;
       } else {
         return this.tabPosInViewport.top + this.distanceToDrag;
+      }
+    },
+    getDragDistance() {
+      if (this.eventType == "pointerdown") {
+        let tabPosInViewport = this.tabPosInViewport.top;
+        return this.imaginaryTopPos - tabPosInViewport;
+      } else {
+        const progress = Math.min(1, this.animationElapsed / 220);
+        const prevDistance = this.distanceDraggedViaKb;
+        const newDistance = easeInQuad(progress, 0, 46, 1) * this.sign;
+        const distanceToDrag = newDistance - prevDistance;
+        this.distanceToDrag = distanceToDrag;
+        this.distanceDraggedViaKb = newDistance;
+
+        if (progress === 1) {
+          this.animation = null;
+        }
+
+        return distanceToDrag;
       }
     },
     headerHeight,
@@ -157,7 +179,7 @@ function initializeTabDrag(event) {
     tabsAbove,
     tabsBelow,
     tabMinPosInViewport: headerHeight,
-    tabMaxPosInViewport: bodyHeight - margin - tabHeight,
+    // tabMaxPosInViewport: bodyHeight - margin - tabHeight,
     tabPositionInTheList: 0,
     minTabPosInList,
     maxTabPosInList,
@@ -169,7 +191,7 @@ function initializeTabDrag(event) {
         this.maxTabOffsetInList -
         this.scrollState.maxScrollTop +
         this.scrollState.tabListOffset +
-        this.scrollTop;
+        this.scrollState.scrollTop;
 
       return maxOffset;
     },
@@ -177,7 +199,7 @@ function initializeTabDrag(event) {
       const minOffset =
         this.minTabOffsetInList +
         this.scrollState.tabListOffset +
-        this.scrollTop;
+        this.scrollState.scrollTop;
       return minOffset;
     },
 

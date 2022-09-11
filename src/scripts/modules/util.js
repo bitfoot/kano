@@ -1,17 +1,15 @@
 "use strict";
 
-function adjustBodyPadding() {
-  const tabList = document.getElementById("tab-list");
-  if (tabList.scrollHeight > 554) {
-    tabList.classList.add("tab-list--scroll");
-  } else {
-    tabList.classList.remove("tab-list--scroll");
-  }
-}
-
 function easeInOutQuad(time, b, c, duration) {
   if ((time /= duration / 2) < 1) return (c / 2) * time * time + b;
   return (-c / 2) * (--time * (time - 2) - 1) + b;
+}
+
+function getFaviconUrl(url) {
+  let faviconUrl = new URL(`chrome-extension://${chrome.runtime.id}/_favicon/`);
+  faviconUrl.searchParams.append("pageUrl", url);
+  faviconUrl.searchParams.append("size", "32");
+  return faviconUrl.href;
 }
 
 function easeInQuad(time, b, c, duration) {
@@ -243,7 +241,6 @@ function createDuplicateIndicatorSvg() {
 }
 
 module.exports = {
-  adjustBodyPadding,
   adjustScrollbar,
   getContainerToContentRatio,
   getContentHeight,
@@ -253,5 +250,6 @@ module.exports = {
   getScrollbarHeight,
   resetTransitionVariables,
   easeInOutQuad,
-  easeInQuad
+  easeInQuad,
+  getFaviconUrl
 };

@@ -214,20 +214,20 @@
     position: relative;
     transform: translateY(var(--y-offset)) scale(0.99);
     background-color: transparent;
-    transition: background-color 300ms ease-in-out, transform 300ms ease-in-out, opacity 300ms ease-out;
+    transition: background-color 300ms ease-out, transform 300ms ease-out, opacity 300ms ease-out;
 
     &::before {
       content: "";
       position: absolute;
-      width: 800rem;
-      height: 800rem;
+      width: 680rem;
+      height: 680rem;
       top: 0;
       left: 0;
       z-index: -1;
-      // transform: translate(var(--x-pos), var(--y-pos)) scale(0.015);
       transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%)) scale(0.1);
       transition: none;
-      background: radial-gradient(circle at center, transparent 0.6%, var(--color-two-hover) 1.6% 100%);
+      // background: radial-gradient(circle at center, transparent 0.6%, red 1.6% 100%);
+      background: radial-gradient(circle at center, transparent 0.5%, var(--color-two-hover) 1% 100%);
       animation: 500ms ease-in forwards heldDown;
     }
 
@@ -355,7 +355,7 @@
   }
 
   to {
-    transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%)) scale(10);
+    transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%)) scale(15);
   }
 }
 

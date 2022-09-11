@@ -28,21 +28,7 @@ function createTabComponent(tab) {
   // create favIcon
   const favIcon = document.createElement("img");
   favIcon.classList.add("tab__favicon");
-  if (tab.favIconUrl) {
-    favIcon.src = tab.favIconUrl;
-  } else {
-    const url = tab.url;
-    const getFaviconUrl = url => {
-      let faviconUrl = new URL(
-        `chrome-extension://${chrome.runtime.id}/_favicon/`
-      );
-      faviconUrl.searchParams.append("pageUrl", url);
-      faviconUrl.searchParams.append("size", "32");
-      return faviconUrl.href;
-    };
-    const faviconUrl = getFaviconUrl(url);
-    favIcon.src = faviconUrl || "images/default20.png";
-  }
+  favIcon.src = tab.favIconUrl;
 
   const domainName = tab.url.match(/(?<=:\/\/).+?(?=\/|$)/);
   favIcon.alt = domainName;
