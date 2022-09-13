@@ -2,8 +2,6 @@
 
 const scroll = require("./scroll");
 const dragTab = require("./dragTab");
-// const easeInOutQuad = require("./util").easeInOutQuad;
-// const easeInQuad = require("./util").easeInQuad;
 
 function onTabDragPointerMove(event) {
   const dragState = this.dragState;

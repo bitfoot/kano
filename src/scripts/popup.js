@@ -252,11 +252,18 @@ document.addEventListener("pointerdown", e => {
   }
 });
 
-// document.addEventListener("pointermove", e => {
-//   // const pointerId = e.pointerId;
-//   // document.documentElement.setPointerCapture(pointerId);
-//   console.log(e.pageX, e.pageY);
-// });
+document.addEventListener("pointermove", e => {
+  if (e.target.classList.contains("tab__tab-button")) {
+    const tabButton = e.target;
+    const parent = tabButton.parentElement;
+    const bounds = parent.getBoundingClientRect();
+    requestAnimationFrame(() => {
+      parent.style.setProperty("--x-pos", e.clientX - bounds.left + "px");
+      parent.style.setProperty("--y-pos", e.clientY - bounds.top + "px");
+    });
+  }
+  // console.log(e.pageX, e.pageY);
+});
 
 document.addEventListener("contextmenu", e => {
   if (e.target.classList.contains("tab__tab-button")) {

@@ -132,6 +132,9 @@ function initializeTabDrag(event) {
 
         if (progress === 1) {
           this.animation = null;
+          // this.animationElapsed = 0;
+          // this.distanceDraggedViaKb = 0;
+          // this.distanceToDrag = 0;
         }
 
         return distanceToDrag;
