@@ -3,6 +3,7 @@ const renderTabComponents = require("./modules/renderTabComponents");
 const addTab = require("./modules/addTab");
 const deleteTabs = require("./modules/deleteTabs");
 const initializeTabDrag = require("./modules/initializeTabDrag");
+const moveTabs = require("./modules/moveTabs");
 const initializeScrollbarDrag = require("./modules/initializeScrollbarDrag");
 const filter = require("./modules/filter");
 const onScroll = require("./modules/onScroll");
@@ -163,7 +164,7 @@ document.addEventListener("click", e => {
       checkbox.checked = shouldBeChecked;
     });
     adjustMenu.call(state);
-  } else if (e.target.id == "close-selected-btn") {
+  } else if (e.target.id === "close-selected-btn") {
     const tabIds = state.visibleTabIds.filter(id => {
       const obj = state.orderedTabObjects[state.tabIndices[id][0]];
       if (obj.isChecked) {
@@ -171,7 +172,16 @@ document.addEventListener("click", e => {
       }
     });
     deleteTabs.call(state, tabIds);
-  } else if (e.target.id == "remove-filter-text-btn") {
+  } else if (e.target.id === "move-to-bottom-btn") {
+    const tabIds = state.visibleTabIds.filter(id => {
+      const obj = state.orderedTabObjects[state.tabIndices[id][0]];
+      if (obj.isChecked) {
+        return true;
+      }
+    });
+    moveTabs.call(state, tabIds);
+    // adjustMenu.call(state);
+  } else if (e.target.id === "remove-filter-text-btn") {
     const filterInput = state.filterState.input;
     filterInput.classList.add("filter__input--cleared");
     setTimeout(() => {

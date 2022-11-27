@@ -6,10 +6,6 @@
   height: var(--block-height);
   background: transparent;
 
-  // &:focus {
-  //   box-shadow: none;
-  // }
-
   &:hover {
     & .filter__input {
       background: var(--color-two-hover);
@@ -22,33 +18,24 @@
     // top: 0;
     font-size: 1rem;
     background: var(--color-two);
-    color: white;
+    color: var(--color-three);
     padding: var(--greater-padding);
     padding-left: var(--block-height);
     padding-right: var(--block-height);
     height: 100%;
-    // height: 40px;
     width: 100%;
-    // width: 16rem;
     border: 0;
-    overflow-x: scroll;
     border-radius: var(--lesser-padding);
-    box-shadow: 0 0 0 2px var(--color-one);
-    transition: background-color 100ms ease-in-out, box-shadow 100ms ease-in-out;
-
-    // &:hover {
-    //   background: var(--color-two-hover);
-    //   transition: background-color 100ms ease-in-out, box-shadow 100ms ease-in-out;
-    // }
+    transition: color 2000ms ease-out, background-color 100ms ease-in-out, box-shadow 100ms ease-in-out;
 
     &:focus {
-      box-shadow: inset 0 0 0 2px lime;
+      box-shadow: inset 0 0 0 2px lime, 0 0 0 2px var(--color-one);
       transition: background-color 100ms ease-in-out, box-shadow 100ms ease-in;
     }
 
     &--cleared {
       color: transparent;
-      transition: color 100ms ease-out;
+      transition: color 2000ms ease-out;
     }
   }
 
