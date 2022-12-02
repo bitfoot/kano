@@ -12,14 +12,12 @@ function adjustMenu() {
     btn.classList.add("menu-item-btn--disabled");
   };
 
-  // console.log("poop");
   const enableButton = btn => {
     btn.removeAttribute("disabled");
     btn.classList.remove("menu-item-btn--disabled");
   };
 
   // get the buttons
-  // const menuButtons = [...document.getElementsByClassName(`menu-item-btn`)];
   const moveToTopBtn = document.getElementById("move-to-top-btn");
   const moveToBottomBtn = document.getElementById("move-to-bottom-btn");
   const closeSelectedBtn = document.getElementById("close-selected-btn");
@@ -39,53 +37,12 @@ function adjustMenu() {
     lastUncheckedVisibleIndex: null,
     firstCheckedVisibleIndex: null,
     lastHiddenTabIndex: this.filterState.lastHiddenTabIndex,
-    duplicateVisibleTabIds: []
+    duplicateVisibleTabIds: [],
+    numChecked: 0,
+    numCheckedAboveLastUnchecked: null
   };
 
-  // if (this.hiddenTabIds.length !== 0) {
-  //   accumulator.firstHiddenTabIndex = this.tabIndices[this.hiddenTabIds[0]];
-  //   accumulator.lastHiddenTabIndex = this.tabIndices[
-  //     this.hiddenTabIds[this.hiddenTabIds.length - 1]
-  //   ];
-  // }
-
-  // console.log(
-  //   `firstHiddenTabIndex: ${accumulator.firstHiddenTabIndex
-  //   }, lastHiddenTabIndex: ${accumulator.lastHiddenTabIndex}`
-  // );
-  // const menuData = this.orderedTabObjects.reduce((a, o, i) => {
-  //   if (o.isVisible) {
-  //     this.visibleTabIds.push(o.id);
-  //     if (o.isDuplicate) {
-  //       a.duplicateVisibleTabIds.push(o.id);
-  //     }
-  //     a.visibleIndices[o.id] = i;
-
-  //     if (o.isChecked) {
-  //       if (a.firstCheckedVisibleIndex === null) {
-  //         a.firstCheckedVisibleIndex = i;
-  //       }
-  //       a.lastCheckedVisibleIndex = i;
-  //       a.checkedVisibleTabs.push(o);
-  //     } else {
-  //       if (a.firstUncheckedVisibleIndex === null) {
-  //         a.firstUncheckedVisibleIndex = i;
-  //       }
-  //       a.lastUncheckedVisibleIndex = i;
-  //       a.uncheckedVisibleTabs.push(o);
-  //     }
-  //   } else {
-  //     this.hiddenTabIds.push(o.id);
-  //     a.visibleIndices[o.id] = null;
-  //     a.lastHiddenTabIndex = i;
-  //     if (a.firstHiddenTabIndex === null) {
-  //       a.firstHiddenTabIndex = i;
-  //     }
-  //   }
-  //   return a;
-  // }, accumulator);
-
-  const menuData = this.visibleTabIds.reduce((a, id) => {
+  this.menuData = this.visibleTabIds.reduce((a, id) => {
     const indexInBrowser = this.tabIndices[id][0];
     const tabObject = this.orderedTabObjects[indexInBrowser];
     if (tabObject.isDuplicate) {
@@ -98,12 +55,14 @@ function adjustMenu() {
       }
       a.lastCheckedVisibleIndex = indexInBrowser;
       a.checkedVisibleTabs.push(this.tabs[indexInBrowser]);
+      a.numChecked += 1;
     } else {
       if (a.firstUncheckedVisibleIndex === null) {
         a.firstUncheckedVisibleIndex = indexInBrowser;
       }
       a.lastUncheckedVisibleIndex = indexInBrowser;
       a.uncheckedVisibleTabs.push(this.tabs[indexInBrowser]);
+      a.numCheckedAboveLastUnchecked = a.numChecked;
     }
 
     return a;
@@ -146,7 +105,8 @@ function adjustMenu() {
   // firstCheckedVisibleIndex
   // lastHiddenTabIndex
 
-  const checkedVisibleTabsExist = menuData.lastCheckedVisibleIndex !== null;
+  const checkedVisibleTabsExist =
+    this.menuData.lastCheckedVisibleIndex !== null;
   let enableMoveToTopBtn = false;
   let enableMoveToBottomBtn = false;
   let enableCloseSelectedBtn = false;
@@ -155,22 +115,24 @@ function adjustMenu() {
     enableCloseSelectedBtn = true;
 
     const uncheckedVisibleTabsAboveExist =
-      menuData.firstUncheckedVisibleIndex !== null &&
-      menuData.firstUncheckedVisibleIndex < menuData.lastCheckedVisibleIndex;
+      this.menuData.firstUncheckedVisibleIndex !== null &&
+      this.menuData.firstUncheckedVisibleIndex <
+      this.menuData.lastCheckedVisibleIndex;
 
     const hiddenTabsAboveExist =
-      menuData.firstHiddenTabIndex !== null &&
-      menuData.firstHiddenTabIndex < menuData.lastCheckedVisibleIndex;
+      this.menuData.firstHiddenTabIndex !== null &&
+      this.menuData.firstHiddenTabIndex < this.menuData.lastCheckedVisibleIndex;
 
     enableMoveToTopBtn = uncheckedVisibleTabsAboveExist || hiddenTabsAboveExist;
 
     const uncheckedVisibleTabsBelowExist =
-      menuData.lastUncheckedVisibleIndex !== null &&
-      menuData.lastUncheckedVisibleIndex > menuData.firstCheckedVisibleIndex;
+      this.menuData.lastUncheckedVisibleIndex !== null &&
+      this.menuData.lastUncheckedVisibleIndex >
+      this.menuData.firstCheckedVisibleIndex;
 
     const hiddenTabsBelowExist =
-      menuData.lastHiddenTabIndex !== null &&
-      menuData.lastHiddenTabIndex > menuData.firstCheckedVisibleIndex;
+      this.menuData.lastHiddenTabIndex !== null &&
+      this.menuData.lastHiddenTabIndex > this.menuData.firstCheckedVisibleIndex;
 
     enableMoveToBottomBtn =
       uncheckedVisibleTabsBelowExist || hiddenTabsBelowExist;
@@ -183,7 +145,7 @@ function adjustMenu() {
     enableButton(selectDeselectAllBtn);
   }
   // if there are duplicate tabs visible, enable the "Close Duplicates" button
-  if (menuData.duplicateVisibleTabIds.length > 0) {
+  if (this.menuData.duplicateVisibleTabIds.length > 0) {
     enableButton(closeDuplicatesBtn);
   } else {
     disableButton(closeDuplicatesBtn);

@@ -1,5 +1,7 @@
 "use strict";
 
+const adjustMenu = require("./adjustMenu");
+
 function moveTabs(tabIds, direction) {
   const tabsToMove = tabIds.map(id => {
     const index = this.tabIndices[id][0];
@@ -18,12 +20,12 @@ function moveTabs(tabIds, direction) {
   );
 
   // 1. Get checked visible tabs
-  const checkedVisibleTabIds = this.visibleTabIds.filter(id => {
-    const obj = this.orderedTabObjects[this.tabIndices[id][0]];
-    if (obj.isChecked) {
-      return true;
-    }
-  });
+  // const checkedVisibleTabIds = this.visibleTabIds.filter(id => {
+  //   const obj = this.orderedTabObjects[this.tabIndices[id][0]];
+  //   if (obj.isChecked) {
+  //     return true;
+  //   }
+  // });
 
   // 2. Get unchecked visible tabs
   const uncheckedVisibleTabIds = this.visibleTabIds.filter(id => {
@@ -49,48 +51,72 @@ function moveTabs(tabIds, direction) {
 
   // get info about tabs
   const tabsInfo = {};
+  const reorderedVisibleTabIds = [];
   let numCheckedAbove = 0;
+  // let numCheckedVisible = tabIds.length;
+  const numCheckedAboveLastUnchecked = this.menuData
+    .numCheckedAboveLastUnchecked;
   const reorderedTabObjects = [];
   this.orderedTabObjects.forEach((obj, i) => {
     const id = obj.id;
     tabsInfo[id] = {};
-    tabsInfo[id].oldIndices = this.tabIndices[id];
-    if (!obj.isChecked) {
-      if (this.tabIndices[id][1] === null) {
-        tabsInfo[id].newIndices = [
-          this.tabIndices[id][0] - numCheckedAbove,
-          null
-        ];
-      } else {
-        tabsInfo[id].newIndices = [
+    // if tab is visible
+    if (this.tabIndices[id][1] !== null) {
+      // if tab is NOT checked
+      if (!obj.isChecked) {
+        this.tabIndices[id] = [
           this.tabIndices[id][0] - numCheckedAbove,
           this.tabIndices[id][1] - numCheckedAbove
         ];
+      } else {
+        const uncheckedBelowExist =
+          lastUncheckedVisibleTabIndices[0] > this.tabIndices[id][0];
+
+        if (uncheckedBelowExist) {
+          this.tabIndices[id] = [
+            lastUncheckedVisibleTabIndices[0] +
+            1 -
+            numCheckedAboveLastUnchecked +
+            numCheckedAbove,
+            lastUncheckedVisibleTabIndices[0] +
+            1 -
+            numCheckedAboveLastUnchecked +
+            numCheckedAbove
+          ];
+          numCheckedAbove += 1;
+        }
       }
+      reorderedVisibleTabIds[this.tabIndices[id][1]] = id;
     } else {
-      tabsInfo[id].newIndices = [
-        lastUncheckedVisibleTabIndices[0] + numCheckedAbove,
-        lastUncheckedVisibleTabIndices[1] + numCheckedAbove
-      ];
-
-      console.log(tabsInfo[id].newIndices);
+      // if visible and unchecked tabs exist below
+      if (this.tabIndices[id][0] < this.menuData.lastUncheckedVisibleIndex) {
+        // if tab is NOT checked
+        if (!obj.isChecked) {
+          this.tabIndices[id] = [
+            this.tabIndices[id][0] - numCheckedAbove,
+            null
+          ];
+        } else {
+          this.tabIndices[id] = [
+            this.tabIndices[id][0] - numCheckedAbove,
+            null
+          ];
+        }
+      }
     }
 
-    reorderedTabObjects[tabsInfo[id].newIndices[0]] = obj;
-
-    // tabsInfo[obj.id].numCheckedAbove = numCheckedAbove;
-    if (obj.isChecked) {
-      numCheckedAbove += 1;
-    }
+    reorderedTabObjects[this.tabIndices[id][0]] = obj;
   });
 
   console.log(this.orderedTabObjects);
   console.log(reorderedTabObjects);
 
   this.orderedTabObjects = reorderedTabObjects;
+  this.visibleTabIds = reorderedVisibleTabIds;
 
   // move tabs in the DOM
   const fragmentOfChecked = document.createDocumentFragment();
+  // all tabs need their filterOffset updated, not just tabs to move
   tabsToMove.forEach(tab => {
     if (this.filterState.tabs[tab.id]) {
       this.filterState.tabs[
@@ -110,6 +136,7 @@ function moveTabs(tabIds, direction) {
   );
 
   this.tabs = [...this.tabList.children];
+  adjustMenu.call(this);
   // console.log(this.tabs);
 }
 

@@ -24,6 +24,7 @@ const state = {
   // have to keep order of all tab Ids so that they can be moved on UI (before actual browser tabs are moved)
   dragState: null,
   dragTimer: null,
+  menuData: null,
   // maxScrollbarThumbOffset: 0,
   // totalFilteredOutTabs: 0,
   // lastFilteredOutTabs: 0,
