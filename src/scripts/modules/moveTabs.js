@@ -7,17 +7,17 @@ function moveTabs(tabIds, direction) {
     const index = this.tabIndices[id][0];
     return this.tabs[index];
   });
-  tabsToMove.forEach(t => (t.style.background = "red"));
+  // tabsToMove.forEach(t => (t.style.background = "red"));
 
   // use same animation as during kb drag
   // implement moving without animation at first
 
   // steps:
   // 1. Get current indices of all visible tabs
-  const visibleTabsOldIndices = {};
-  this.visibleTabIds.forEach(
-    id => (visibleTabsOldIndices[id] = this.tabIndices[id])
-  );
+  // const visibleTabsOldIndices = {};
+  // this.visibleTabIds.forEach(
+  //   id => (visibleTabsOldIndices[id] = this.tabIndices[id])
+  // );
 
   // 1. Get checked visible tabs
   // const checkedVisibleTabIds = this.visibleTabIds.filter(id => {
@@ -57,9 +57,11 @@ function moveTabs(tabIds, direction) {
   const numCheckedAboveLastUnchecked = this.menuData
     .numCheckedAboveLastUnchecked;
   const reorderedTabObjects = [];
+  let hiddenAbove = 0;
   this.orderedTabObjects.forEach((obj, i) => {
     const id = obj.id;
     tabsInfo[id] = {};
+    let newFilterOffset = null;
     // if tab is visible
     if (this.tabIndices[id][1] !== null) {
       // if tab is NOT checked
@@ -78,16 +80,40 @@ function moveTabs(tabIds, direction) {
             1 -
             numCheckedAboveLastUnchecked +
             numCheckedAbove,
-            lastUncheckedVisibleTabIndices[0] +
+            lastUncheckedVisibleTabIndices[1] +
             1 -
             numCheckedAboveLastUnchecked +
             numCheckedAbove
           ];
           numCheckedAbove += 1;
+          if (this.filterState.tabs[id]) {
+            // replacedTabFilterOffset = this.filterState.tabs[replacedTabId]
+            //   .filterOffset;
+            this.filterState.tabs[
+              id
+            ].filterOffset = lastUncheckedVisibleTabFilterOffset;
+          }
         }
+
+        // get filterOffset value from the tab whose old VISIBLE index it took
+        // const replacedTabId = this.visibleTabIds[this.tabIndices[id][1]];
+        // let replacedTabFilterOffset = null;
+        // if (this.filterState.tabs[id]) {
+        //   // replacedTabFilterOffset = this.filterState.tabs[replacedTabId]
+        //   //   .filterOffset;
+        //   this.filterState.tabs[
+        //     id
+        //   ].filterOffset = lastUncheckedVisibleTabFilterOffset;
+        // }
+
+        // console.log(
+        //   `title: ${obj.title}, indices: ${this.tabIndices[id]
+        //   }, replacedTabId: ${replacedTabId}, replacedTabFilterOffset: ${replacedTabFilterOffset}`
+        // );
       }
       reorderedVisibleTabIds[this.tabIndices[id][1]] = id;
     } else {
+      // hiddenAbove += 1;
       // if visible and unchecked tabs exist below
       if (this.tabIndices[id][0] < this.menuData.lastUncheckedVisibleIndex) {
         // if tab is NOT checked
@@ -114,19 +140,37 @@ function moveTabs(tabIds, direction) {
   this.orderedTabObjects = reorderedTabObjects;
   this.visibleTabIds = reorderedVisibleTabIds;
 
+  // visibleUnchecked tabs that are below the firstVisibleChecked AND above the lastVisibleUnchecked (inclusive)
+  // need their filterOffset updated to that of the firstVisibleChecked tab
+
   // move tabs in the DOM
   const fragmentOfChecked = document.createDocumentFragment();
   // all tabs need their filterOffset updated, not just tabs to move
-  tabsToMove.forEach(tab => {
+  // tabsToMove.forEach(tab => {
+  //   if (this.filterState.tabs[tab.id]) {
+  //     this.filterState.tabs[
+  //       tab.id
+  //     ].filterOffset = lastUncheckedVisibleTabFilterOffset;
+  //     tab.style.setProperty(
+  //       "--y-offset",
+  //       lastUncheckedVisibleTabFilterOffset + "px"
+  //     );
+  //   }
+  //   fragmentOfChecked.appendChild(tab);
+  // });
+  this.tabs.forEach(tab => {
     if (this.filterState.tabs[tab.id]) {
-      this.filterState.tabs[
-        tab.id
-      ].filterOffset = lastUncheckedVisibleTabFilterOffset;
       tab.style.setProperty(
         "--y-offset",
-        lastUncheckedVisibleTabFilterOffset + "px"
+        this.filterState.tabs[tab.id].filterOffset + "px"
       );
     }
+  });
+  tabsToMove.forEach(tab => {
+    // tab.style.setProperty(
+    //   "--y-offset",
+    //   lastUncheckedVisibleTabFilterOffset + "px"
+    // );
     fragmentOfChecked.appendChild(tab);
   });
 
