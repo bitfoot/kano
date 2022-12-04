@@ -181,7 +181,7 @@ document.addEventListener("click", e => {
       }
     });
     moveTabs.call(state, tabIds);
-    // adjustMenu.call(state);
+    adjustMenu.call(state);
   } else if (e.target.id === "remove-filter-text-btn") {
     const filterInput = state.filterState.input;
     filterInput.classList.add("filter__input--cleared");
