@@ -173,14 +173,11 @@ document.addEventListener("click", e => {
       }
     });
     deleteTabs.call(state, tabIds);
+  } else if (e.target.id === "move-to-top-btn") {
+    moveTabs.call(state, "top");
+    adjustMenu.call(state);
   } else if (e.target.id === "move-to-bottom-btn") {
-    const tabIds = state.visibleTabIds.filter(id => {
-      const obj = state.orderedTabObjects[state.tabIndices[id][0]];
-      if (obj.isChecked) {
-        return true;
-      }
-    });
-    moveTabs.call(state, tabIds);
+    moveTabs.call(state, "bottom");
     adjustMenu.call(state);
   } else if (e.target.id === "remove-filter-text-btn") {
     const filterInput = state.filterState.input;
@@ -230,6 +227,10 @@ document.addEventListener(`input`, e => {
 state.scrollState.container.addEventListener("scroll", onScroll.bind(state));
 
 document.addEventListener("pointerdown", e => {
+  // if the left mouse button was clicked, we don't need to do anything
+  if (e.pointerType === "mouse" && e.buttons !== 1) {
+    return;
+  }
   if (e.target.classList.contains("tab__tab-button")) {
     const tabButton = e.target;
     const parent = tabButton.parentElement;

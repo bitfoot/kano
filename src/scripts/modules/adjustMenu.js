@@ -39,8 +39,12 @@ function adjustMenu() {
     lastHiddenTabIndex: this.filterState.lastHiddenTabIndex,
     duplicateVisibleTabIds: [],
     numChecked: 0,
-    numCheckedAboveLastUnchecked: null
+    numUnchecked: 0,
+    numCheckedAboveLastUnchecked: 0,
+    numCheckedBelowFirstUnchecked: 0
   };
+
+  console.log(`visibleTabIds: ${this.visibleTabIds}`);
 
   this.menuData = this.visibleTabIds.reduce((a, id) => {
     const indexInBrowser = this.tabIndices[id][0];
@@ -56,6 +60,9 @@ function adjustMenu() {
       a.lastCheckedVisibleIndex = indexInBrowser;
       a.checkedVisibleTabs.push(this.tabs[indexInBrowser]);
       a.numChecked += 1;
+      if (a.firstUncheckedVisibleIndex !== null) {
+        a.numCheckedBelowFirstUnchecked += 1;
+      }
     } else {
       if (a.firstUncheckedVisibleIndex === null) {
         a.firstUncheckedVisibleIndex = indexInBrowser;
@@ -63,7 +70,14 @@ function adjustMenu() {
       a.lastUncheckedVisibleIndex = indexInBrowser;
       a.uncheckedVisibleTabs.push(this.tabs[indexInBrowser]);
       a.numCheckedAboveLastUnchecked = a.numChecked;
+      a.numUnchecked += 1;
     }
+
+    console.log(
+      `title: ${tabObject.title
+      }, indexInBrowser: ${indexInBrowser}, firstCheckedVisibleIndex: ${a.firstCheckedVisibleIndex
+      }`
+    );
 
     return a;
   }, accumulator);
