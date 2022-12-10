@@ -193,6 +193,7 @@ function createCheckboxSvg() {
   paths[1].classList.add(`tab__svg-checkbox-checkmark`);
   paths.forEach(path => g.appendChild(path));
   svg.appendChild(g);
+  svg.classList.add("tab__svg-checkbox");
   return svg;
 }
 

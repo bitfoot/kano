@@ -21,7 +21,8 @@ function createTabComponent(tab) {
   label.for = checkbox.id;
   // label.tabIndex = 0;
   const checkboxIcon = createCheckboxSvg();
-  checkboxIcon.classList.add(`tab__svg-checkbox`);
+  // svg.classList.add("tab__svg-checkbox");
+  // checkboxIcon.classList.add(`tab__svg-checkbox`);
   label.append(checkbox);
   label.append(checkboxIcon);
 

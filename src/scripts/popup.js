@@ -180,13 +180,16 @@ document.addEventListener("click", e => {
     moveTabs.call(state, "bottom");
     adjustMenu.call(state);
   } else if (e.target.id === "remove-filter-text-btn") {
+    // util.clearFilter.call(state);
     const filterInput = state.filterState.input;
-    filterInput.classList.add("filter__input--cleared");
-    setTimeout(() => {
-      filterInput.value = "";
-      filter.call(state);
-      filterInput.classList.remove("filter__input--cleared");
-    }, 100);
+    // filterInput.classList.add("filter__input--cleared");
+    // setTimeout(() => {
+    //   filterInput.value = "";
+    //   filter.call(state);
+    //   filterInput.classList.remove("filter__input--cleared");
+    // }, 100);
+    filterInput.value = "";
+    filter.call(state);
   }
 });
 

@@ -44,7 +44,7 @@ function adjustMenu() {
     numCheckedBelowFirstUnchecked: 0
   };
 
-  console.log(`visibleTabIds: ${this.visibleTabIds}`);
+  // console.log(`visibleTabIds: ${this.visibleTabIds}`);
 
   this.menuData = this.visibleTabIds.reduce((a, id) => {
     const indexInBrowser = this.tabIndices[id][0];
@@ -73,11 +73,11 @@ function adjustMenu() {
       a.numUnchecked += 1;
     }
 
-    console.log(
-      `title: ${tabObject.title
-      }, indexInBrowser: ${indexInBrowser}, firstCheckedVisibleIndex: ${a.firstCheckedVisibleIndex
-      }`
-    );
+    // console.log(
+    //   `title: ${tabObject.title
+    //   }, indexInBrowser: ${indexInBrowser}, firstCheckedVisibleIndex: ${a.firstCheckedVisibleIndex
+    //   }`
+    // );
 
     return a;
   }, accumulator);
