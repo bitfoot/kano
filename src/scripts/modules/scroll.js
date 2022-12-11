@@ -1,7 +1,7 @@
 "use strict";
 
 function scroll(options = {}) {
-  const { distance = 0, scrollBarOnly = false, speed = 0 } = options;
+  const { distance = 0, scrollBarOnly = false } = options;
   const dragState = this.dragState;
   const container = this.scrollState.container;
   const tabList = container.children[0];

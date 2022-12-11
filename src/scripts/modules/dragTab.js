@@ -1,7 +1,8 @@
 "use strict";
 
 function dragTab(options = {}) {
-  const { distance = 0, speed = 0 } = options;
+  const { distance = 0 } = options;
+  // const dragState = this.dragState;
   const dragState = this.dragState;
   if (!dragState) throw new Error("dragState object is not initialized");
 

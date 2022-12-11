@@ -3,6 +3,8 @@ const onTabDragPointerMove = require("./onTabDragPointerMove");
 const onTabDragPointerUp = require("./onTabDragPointerUp");
 const resetTransitionVariables = require("./util").resetTransitionVariables;
 const easeInQuad = require("./util").easeInQuad;
+const dragTab = require("./dragTab");
+const scroll = require("./scroll");
 
 function initializeTabDrag(event) {
   const eventType = event.type;
@@ -85,6 +87,53 @@ function initializeTabDrag(event) {
     .forEach(t => {
       t.classList.add("tab--moving");
     });
+
+  // this is animation step for keyboard drag
+  // const step = timestamp => {
+  //   console.log(this);
+  //   if (this.animationStart === null) {
+  //     this.animationStart = timestamp;
+  //   }
+
+  //   this.animationElapsed = timestamp - this.animationStart;
+
+  //   if (this.previousTimeStamp !== timestamp) {
+  //     this.previousTimeStamp = timestamp;
+  //     const dragDistance = this.getDragDistance();
+  //     const scrollDistance = this.getScrollDistance();
+
+  //     if (scrollDistance !== 0) {
+  //       scroll.call(this, { distance: scrollDistance });
+  //     }
+
+  //     if (this.eventType === "keydown" || this.animation) {
+  //       dragTab.call(this, { distance: dragDistance });
+  //     }
+
+  //     if (
+  //       this.eventType === "pointerdown" &&
+  //       scrollDistance === 0 &&
+  //       (this.tabPosInList >= this.minTabPosInList ||
+  //         this.tabPosInList <= this.maxTabPosInList)
+  //     ) {
+  //       this.animation = null;
+  //     }
+  //   }
+
+  //   if (this.eventType === "keydown") {
+  //     if (this.animationElapsed >= 220) {
+  //       // dragState.animation = null;
+  //       this.animationElapsed = 0;
+  //       this.distanceDraggedViaKb = 0;
+  //       this.animationStart = null;
+  //       this.distanceToDrag = 0;
+  //     }
+  //   }
+
+  //   if (this.animation) {
+  //     window.requestAnimationFrame(step);
+  //   }
+  // };
 
   this.dragState = {
     sign,
@@ -205,7 +254,6 @@ function initializeTabDrag(event) {
         this.scrollState.scrollTop;
       return minOffset;
     },
-
     getScrollDistance() {
       const imaginaryTopPos = this.imaginaryTopPos;
       const imaginaryBottomPos = imaginaryTopPos + this.tabHeight;
@@ -270,7 +318,55 @@ function initializeTabDrag(event) {
       };
 
       return getDistance();
-    }
+    },
+    step: function (timestamp) {
+      if (this.dragState.animationStart === null) {
+        this.dragState.animationStart = timestamp;
+      }
+
+      this.dragState.animationElapsed =
+        timestamp - this.dragState.animationStart;
+
+      if (this.dragState.previousTimeStamp !== timestamp) {
+        this.dragState.previousTimeStamp = timestamp;
+        const dragDistance = this.dragState.getDragDistance();
+        const scrollDistance = this.dragState.getScrollDistance();
+
+        if (scrollDistance !== 0) {
+          scroll.call(this, { distance: scrollDistance });
+        }
+
+        if (
+          this.dragState.eventType === "keydown" ||
+          this.dragState.animation
+        ) {
+          dragTab.call(this, { distance: dragDistance });
+        }
+
+        if (
+          this.dragState.eventType === "pointerdown" &&
+          scrollDistance === 0 &&
+          (this.dragState.tabPosInList >= this.dragState.minTabPosInList ||
+            this.dragState.tabPosInList <= this.dragState.maxTabPosInList)
+        ) {
+          this.dragState.animation = null;
+        }
+      }
+
+      if (this.dragState.eventType === "keydown") {
+        if (this.dragState.animationElapsed >= 220) {
+          // dragState.animation = null;
+          this.dragState.animationElapsed = 0;
+          this.dragState.distanceDraggedViaKb = 0;
+          this.dragState.animationStart = null;
+          this.dragState.distanceToDrag = 0;
+        }
+      }
+
+      if (this.dragState.animation) {
+        window.requestAnimationFrame(this.dragState.step);
+      }
+    }.bind(this)
   };
 
   if (eventType == "pointerdown") {

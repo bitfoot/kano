@@ -265,9 +265,6 @@ function moveTabs(direction) {
   // console.log(reorderedTabObjects);
   console.log(tabsInfo);
 
-  this.orderedTabObjects = reorderedTabObjects;
-  this.visibleTabIds = reorderedVisibleTabIds;
-
   // move tabs in the DOM
   const moveTabsInTheDOM = (tabsToMove, direction) => {
     const fragmentOfChecked = document.createDocumentFragment();
@@ -302,6 +299,8 @@ function moveTabs(direction) {
   };
 
   moveTabsInTheDOM(checkedVisibleTabs, direction);
+  this.orderedTabObjects = reorderedTabObjects;
+  this.visibleTabIds = reorderedVisibleTabIds;
 }
 
 module.exports = moveTabs;
