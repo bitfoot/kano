@@ -256,7 +256,7 @@
         transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%)) scale(0.1);
         transition: none;
         background: radial-gradient(circle at center, transparent 0.5%, var(--color-two) 1% 100%);
-        animation: 500ms ease-in forwards heldDown;
+        animation: 300ms ease-in forwards heldDown;
       }
 
       &::after {

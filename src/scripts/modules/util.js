@@ -66,7 +66,6 @@ function getMaxScrollTop() {
 }
 
 // this will be called when tabs are first rendered, when a tab is deleted, and when tabs are filtered
-// TODO: make scrollbar length adjust based on number of filtered-out tabs
 function adjustScrollbar() {
   const container = this.scrollState.container;
   const scrollbarTrack = this.scrollState.scrollbarTrack;

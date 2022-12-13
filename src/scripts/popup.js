@@ -133,21 +133,15 @@ document.addEventListener("click", e => {
       deleteTabs.call(state, [tab.id]);
     }
   } else if (e.target.classList.contains("tab__tab-button")) {
-    const tabButton = e.target;
-    if (tabButton.parentElement.classList.contains("tab--held-down")) {
-      tabButton.parentElement.classList.remove("tab--held-down");
-      const tabId = e.target.parentElement.id;
-      const browserTabId = parseInt(tabId.split("-")[1]);
-      chrome.tabs.get(browserTabId, function (tab) {
-        chrome.tabs.highlight({ tabs: tab.index }, function () { });
-      });
-    }
-    // state.dragTimer = null;
-    // const tabId = e.target.parentElement.id;
-    // const browserTabId = parseInt(tabId.split("-")[1]);
-    // chrome.tabs.get(browserTabId, function (tab) {
-    //   chrome.tabs.highlight({ tabs: tab.index }, function () { });
-    // });
+    // const tabButton = e.target;
+    // if (tabButton.parentElement.classList.contains("tab--held-down")) {
+    //   tabButton.parentElement.classList.remove("tab--held-down");
+    //   const tabId = e.target.parentElement.id;
+    //   const browserTabId = parseInt(tabId.split("-")[1]);
+    //   chrome.tabs.get(browserTabId, function (tab) {
+    //     chrome.tabs.highlight({ tabs: tab.index }, function () { });
+    //   });
+    // }
   } else if (e.target.id === "select-deselect-all-btn") {
     const allVisibleTabsAreChecked = state.visibleTabIds.every(id => {
       const tabIndex = state.tabIndices[id][0];
@@ -180,32 +174,9 @@ document.addEventListener("click", e => {
     moveTabs.call(state, "bottom");
     adjustMenu.call(state);
   } else if (e.target.id === "remove-filter-text-btn") {
-    // util.clearFilter.call(state);
     const filterInput = state.filterState.input;
-    // filterInput.classList.add("filter__input--cleared");
-    // setTimeout(() => {
-    //   filterInput.value = "";
-    //   filter.call(state);
-    //   filterInput.classList.remove("filter__input--cleared");
-    // }, 100);
     filterInput.value = "";
     filter.call(state);
-  }
-});
-
-document.addEventListener(`keydown`, e => {
-  if (e.code === "Space") {
-    if (
-      e.target.classList.contains("tab__tab-button") &&
-      state.dragState === null
-    ) {
-      const tabButton = e.target;
-      tabButton.parentElement.classList.add("tab--held-down");
-      state.dragTimer = setTimeout(initializeTabDrag.bind(state, e), 300);
-      tabButton.onkeyup = () => {
-        clearTimeout(state.dragTimer);
-      };
-    }
   }
 });
 
@@ -247,10 +218,18 @@ document.addEventListener("pointerdown", e => {
       parent.style.setProperty("--y-pos", e.clientY - bounds.top + "px");
     });
 
-    state.dragTimer = setTimeout(initializeTabDrag.bind(state, e), 500);
+    state.dragTimer = setTimeout(initializeTabDrag.bind(state, e), 300);
     tabButton.onpointerup = () => {
       clearTimeout(state.dragTimer);
       tabButton.releasePointerCapture(pointerId);
+      if (state.dragState === null) {
+        // tabButton.parentElement.classList.remove("tab--held-down");
+        const tabId = e.target.parentElement.id;
+        const browserTabId = parseInt(tabId.split("-")[1]);
+        chrome.tabs.get(browserTabId, function (tab) {
+          chrome.tabs.highlight({ tabs: tab.index }, function () { });
+        });
+      }
     };
   } else if (e.target.id === "scrollbar-thumb") {
     initializeScrollbarDrag.call(state, e);
@@ -264,6 +243,29 @@ document.addEventListener("pointerdown", e => {
       left: 0,
       behavior: "smooth"
     });
+  }
+});
+
+document.addEventListener(`keydown`, e => {
+  if (e.code !== "Space" && e.code !== "Enter") return;
+  if (
+    e.target.classList.contains("tab__tab-button") &&
+    state.dragState === null
+  ) {
+    const tabButton = e.target;
+    tabButton.parentElement.classList.add("tab--held-down");
+    state.dragTimer = setTimeout(initializeTabDrag.bind(state, e), 300);
+    tabButton.onkeyup = () => {
+      clearTimeout(state.dragTimer);
+      if (state.dragState === null) {
+        tabButton.parentElement.classList.remove("tab--held-down");
+        const tabId = e.target.parentElement.id;
+        const browserTabId = parseInt(tabId.split("-")[1]);
+        chrome.tabs.get(browserTabId, function (tab) {
+          chrome.tabs.highlight({ tabs: tab.index }, function () { });
+        });
+      }
+    };
   }
 });
 

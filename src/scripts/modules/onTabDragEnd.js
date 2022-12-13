@@ -152,33 +152,13 @@ function onTabDragPointerUp(event) {
 
   // reset style values of all the tabs to their defaults
   dragState.listedTabs.forEach(tab => {
-    // if (tab.id !== draggedTabId) {
     let filterOffset = dragState.tabsPosInfo[tab.id].filterOffset;
-    // let dragOffset = dragState.tabsPosInfo[tab.id].dragOffset;
-    let dragOffset;
-
-    dragOffset = 0;
-
-    // if (tab.id === draggedTabId) {
-    //   console.log(
-    //     `movedDirection: ${movedDirection}, dragOffset: ${dragState.tabsPosInfo[tab.id].dragOffset
-    //     }, filterOffset: ${state.filterState.tabs[tab.id].filterOffset
-    //     }, replacedTabTitle: ${replacedTabTitle}`
-    //   );
-    // }
-
-    if (tab.id == draggedTabId) {
-      dragOffset = 0;
-    }
-    let newOffset = filterOffset + dragOffset;
     requestAnimationFrame(() => {
-      tab.style.setProperty("--y-offset", newOffset + "px");
+      tab.style.setProperty("--y-offset", filterOffset + "px");
       tab.style.setProperty("--opacity", 1);
       tab.style.setProperty("--scale", 0.99);
       tab.classList.remove("tab--moving");
     });
-
-    // }
   });
 
   if (this.scrollState.tabListOffset !== 0) {

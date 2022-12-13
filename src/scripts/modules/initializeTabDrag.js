@@ -1,19 +1,20 @@
 "use strict";
 const onTabDragPointerMove = require("./onTabDragPointerMove");
-const onTabDragPointerUp = require("./onTabDragPointerUp");
+const onTabDragEnd = require("./onTabDragEnd");
 const resetTransitionVariables = require("./util").resetTransitionVariables;
 const easeInQuad = require("./util").easeInQuad;
+const easeInOutQuad = require("./util").easeInOutQuad;
 const dragTab = require("./dragTab");
 const scroll = require("./scroll");
 
 function initializeTabDrag(event) {
   const eventType = event.type;
-  let sign;
-  if (eventType == "pointerdown") {
-    console.log(`drag initiated from pointerdown event.`);
-  } else {
-    console.log(`drag initiated from keydown event.`);
-  }
+  // let sign;
+  // if (eventType == "pointerdown") {
+  //   console.log(`drag initiated from pointerdown event.`);
+  // } else {
+  //   console.log(`drag initiated from keydown event.`);
+  // }
 
   const draggedTab = event.target.parentElement;
   const pointerPosition = event.pageY;
@@ -88,55 +89,8 @@ function initializeTabDrag(event) {
       t.classList.add("tab--moving");
     });
 
-  // this is animation step for keyboard drag
-  // const step = timestamp => {
-  //   console.log(this);
-  //   if (this.animationStart === null) {
-  //     this.animationStart = timestamp;
-  //   }
-
-  //   this.animationElapsed = timestamp - this.animationStart;
-
-  //   if (this.previousTimeStamp !== timestamp) {
-  //     this.previousTimeStamp = timestamp;
-  //     const dragDistance = this.getDragDistance();
-  //     const scrollDistance = this.getScrollDistance();
-
-  //     if (scrollDistance !== 0) {
-  //       scroll.call(this, { distance: scrollDistance });
-  //     }
-
-  //     if (this.eventType === "keydown" || this.animation) {
-  //       dragTab.call(this, { distance: dragDistance });
-  //     }
-
-  //     if (
-  //       this.eventType === "pointerdown" &&
-  //       scrollDistance === 0 &&
-  //       (this.tabPosInList >= this.minTabPosInList ||
-  //         this.tabPosInList <= this.maxTabPosInList)
-  //     ) {
-  //       this.animation = null;
-  //     }
-  //   }
-
-  //   if (this.eventType === "keydown") {
-  //     if (this.animationElapsed >= 220) {
-  //       // dragState.animation = null;
-  //       this.animationElapsed = 0;
-  //       this.distanceDraggedViaKb = 0;
-  //       this.animationStart = null;
-  //       this.distanceToDrag = 0;
-  //     }
-  //   }
-
-  //   if (this.animation) {
-  //     window.requestAnimationFrame(step);
-  //   }
-  // };
-
   this.dragState = {
-    sign,
+    direction: null,
     animationStart: null,
     animationElapsed: 0,
     distance: 0,
@@ -165,28 +119,6 @@ function initializeTabDrag(event) {
         return this.pointerPosition - this.shiftY;
       } else {
         return this.tabPosInViewport.top + this.distanceToDrag;
-      }
-    },
-    getDragDistance() {
-      if (this.eventType == "pointerdown") {
-        let tabPosInViewport = this.tabPosInViewport.top;
-        return this.imaginaryTopPos - tabPosInViewport;
-      } else {
-        const progress = Math.min(1, this.animationElapsed / 220);
-        const prevDistance = this.distanceDraggedViaKb;
-        const newDistance = easeInQuad(progress, 0, 46, 1) * this.sign;
-        const distanceToDrag = newDistance - prevDistance;
-        this.distanceToDrag = distanceToDrag;
-        this.distanceDraggedViaKb = newDistance;
-
-        if (progress === 1) {
-          this.animation = null;
-          // this.animationElapsed = 0;
-          // this.distanceDraggedViaKb = 0;
-          // this.distanceToDrag = 0;
-        }
-
-        return distanceToDrag;
       }
     },
     headerHeight,
@@ -319,7 +251,23 @@ function initializeTabDrag(event) {
 
       return getDistance();
     },
+    getDragDistance() {
+      let dragDistance;
+      if (this.eventType == "pointerdown") {
+        let tabPosInViewport = this.tabPosInViewport.top;
+        dragDistance = this.imaginaryTopPos - tabPosInViewport;
+      } else {
+        let sign = this.direction === "down" ? 1 : -1;
+        const progress = Math.min(1, this.animationElapsed / 220);
+        const prevDistance = this.distanceDraggedViaKb;
+        this.distanceDraggedViaKb = easeInOutQuad(progress, 0, 46, 1) * sign;
+        this.distanceToDrag = this.distanceDraggedViaKb - prevDistance;
+        dragDistance = this.distanceToDrag;
+      }
+      return dragDistance;
+    },
     step: function (timestamp) {
+      if (this.dragState === null) return;
       if (this.dragState.animationStart === null) {
         this.dragState.animationStart = timestamp;
       }
@@ -355,7 +303,8 @@ function initializeTabDrag(event) {
 
       if (this.dragState.eventType === "keydown") {
         if (this.dragState.animationElapsed >= 220) {
-          // dragState.animation = null;
+          // update sign
+          this.dragState.animation = null;
           this.dragState.animationElapsed = 0;
           this.dragState.distanceDraggedViaKb = 0;
           this.dragState.animationStart = null;
@@ -371,7 +320,7 @@ function initializeTabDrag(event) {
 
   if (eventType == "pointerdown") {
     draggedTab.onpointermove = onTabDragPointerMove.bind(this);
-    draggedTab.onpointerup = onTabDragPointerUp.bind(this);
+    draggedTab.onpointerup = onTabDragEnd.bind(this);
   } else {
     draggedTab.onkeydown = e => {
       if (e.code === "ArrowDown" || e.code === "ArrowUp") {
@@ -379,8 +328,8 @@ function initializeTabDrag(event) {
       }
     };
     draggedTab.onkeyup = e => {
-      if (e.code === "Space") {
-        onTabDragPointerUp.call(this);
+      if (e.code === "Space" || e.code === "Enter") {
+        onTabDragEnd.call(this);
       }
     };
   }
