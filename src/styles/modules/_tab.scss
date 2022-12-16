@@ -8,7 +8,7 @@
   color: var(--color-three);
   margin: 0 0 var(--lesser-padding) 0;
   padding: var(--greater-padding);
-  border-radius: var(--lesser-padding);
+  // border-radius: var(--lesser-padding);
   --deleted-offset: 0px;
   --y-offset: 0px;
   --delay: 0;
@@ -26,6 +26,7 @@
   stroke: transparent;
   // transition: stroke 200ms ease-out, background-color 200ms ease-in-out;
   transition: stroke 200ms ease-out;
+  // content-visibility: auto;
   // animation: 5000ms ease-in-out banana;
   // z-index: 1;
 
@@ -83,7 +84,7 @@
       width: 2rem;
       position: absolute;
       right: calc(100% + 3px);
-      border-radius: 0 var(--lesser-padding) var(--lesser-padding) 0;
+      // border-radius: 0 var(--lesser-padding) var(--lesser-padding) 0;
       top: 0;
       height: 100%;
       // background: orange;
@@ -100,7 +101,7 @@
     // z-index: 1;
     width: 100%;
     height: 100%;
-    border-radius: var(--lesser-padding);
+    // border-radius: var(--lesser-padding);
     background: transparent;
     touch-action: none;
     transition: box-shadow 100ms ease-in-out;

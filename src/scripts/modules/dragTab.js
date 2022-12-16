@@ -4,7 +4,7 @@ function dragTab(options = {}) {
   const { distance = 0 } = options;
   // const dragState = this.dragState;
   const dragState = this.dragState;
-  if (!dragState) throw new Error("dragState object is not initialized");
+  if (!dragState) throw new Error("dragState is not initialized");
 
   dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset += distance;
 

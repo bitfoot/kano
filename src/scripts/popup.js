@@ -223,7 +223,7 @@ document.addEventListener("pointerdown", e => {
       clearTimeout(state.dragTimer);
       tabButton.releasePointerCapture(pointerId);
       if (state.dragState === null) {
-        // tabButton.parentElement.classList.remove("tab--held-down");
+        tabButton.parentElement.classList.remove("tab--held-down");
         const tabId = e.target.parentElement.id;
         const browserTabId = parseInt(tabId.split("-")[1]);
         chrome.tabs.get(browserTabId, function (tab) {
@@ -278,8 +278,14 @@ document.addEventListener("pointermove", e => {
       parent.style.setProperty("--x-pos", e.clientX - bounds.left + "px");
       parent.style.setProperty("--y-pos", e.clientY - bounds.top + "px");
     });
+  } else if (e.target.id === "filter-input") {
+    const filter = e.target.parentElement;
+    const bounds = filter.getBoundingClientRect();
+    requestAnimationFrame(() => {
+      filter.style.setProperty("--x-pos", e.clientX - bounds.left + "px");
+      filter.style.setProperty("--y-pos", e.clientY - bounds.top + "px");
+    });
   }
-  // console.log(e.pageX, e.pageY);
 });
 
 document.addEventListener("contextmenu", e => {
