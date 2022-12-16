@@ -285,6 +285,12 @@ document.addEventListener("pointermove", e => {
       filter.style.setProperty("--x-pos", e.clientX - bounds.left + "px");
       filter.style.setProperty("--y-pos", e.clientY - bounds.top + "px");
     });
+  } else if (e.target.classList.contains("menu-item-btn")) {
+    const bounds = e.target.getBoundingClientRect();
+    requestAnimationFrame(() => {
+      e.target.style.setProperty("--x-pos", e.clientX - bounds.left + "px");
+      e.target.style.setProperty("--y-pos", e.clientY - bounds.top + "px");
+    });
   }
 });
 

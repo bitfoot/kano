@@ -75,6 +75,10 @@ function onTabDragPointerUp(event) {
         newFilterOffset + "px"
       );
 
+      requestAnimationFrame(() => {
+        const tabButton = dragState.draggedTab.firstChild;
+        tabButton.focus();
+      });
       // move the actual chrome tab
       const replacedTabIdInBrowser = +replacedTab.id.split("-")[1];
       // chrome.tabs.get(replacedTabIdInBrowser).then(tabDetails => {
@@ -134,6 +138,10 @@ function onTabDragPointerUp(event) {
         "--y-offset",
         newFilterOffset + "px"
       );
+      requestAnimationFrame(() => {
+        const tabButton = dragState.draggedTab.firstChild;
+        tabButton.focus();
+      });
 
       const replacedTabIdInBrowser = +replacedTab.id.split("-")[1];
       // chrome.tabs.get(replacedTabIdInBrowser).then(tabDetails => {
@@ -165,8 +173,8 @@ function onTabDragPointerUp(event) {
     dragState.tabListContainer.scrollBy(0, this.scrollState.tabListOffset);
   }
 
-  const tabButton = dragState.draggedTab.querySelector(".tab__tab-button");
-  tabButton.focus();
+  // const tabButton = dragState.draggedTab.firstChild;
+  // tabButton.focus();
 
   // tab order has changed, so it should be changed in the "tabs" and "orderedTabObjects" lists in state
   if (movedDirection !== null) {

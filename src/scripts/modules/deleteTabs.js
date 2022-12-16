@@ -69,7 +69,7 @@ function deleteTabs(idsOfTabsToDelete) {
   );
 
   const timeoutDuration = 100 + animationDuration;
-  this.tabList.style.setProperty(
+  document.documentElement.style.setProperty(
     "--below-deleted-animation-duration",
     animationDuration + "ms"
   );

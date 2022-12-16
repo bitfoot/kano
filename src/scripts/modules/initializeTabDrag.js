@@ -90,10 +90,14 @@ function initializeTabDrag(event) {
     });
 
   this.dragState = {
+    sign: null,
     direction: null,
+    arrowKeyIsHeldDown: null,
+    totalDistance: 46,
+    animationDuration: 420,
+    animation: null,
     animationStart: null,
     animationElapsed: 0,
-    distance: 0,
     distanceToDrag: 0,
     elapsed: 0,
     eventType,
@@ -101,14 +105,8 @@ function initializeTabDrag(event) {
     previousTimeStamp: null,
     done: null,
     distanceDraggedViaKb: 0,
-    kbDragProgress: 0,
-    // get kbDragProgress() {
-    //   return this.distanceDraggedViaKb / 46;
-    // },
-    // kbDragAnimation: null,
     tabsPosInfo,
     scrollState,
-    animation: null,
     scroll: false,
     draggedTab,
     midPoint,
@@ -257,12 +255,50 @@ function initializeTabDrag(event) {
         let tabPosInViewport = this.tabPosInViewport.top;
         dragDistance = this.imaginaryTopPos - tabPosInViewport;
       } else {
-        let sign = this.direction === "down" ? 1 : -1;
-        const progress = Math.min(1, this.animationElapsed / 220);
-        const prevDistance = this.distanceDraggedViaKb;
-        this.distanceDraggedViaKb = easeInOutQuad(progress, 0, 46, 1) * sign;
+        // let sign = this.direction === "down" ? 1 : -1;
+        // const progress = Math.min(1, this.animationElapsed / 220);
+        // const prevDistance = this.distanceDraggedViaKb;
+        // this.distanceDraggedViaKb = easeInOutQuad(progress, 0, 46, 1) * sign;
+        // this.distanceToDrag = this.distanceDraggedViaKb - prevDistance;
+        // dragDistance = this.distanceToDrag;
+        // let totalDistance = 46;
+        // let duration = 220;
+        const prevSign = this.sign;
+        this.sign = this.direction === "down" ? 1 : -1;
+        let progress = Math.min(
+          1,
+          this.animationElapsed / this.animationDuration
+        );
+        let prevDistance = this.distanceDraggedViaKb;
+        // if sign changed, then:
+        if (prevSign !== null && prevSign !== this.sign) {
+          this.animationStart = null;
+          this.animationElapsed = 0;
+          progress = 0;
+          prevDistance = 0;
+          const currentPos = this.tabPosInList;
+          let desiredPos;
+          let desiredIndex;
+          if (this.direction === "down") {
+            desiredIndex = Math.ceil(currentPos / 46);
+            desiredPos = desiredIndex * 46;
+            this.totalDistance = desiredPos - currentPos;
+          } else {
+            desiredIndex = Math.floor(currentPos / 46);
+            desiredPos = desiredIndex * 46;
+            this.totalDistance = currentPos - desiredPos;
+          }
+          this.animationDuration = (this.totalDistance / 46) * 420;
+        }
+
+        this.distanceDraggedViaKb =
+          easeInOutQuad(progress, 0, this.totalDistance, 1) * this.sign;
         this.distanceToDrag = this.distanceDraggedViaKb - prevDistance;
         dragDistance = this.distanceToDrag;
+        // console.log(
+        //   `totalDistance: ${this.totalDistance}, distanceToDrag: ${this.distanceToDrag
+        //   }`
+        // );
       }
       return dragDistance;
     },
@@ -302,13 +338,19 @@ function initializeTabDrag(event) {
       }
 
       if (this.dragState.eventType === "keydown") {
-        if (this.dragState.animationElapsed >= 220) {
-          // update sign
-          this.dragState.animation = null;
+        if (
+          this.dragState.animationElapsed >= this.dragState.animationDuration
+        ) {
           this.dragState.animationElapsed = 0;
           this.dragState.distanceDraggedViaKb = 0;
           this.dragState.animationStart = null;
           this.dragState.distanceToDrag = 0;
+          this.dragState.totalDistance = 46;
+          this.dragState.animationDuration = 420;
+
+          if (this.dragState.arrowKeyIsHeldDown === false) {
+            this.dragState.animation = null;
+          }
         }
       }
 
@@ -328,8 +370,11 @@ function initializeTabDrag(event) {
       }
     };
     draggedTab.onkeyup = e => {
+      // console.log(e.code);
       if (e.code === "Space" || e.code === "Enter") {
         onTabDragEnd.call(this);
+      } else if (e.code === "ArrowDown" || e.code === "ArrowUp") {
+        this.dragState.arrowKeyIsHeldDown = false;
       }
     };
   }

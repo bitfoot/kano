@@ -19,10 +19,7 @@ function createTabComponent(tab) {
   const label = document.createElement("label");
   label.classList.add("tab__checkbox-label");
   label.for = checkbox.id;
-  // label.tabIndex = 0;
   const checkboxIcon = createCheckboxSvg();
-  // svg.classList.add("tab__svg-checkbox");
-  // checkboxIcon.classList.add(`tab__svg-checkbox`);
   label.append(checkbox);
   label.append(checkboxIcon);
 
@@ -37,8 +34,6 @@ function createTabComponent(tab) {
   // create tab Title
   const p = document.createElement("p");
   p.classList.add("tab__title");
-
-  // this soulution isn't good, can't handle 44 Ws
   p.textContent = tab.title;
 
   // create delete button
@@ -54,10 +49,9 @@ function createTabComponent(tab) {
 
   if (tab.isActive === true) {
     tabComponent.classList.add("tab--active");
-    // create active tab indicator
-    const activeIndicator = document.createElement("div");
-    activeIndicator.classList.add("tab__active-indicator");
-    tabComponent.appendChild(activeIndicator);
+    // const activeIndicator = document.createElement("div");
+    // activeIndicator.classList.add("tab__active-indicator");
+    // tabComponent.appendChild(activeIndicator);
   }
   tabComponent.appendChild(tabButton);
   tabComponent.appendChild(label);
@@ -65,7 +59,6 @@ function createTabComponent(tab) {
   tabComponent.appendChild(p);
   if (tab.isDuplicate === true) {
     tabComponent.classList.add("tab--duplicate");
-    // create duplicate indicator
     const duplicateIndicator = createDuplicateIndicatorSvg();
     tabComponent.appendChild(duplicateIndicator);
   }

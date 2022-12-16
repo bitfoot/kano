@@ -11,19 +11,6 @@
 
   &:hover {
 
-    // &::after {
-    //   content: "";
-    //   position: absolute;
-    //   top: 0;
-    //   left: 0;
-    //   width: 68rem;
-    //   height: 68rem;
-    //   // z-index: -1;
-    //   background: radial-gradient(circle at center, var(--color-two-hover), var(--color-two) 50%);
-    //   transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%));
-    //   transition: none;
-    // }
-
     & .filter__input {
       // background: var(--color-two-hover);
       background: radial-gradient(circle at var(--x-pos) var(--y-pos), var(--color-two-hover), var(--color-two) 34rem);
@@ -45,7 +32,7 @@
     height: 100%;
     width: 100%;
     border: 0;
-    border-radius: var(--lesser-padding);
+    // border-radius: var(--lesser-padding);
     transition: box-shadow 100ms ease-in-out;
 
     &:focus {
@@ -86,7 +73,7 @@
     right: var(--lesser-padding);
     width: 1.4rem;
     height: 1.4rem;
-    border-radius: var(--lesser-padding);
+    // border-radius: var(--lesser-padding);
     background: transparent;
 
 

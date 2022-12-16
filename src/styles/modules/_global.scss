@@ -32,7 +32,7 @@
   --pointer-x-pos: 0;
   --pointer-y-pos: 0;
 
-
+  --below-deleted-animation-duration: 0ms;
   --color-three: #eee;
   --color-four: #ccc;
   --golden-ratio: 1.61803398875;
@@ -141,26 +141,25 @@ button {
     transform: translateY(var(--thumb-offset));
     width: var(--lesser-padding);
     background: var(--color-two);
-    // border-radius: var(--greater-padding);
-    border-radius: var(--lesser-padding);
+    // border-radius: var(--lesser-padding);
     transition: background-color 200ms ease-in-out;
 
     &:hover {
       background: var(--color-two-hover);
-      transition: background-color 100ms ease-in-out;
+      transition: background-color var(--below-deleted-animation-duration) ease-in-out;
     }
 
     &--transforming {
       transform-origin: top;
       // transform-origin: center;
       transform: translateY(var(--thumb-offset)) scaleY(var(--ratio));
-      transition: background-color 200ms ease-out, transform 200ms ease-in-out;
+      transition: background-color var(--below-deleted-animation-duration) ease-out, transform var(--below-deleted-animation-duration) ease-in-out;
       background: purple;
 
       &:hover {
         transform-origin: top;
         transform: translateY(var(--thumb-offset)) scaleY(var(--ratio));
-        transition: background-color 200ms ease-out, transform 200ms ease-in-out;
+        transition: background-color var(--below-deleted-animation-duration) ease-out, transform var(--below-deleted-animation-duration) ease-in-out;
         background: purple;
       }
     }

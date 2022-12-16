@@ -8,13 +8,14 @@ function onTabDragPointerMove(event) {
   if (dragState.eventType == "pointerdown") {
     dragState.pointerPosition = event.pageY;
   } else {
-    if (!dragState.animation) {
-      if (event.code === "ArrowDown") {
-        dragState.direction = "down";
-      } else {
-        dragState.direction = "up";
-      }
+    dragState.arrowKeyIsHeldDown = true;
+    // if (!dragState.animation) {
+    if (event.code === "ArrowDown") {
+      dragState.direction = "down";
+    } else {
+      dragState.direction = "up";
     }
+    // }
   }
 
   if (!dragState.animation) {
