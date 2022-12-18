@@ -63,6 +63,7 @@ function createTabComponent(tab) {
     tabComponent.appendChild(duplicateIndicator);
   }
   tabComponent.appendChild(deleteButton);
+  // tabComponent.appendChild(tabButton);
 
   return tabComponent;
 }

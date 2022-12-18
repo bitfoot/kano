@@ -94,7 +94,7 @@ function initializeTabDrag(event) {
     direction: null,
     arrowKeyIsHeldDown: null,
     totalDistance: 46,
-    animationDuration: 420,
+    animationDuration: 220,
     animation: null,
     animationStart: null,
     animationElapsed: 0,
@@ -288,7 +288,7 @@ function initializeTabDrag(event) {
             desiredPos = desiredIndex * 46;
             this.totalDistance = currentPos - desiredPos;
           }
-          this.animationDuration = (this.totalDistance / 46) * 420;
+          this.animationDuration = (this.totalDistance / 46) * 220;
         }
 
         this.distanceDraggedViaKb =
@@ -346,7 +346,7 @@ function initializeTabDrag(event) {
           this.dragState.animationStart = null;
           this.dragState.distanceToDrag = 0;
           this.dragState.totalDistance = 46;
-          this.dragState.animationDuration = 420;
+          this.dragState.animationDuration = 220;
 
           if (this.dragState.arrowKeyIsHeldDown === false) {
             this.dragState.animation = null;

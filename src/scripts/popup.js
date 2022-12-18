@@ -270,6 +270,7 @@ document.addEventListener(`keydown`, e => {
 });
 
 document.addEventListener("pointermove", e => {
+  // console.log(e);
   if (e.target.classList.contains("tab__tab-button")) {
     const tabButton = e.target;
     const parent = tabButton.parentElement;
@@ -286,6 +287,12 @@ document.addEventListener("pointermove", e => {
       filter.style.setProperty("--y-pos", e.clientY - bounds.top + "px");
     });
   } else if (e.target.classList.contains("menu-item-btn")) {
+    const bounds = e.target.getBoundingClientRect();
+    requestAnimationFrame(() => {
+      e.target.style.setProperty("--x-pos", e.clientX - bounds.left + "px");
+      e.target.style.setProperty("--y-pos", e.clientY - bounds.top + "px");
+    });
+  } else if (e.target.id === "scrollbar-thumb") {
     const bounds = e.target.getBoundingClientRect();
     requestAnimationFrame(() => {
       e.target.style.setProperty("--x-pos", e.clientX - bounds.left + "px");

@@ -133,6 +133,8 @@ button {
   padding: 0 var(--lesser-padding);
 
   &__thumb {
+    --x-pos: 0;
+    --y-pos: 0;
     --ratio: 1;
     --thumb-height: 0;
     --thumb-offset: 0;
@@ -145,7 +147,8 @@ button {
     transition: background-color 200ms ease-in-out;
 
     &:hover {
-      background: var(--color-two-hover);
+      // background: var(--color-two-hover);
+      background: radial-gradient(circle at var(--x-pos) var(--y-pos), var(--color-two-hover), var(--color-two) 34rem);
       transition: background-color var(--below-deleted-animation-duration) ease-in-out;
     }
 
