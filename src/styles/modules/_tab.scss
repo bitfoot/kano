@@ -38,17 +38,7 @@
 
       &::after {
         content: "";
-        // position: absolute;
-        // top: 0;
-        // left: 0;
-        // width: 68rem;
-        // height: 68rem;
-        // z-index: -2;
-        // z-index: -1;
-        // background: radial-gradient(circle at center, red, var(--color-two) 50%);
-        // transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%));
         opacity: 1;
-        // transition: none;
         transition: opacity 100ms ease-in;
       }
     }
@@ -69,11 +59,10 @@
     opacity: 1;
     transform: translateY(var(--y-offset));
     transition: transform var(--trans-duration) var(--trans-delay) ease-in-out, opacity var(--opacity-duration) var(--opacity-delay) ease-in-out, stroke 200ms ease-out;
-    ;
+
 
     &:hover {
       transition: transform var(--trans-duration) var(--trans-delay) ease-in-out, opacity var(--opacity-duration) var(--opacity-delay) ease-in-out, stroke 200ms ease-out;
-      ;
     }
 
   }

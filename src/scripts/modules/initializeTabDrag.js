@@ -29,6 +29,7 @@ function initializeTabDrag(event) {
   const headerHeight = scrollState.headerHeight;
   const tabHeight = draggedTab.offsetHeight;
   const margin = 6;
+  const tabRowHeight = tabHeight + margin;
 
   const wholeContentHeight = this.visibleTabIds.length * (tabHeight + margin);
 
@@ -90,10 +91,12 @@ function initializeTabDrag(event) {
     });
 
   this.dragState = {
+    tabRowHeight,
+    defaultAnimationDuration: 220,
     sign: null,
     direction: null,
     arrowKeyIsHeldDown: null,
-    totalDistance: 46,
+    totalDistance: tabRowHeight,
     animationDuration: 220,
     animation: null,
     animationStart: null,
@@ -262,7 +265,7 @@ function initializeTabDrag(event) {
         // this.distanceToDrag = this.distanceDraggedViaKb - prevDistance;
         // dragDistance = this.distanceToDrag;
         // let totalDistance = 46;
-        // let duration = 220;
+        // const defaultAnimationDuration = 220;
         const prevSign = this.sign;
         this.sign = this.direction === "down" ? 1 : -1;
         let progress = Math.min(
@@ -280,15 +283,17 @@ function initializeTabDrag(event) {
           let desiredPos;
           let desiredIndex;
           if (this.direction === "down") {
-            desiredIndex = Math.ceil(currentPos / 46);
-            desiredPos = desiredIndex * 46;
+            desiredIndex = Math.ceil(currentPos / this.tabRowHeight);
+            desiredPos = desiredIndex * this.tabRowHeight;
             this.totalDistance = desiredPos - currentPos;
           } else {
-            desiredIndex = Math.floor(currentPos / 46);
-            desiredPos = desiredIndex * 46;
+            desiredIndex = Math.floor(currentPos / this.tabRowHeight);
+            desiredPos = desiredIndex * this.tabRowHeight;
             this.totalDistance = currentPos - desiredPos;
           }
-          this.animationDuration = (this.totalDistance / 46) * 220;
+          this.animationDuration =
+            (this.totalDistance / this.tabRowHeight) *
+            this.defaultAnimationDuration;
         }
 
         this.distanceDraggedViaKb =
@@ -345,8 +350,8 @@ function initializeTabDrag(event) {
           this.dragState.distanceDraggedViaKb = 0;
           this.dragState.animationStart = null;
           this.dragState.distanceToDrag = 0;
-          this.dragState.totalDistance = 46;
-          this.dragState.animationDuration = 220;
+          this.dragState.totalDistance = this.dragState.tabRowHeight;
+          this.dragState.animationDuration = this.dragState.defaultAnimationDuration;
 
           if (this.dragState.arrowKeyIsHeldDown === false) {
             this.dragState.animation = null;

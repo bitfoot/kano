@@ -4,27 +4,56 @@
   position: relative;
   flex: 1 0 0;
   height: var(--block-height);
-  background: transparent;
+  width: 400px;
+  // background: transparent;
+  background: var(--color-two);
   --x-pos: 0;
   --y-pos: 0;
   overflow: hidden;
+  z-index: 0;
+
+  &::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 68rem;
+    height: 68rem;
+    z-index: -1;
+    // z-index: 1;
+    opacity: 0;
+    // background: red;
+    // background: radial-gradient(circle at center, red, green 50%);
+    background: radial-gradient(circle at center, var(--color-two-hover), transparent 50%);
+    transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%));
+    // transform: translate(calc(var(--x-pos) - 34rem), calc(var(--y-pos) - 34rem));
+    // transition: none;
+    transition: opacity 100ms ease-out;
+  }
 
   &:hover {
 
-    & .filter__input {
-      // background: var(--color-two-hover);
-      background: radial-gradient(circle at var(--x-pos) var(--y-pos), var(--color-two-hover), var(--color-two) 34rem);
-      // transition: background-color 100ms ease-in-out, box-shadow 100ms ease-in-out;
+    &::after {
+      content: "";
+      opacity: 1;
+      transition: opacity 100ms ease-in;
     }
+
+    // & .filter__input {
+    //   // background: var(--color-two-hover);
+    //   // background: radial-gradient(circle at var(--x-pos) var(--y-pos), red, transparent 34rem);
+    //   // transition: background-color 100ms ease-in-out, box-shadow 100ms ease-in-out;
+    // }
 
   }
 
   &__input {
-    // position: absolute;
-    // top: 0;
-    // left: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
     font-size: 1rem;
-    background: var(--color-two);
+    background: transparent;
     color: var(--color-three);
     padding: var(--greater-padding);
     padding-left: var(--block-height);
@@ -32,6 +61,8 @@
     height: 100%;
     width: 100%;
     border: 0;
+    z-index: 1;
+    // overflow: hidden;
     // border-radius: var(--lesser-padding);
     transition: box-shadow 100ms ease-in-out;
 

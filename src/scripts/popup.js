@@ -281,6 +281,7 @@ document.addEventListener("pointermove", e => {
     });
   } else if (e.target.id === "filter-input") {
     const filter = e.target.parentElement;
+    // const filter = e.target;
     const bounds = filter.getBoundingClientRect();
     requestAnimationFrame(() => {
       filter.style.setProperty("--x-pos", e.clientX - bounds.left + "px");
