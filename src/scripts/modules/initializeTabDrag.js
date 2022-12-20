@@ -101,7 +101,7 @@ function initializeTabDrag(event) {
     animation: null,
     animationStart: null,
     animationElapsed: 0,
-    distanceToDrag: 0,
+    distanceToDragInOneFrame: 0,
     elapsed: 0,
     eventType,
     start: null,
@@ -119,7 +119,7 @@ function initializeTabDrag(event) {
       if (this.eventType == "pointerdown") {
         return this.pointerPosition - this.shiftY;
       } else {
-        return this.tabPosInViewport.top + this.distanceToDrag;
+        return this.tabPosInViewport.top + this.distanceToDragInOneFrame;
       }
     },
     headerHeight,
@@ -258,14 +258,6 @@ function initializeTabDrag(event) {
         let tabPosInViewport = this.tabPosInViewport.top;
         dragDistance = this.imaginaryTopPos - tabPosInViewport;
       } else {
-        // let sign = this.direction === "down" ? 1 : -1;
-        // const progress = Math.min(1, this.animationElapsed / 220);
-        // const prevDistance = this.distanceDraggedViaKb;
-        // this.distanceDraggedViaKb = easeInOutQuad(progress, 0, 46, 1) * sign;
-        // this.distanceToDrag = this.distanceDraggedViaKb - prevDistance;
-        // dragDistance = this.distanceToDrag;
-        // let totalDistance = 46;
-        // const defaultAnimationDuration = 220;
         const prevSign = this.sign;
         this.sign = this.direction === "down" ? 1 : -1;
         let progress = Math.min(
@@ -298,12 +290,9 @@ function initializeTabDrag(event) {
 
         this.distanceDraggedViaKb =
           easeInOutQuad(progress, 0, this.totalDistance, 1) * this.sign;
-        this.distanceToDrag = this.distanceDraggedViaKb - prevDistance;
-        dragDistance = this.distanceToDrag;
-        // console.log(
-        //   `totalDistance: ${this.totalDistance}, distanceToDrag: ${this.distanceToDrag
-        //   }`
-        // );
+        this.distanceToDragInOneFrame =
+          this.distanceDraggedViaKb - prevDistance;
+        dragDistance = this.distanceToDragInOneFrame;
       }
       return dragDistance;
     },
@@ -349,7 +338,7 @@ function initializeTabDrag(event) {
           this.dragState.animationElapsed = 0;
           this.dragState.distanceDraggedViaKb = 0;
           this.dragState.animationStart = null;
-          this.dragState.distanceToDrag = 0;
+          this.dragState.distanceToDragInOneFrame = 0;
           this.dragState.totalDistance = this.dragState.tabRowHeight;
           this.dragState.animationDuration = this.dragState.defaultAnimationDuration;
 

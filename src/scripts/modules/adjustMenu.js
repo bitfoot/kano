@@ -44,8 +44,6 @@ function adjustMenu() {
     numCheckedBelowFirstUnchecked: 0
   };
 
-  // console.log(`visibleTabIds: ${this.visibleTabIds}`);
-
   this.menuData = this.visibleTabIds.reduce((a, id) => {
     const indexInBrowser = this.tabIndices[id][0];
     const tabObject = this.orderedTabObjects[indexInBrowser];
@@ -73,51 +71,8 @@ function adjustMenu() {
       a.numUnchecked += 1;
     }
 
-    // console.log(
-    //   `title: ${tabObject.title
-    //   }, indexInBrowser: ${indexInBrowser}, firstCheckedVisibleIndex: ${a.firstCheckedVisibleIndex
-    //   }`
-    // );
-
     return a;
   }, accumulator);
-
-  // move up button should be enabled when:
-  /* 
-    if (Filter IS NOT active) {
-      if unchecked tab exists above ANY of the checked tabs (best is to check against the last checked tab, so find firstUncheckedVisibleIndex and see if firstUncheckedVisibleIndex < lastCheckedVisibleIndex)
-    } else if (Filter IS active):
-      if any hidden OR visible unchecked tab exists above the last checked visible tab (if index of last visible checked tab < its normal index, OR if firstUncheckedVisibleIndex < lastCheckedVisibleIndex)
-  */
-
-  // move down button should be enabled when:
-  /* 
-    if (Filter IS NOT active) {
-      if unchecked tab exists below ANY of the checked tabs (best is to check against the first checked tab, so find lastUncheckedVisibleIndex and see if lastUncheckedVisibleIndex > firstCheckedVisibleIndex)
-    } else if (Filter IS active):
-      if any hidden OR visible unchecked tab exists below the first checked visible tab (if index of last visible checked tab < its normal index, OR if firstUncheckedVisibleIndex < lastCheckedVisibleIndex)
-  */
-
-  // checkedVisibleTabsExist
-  // uncheckedVisibleTabsAboveExist
-  //    firstUncheckedVisibleIndex
-  //    lastCheckedVisibleIndex
-  // hiddenTabsAboveExist
-  //    firstHiddenTabIndex
-  //    lastCheckedVisibleIndex
-  // uncheckedVisibleTabsBelowExist
-  //    lastUncheckedVisibleIndex
-  //    firstCheckedVisibleIndex
-  // hiddenTabsBelowExist
-  //    lastHiddenTabIndex
-  //    firstCheckedVisibleIndex
-
-  // firstUncheckedVisibleIndex
-  // lastCheckedVisibleIndex
-  // firstHiddenTabIndex
-  // lastUncheckedVisibleIndex
-  // firstCheckedVisibleIndex
-  // lastHiddenTabIndex
 
   const checkedVisibleTabsExist =
     this.menuData.lastCheckedVisibleIndex !== null;

@@ -23,6 +23,7 @@ const state = {
   deleteTabs,
   // have to keep order of all tab Ids so that they can be moved on UI (before actual browser tabs are moved)
   dragState: null,
+  moveState: null,
   dragTimer: null,
   menuData: null,
   // maxScrollbarThumbOffset: 0,

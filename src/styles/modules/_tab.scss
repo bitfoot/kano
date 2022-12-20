@@ -321,6 +321,19 @@
 
   }
 
+  &--banana {
+    pointer-events: none;
+    // opacity: var(--opacity);
+    // background: var(--color-two-hover);
+    transform: translateY(var(--y-offset));
+    // transition: transform 50ms ease-in-out, opacity 50ms ease-in-out, background-color 50ms ease-in-out;
+    z-index: 999;
+
+    &:hover {
+      background: var(--color-two-hover);
+    }
+  }
+
   &--moving {
     opacity: var(--opacity);
     background: var(--color-two-hover);
