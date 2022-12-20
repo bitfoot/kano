@@ -35,6 +35,7 @@ const state = {
     filterIsActive: false,
     clearFilterBtn: document.getElementById("remove-filter-text-btn"),
     input: document.getElementById("filter-input"),
+    filterTextBackground: document.getElementById("filter-text-background"),
     tabs: {},
     numOfFilteredTabs: null,
     firstHiddenTabIndex: null,
