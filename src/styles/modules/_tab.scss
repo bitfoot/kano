@@ -25,7 +25,7 @@
   touch-action: none;
   stroke: transparent;
   // transition: stroke 200ms ease-out, background-color 200ms ease-in-out;
-  transition: stroke 200ms ease-out;
+  // transition: stroke 200ms ease-out;
   // content-visibility: auto;
   // animation: 5000ms ease-in-out banana;
   font-family: 'Open Sans', sans-serif;
@@ -33,10 +33,10 @@
 
   &:hover {
     // background: transparent;
+    // color: var(--color-three-hover);
     transition: transform 60ms ease-out, opacity 200ms ease-in-out, box-shadow 200ms ease-in-out, stroke 200ms ease-out;
 
     & .tab__tab-button {
-
       &::after {
         content: "";
         opacity: 1;
@@ -325,13 +325,13 @@
     pointer-events: none;
     // opacity: var(--opacity);
     // background: var(--color-two-hover);
-    transform: translateY(var(--y-offset));
+    transform: translateY(var(--y-offset)) scale(0.97);
     // transition: transform 50ms ease-in-out, opacity 50ms ease-in-out, background-color 50ms ease-in-out;
     z-index: 999;
+  }
 
-    &:hover {
-      background: var(--color-two-hover);
-    }
+  &--peach {
+    transform: translateY(var(--y-offset)) scale(var(--scale));
   }
 
   &--moving {
@@ -340,25 +340,24 @@
     transform: translateY(var(--y-offset)) scale(var(--scale));
     transition: transform 50ms ease-in-out, opacity 50ms ease-in-out, background-color 50ms ease-in-out;
     z-index: -1000;
-
-    &:hover {
-      background: var(--color-two-hover);
-    }
   }
 
   &__duplicate-indicator {
     margin-right: var(--greater-padding);
+    stroke: var(--color-three);
+    opacity: 0;
+    transition: opacity 200ms ease-out;
   }
 
   &--duplicate {
-    // stroke: var(--color-three);
-    stroke: var(--color-four);
+    & .tab__duplicate-indicator {
+      opacity: 1;
+      transition: opacity 200ms ease-out;
+    }
   }
 
   &--deleted {
     opacity: 0;
-    // background: red;
-    // margin-bottom: calc((var(--block-height) - var(--lesser-padding)) * -1);
     transition: opacity 100ms ease-out;
 
     &:hover {
@@ -366,18 +365,8 @@
       transition: opacity 100ms ease-out;
     }
 
-    // &+li {
-    //   margin-top: calc(var(--block-height) * -1);
-    //   transition: none;
-    // }
-
     &~li {
       animation: var(--below-deleted-animation-duration) 100ms ease-in-out forwards belowDeleted;
-
-      &:hover {
-        // transform: translateY(calc(var(--y-offset) - var(--block-height) - var(--lesser-padding)));
-        // transition: transform 200ms 100ms ease-out;
-      }
     }
   }
 }

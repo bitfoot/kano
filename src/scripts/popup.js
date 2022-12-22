@@ -21,6 +21,8 @@ const state = {
   },
   addTab,
   deleteTabs,
+  shiftKeyIsDown: null,
+  shiftCheckedTabIndex: null,
   // have to keep order of all tab Ids so that they can be moved on UI (before actual browser tabs are moved)
   dragState: null,
   moveState: null,
@@ -134,16 +136,6 @@ document.addEventListener("click", e => {
     if (!tab.classList.contains("tab--deleted")) {
       deleteTabs.call(state, [tab.id]);
     }
-  } else if (e.target.classList.contains("tab__tab-button")) {
-    // const tabButton = e.target;
-    // if (tabButton.parentElement.classList.contains("tab--held-down")) {
-    //   tabButton.parentElement.classList.remove("tab--held-down");
-    //   const tabId = e.target.parentElement.id;
-    //   const browserTabId = parseInt(tabId.split("-")[1]);
-    //   chrome.tabs.get(browserTabId, function (tab) {
-    //     chrome.tabs.highlight({ tabs: tab.index }, function () { });
-    //   });
-    // }
   } else if (e.target.id === "select-deselect-all-btn") {
     const allVisibleTabsAreChecked = state.visibleTabIds.every(id => {
       const tabIndex = state.tabIndices[id][0];
@@ -184,9 +176,17 @@ document.addEventListener("click", e => {
 
 document.addEventListener(`input`, e => {
   if (e.target.classList.contains("tab__checkbox")) {
+    // console.log(state.shiftKeyIsDown);
     const label = e.target.parentElement;
     const tabId = label.parentElement.id;
     const tabIndex = state.tabIndices[tabId][0];
+    if (state.shiftKeyIsDown) {
+      if (state.shiftCheckedTabIndex === null) {
+        state.shiftCheckedTabIndex = tabIndex;
+      } else {
+        // check/uncheck all visible tabs between shiftCheckedTabIndex and tabIndex
+      }
+    }
     if (e.target.checked) {
       label.classList.add(`tab__checkbox-label--checked`);
       state.orderedTabObjects[tabIndex].isChecked = true;
@@ -249,7 +249,11 @@ document.addEventListener("pointerdown", e => {
 });
 
 document.addEventListener(`keydown`, e => {
-  if (e.code !== "Space" && e.code !== "Enter") return;
+  console.log(e.code);
+  if (e.code === "ShiftLeft" || e.code === "ShiftRight") {
+    state.shiftKeyIsDown = true;
+  } else if (e.code !== "Space" && e.code !== "Enter") return;
+
   if (
     e.target.classList.contains("tab__tab-button") &&
     state.dragState === null
@@ -268,6 +272,12 @@ document.addEventListener(`keydown`, e => {
         });
       }
     };
+  }
+});
+
+document.addEventListener(`keyup`, e => {
+  if (e.code === "ShiftLeft" || e.code === "ShiftRight") {
+    state.shiftKeyIsDown = false;
   }
 });
 
