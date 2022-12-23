@@ -59,6 +59,29 @@
   // width: 36rem;
   // background: green;
 
+  // &::after {
+  //   content: "";
+  //   position: absolute;
+  //   top: 0;
+  //   left: 0;
+  //   width: 68rem;
+  //   height: 68rem;
+  //   z-index: -1;
+  //   opacity: 0;
+  //   background: radial-gradient(circle at center, #3d1452, transparent 50%);
+  //   transform: translate(calc(var(--pointer-x-pos) - 50%), calc(var(--pointer-y-pos) - 50%));
+  //   // transition: none;
+  //   transition: opacity 1000ms ease-out;
+  // }
+
+  // &:hover {
+  //   &::after {
+  //     content: "";
+  //     opacity: 1;
+  //     transition: opacity 1000ms ease-in;
+  //   }
+  // }
+
 }
 
 html,

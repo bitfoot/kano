@@ -22,7 +22,7 @@ const state = {
   addTab,
   deleteTabs,
   shiftKeyIsDown: null,
-  shiftCheckedTabIndex: null,
+  lastCheckedTabId: null,
   // have to keep order of all tab Ids so that they can be moved on UI (before actual browser tabs are moved)
   dragState: null,
   moveState: null,
@@ -181,12 +181,30 @@ document.addEventListener(`input`, e => {
     const tabId = label.parentElement.id;
     const tabIndex = state.tabIndices[tabId][0];
     if (state.shiftKeyIsDown) {
-      if (state.shiftCheckedTabIndex === null) {
-        state.shiftCheckedTabIndex = tabIndex;
-      } else {
-        // check/uncheck all visible tabs between shiftCheckedTabIndex and tabIndex
+      // check/uncheck all visible tabs between shiftCheckedTabIndex and tabIndex
+      // find out if lastCheckedTabId belongs to a visible tab
+      const lastCheckedTabVisibleIndex =
+        state.tabIndices[state.lastCheckedTabId][1];
+      if (lastCheckedTabVisibleIndex !== null) {
+        const tabVisibleIndex = state.tabIndices[tabId][1];
+        let idsOfTabsToAffect;
+        if (tabVisibleIndex < lastCheckedTabVisibleIndex) {
+          idsOfTabsToAffect = state.visibleTabIds.slice(
+            tabVisibleIndex,
+            lastCheckedTabVisibleIndex + 1
+          );
+        } else if (tabVisibleIndex > lastCheckedTabVisibleIndex) {
+          idsOfTabsToAffect = state.visibleTabIds.slice(
+            lastCheckedTabVisibleIndex,
+            tabVisibleIndex + 1
+          );
+        } else {
+          idsOfTabsToAffect = [tabId];
+        }
+        // const
       }
     }
+    state.lastCheckedTabId = tabId;
     if (e.target.checked) {
       label.classList.add(`tab__checkbox-label--checked`);
       state.orderedTabObjects[tabIndex].isChecked = true;
@@ -282,6 +300,16 @@ document.addEventListener(`keyup`, e => {
 });
 
 document.addEventListener("pointermove", e => {
+  // requestAnimationFrame(() => {
+  //   document.documentElement.style.setProperty(
+  //     "--pointer-x-pos",
+  //     e.clientX + "px"
+  //   );
+  //   document.documentElement.style.setProperty(
+  //     "--pointer-y-pos",
+  //     e.clientY + "px"
+  //   );
+  // });
   // console.log(e);
   if (e.target.classList.contains("tab__tab-button")) {
     const tabButton = e.target;
