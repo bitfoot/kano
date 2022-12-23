@@ -332,6 +332,7 @@
 
   &--peach {
     background: purple;
+    transition: none;
     transform: translateY(var(--y-offset)) scale(var(--scale));
   }
 
