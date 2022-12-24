@@ -163,10 +163,10 @@ document.addEventListener("click", e => {
     deleteTabs.call(state, tabIds);
   } else if (e.target.id === "move-to-top-btn") {
     moveTabs.call(state, "top");
-    adjustMenu.call(state);
+    // adjustMenu.call(state);
   } else if (e.target.id === "move-to-bottom-btn") {
     moveTabs.call(state, "bottom");
-    adjustMenu.call(state);
+    // adjustMenu.call(state);
   } else if (e.target.id === "remove-filter-text-btn") {
     const filterInput = state.filterState.input;
     filterInput.value = "";

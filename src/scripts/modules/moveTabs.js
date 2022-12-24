@@ -1,6 +1,8 @@
 "use strict";
 
 const easeInOutQuad = require("./util").easeInOutQuad;
+const easeInQuad = require("./util").easeInQuad;
+const adjustMenu = require("./adjustMenu");
 
 function moveTabs(direction) {
   const checkedVisibleTabs = this.menuData.checkedVisibleTabs;
@@ -14,12 +16,12 @@ function moveTabs(direction) {
   // }
   let numCheckedAbove = 0;
   let numUncheckedAbove = 0;
-  let blockIndex = null;
-  let lastVisibleIsChecked = false;
+  // let blockIndex = null;
+  // let lastVisibleIsChecked = false;
   const tabHeight = 40;
   const margin = 6;
   const tabRowHeight = tabHeight + margin;
-  let indexOfNextUncheckedTabObj = 0;
+  // let indexOfNextUncheckedTabObj = 0;
 
   // get info about tabs
   this.moveState = {
@@ -31,7 +33,7 @@ function moveTabs(direction) {
     animationStart: null,
     previousTimeStamp: null,
     animationElapsed: null,
-    animationDuration: 20000,
+    animationDuration: 4000,
     blocks: [],
     getMoveDistance(block) {
       let progress = Math.min(
@@ -40,7 +42,7 @@ function moveTabs(direction) {
       );
       let prevDistanceMoved = block.totalDistanceMoved;
 
-      block.totalDistanceMoved = easeInOutQuad(
+      block.totalDistanceMoved = easeInQuad(
         progress,
         0,
         block.totalDistanceToMove,
@@ -69,31 +71,23 @@ function moveTabs(direction) {
 
         if (this.moveState.animation) {
           // update positions of blocks (checked tabs)
-
           for (
             let blockIndex = this.moveState.blocks.length - 1;
             blockIndex >= 0;
             blockIndex--
           ) {
-            const block = this.moveState.blocks[blockIndex];
-            const moveDistance = this.moveState.getMoveDistance(block);
+            // const block = this.moveState.blocks[blockIndex];
+            // const moveDistance = this.moveState.getMoveDistance(block);
             // update block position
-            block.topPos += moveDistance;
-            block.bottomPos += moveDistance;
+            // block.topPos += moveDistance;
+            // block.bottomPos += moveDistance;
             // style tabs within the block
-            // console.log(`totalDistanceMoved: ${block.totalDistanceMoved}`);
-            block.tabs.forEach(tab => {
-              tab.style.setProperty(
-                "--y-offset",
-                block.totalDistanceMoved + "px"
-              );
-            });
-            // console.log(
-            //   `blockIndex: ${blockIndex}, block.topPos: ${block.topPos
-            //   }, block.bottomPos: ${block.bottomPos}, block.initialTopPos: ${block.initialTopPos
-            //   }, indexOfNextUncheckedTabObj: ${block.indexOfNextUncheckedTabObj
-            //   } `
-            // );
+            // block.tabs.forEach(tab => {
+            //   tab.style.setProperty(
+            //     "--y-offset",
+            //     block.totalDistanceMoved + "px"
+            //   );
+            // });
             // style tabs below the block
             for (
               let index = block.indexOfNextUncheckedTabObj;
@@ -104,33 +98,20 @@ function moveTabs(direction) {
               if (tabObj.currentTopPos >= block.bottomPos) {
                 break;
               } else {
-                const factor = block.height / tabHeight + 1;
-
-                // const factor = 2.6;
-                // const difference =
-                //   (tabObj.currentTopPos - block.bottomPos) / factor;
-                // let difference = Math.max(
-                //   tabObj.currentTopPos - block.bottomPos,
-                //   -80
-                // );
-                let difference = tabObj.currentTopPos - block.bottomPos;
-                difference = difference / factor;
-                // const difference = tabObj.currentTopPos - block.bottomPos;
-                // const difference = tabObj.initialTopPos - block.bottomPos;
-                // const differenceToTabHeightRatio = Math.min(
-                //   1,
-                //   Math.abs(difference) / tabHeight
-                // );
-                const differenceToTabHeightRatio =
-                  Math.abs(difference) / tabHeight;
-
                 if (!tabObj.blocksAbove[block.id]) {
+                  tabObj.combinedBlocksHeight += block.height;
                   const blockDistanceToTravel = (block.height + margin) * -1;
                   tabObj.blocksAbove[block.id] = {
                     blockDistanceToTravel,
                     blockDistanceTravelled: 0
                   };
                 }
+                const factor = block.height / tabHeight + 1;
+                let difference = tabObj.currentTopPos - block.bottomPos;
+                difference = difference / factor;
+
+                const differenceToTabHeightRatio =
+                  Math.abs(difference) / tabHeight;
 
                 const blockDistanceTravelled =
                   tabObj.blocksAbove[block.id].blockDistanceTravelled;
@@ -151,12 +132,6 @@ function moveTabs(direction) {
                 tabObj.currentTopPos =
                   tabObj.initialTopPos + tabObj.totalOffset;
 
-                // console.log(
-                //   `tabIndex: ${index}, offsetChange: ${offsetChange}`
-                // );
-                // tabObj.currentTopPos = tabObj.initialTopPos + distanceToMove;
-
-                // let offset = tabObj.currentTopPos - tabObj.initialTopPos;
                 if (
                   newBlockDistanceToTravel ==
                   tabObj.blocksAbove[block.id].blockDistanceToTravel
@@ -182,18 +157,18 @@ function moveTabs(direction) {
         window.requestAnimationFrame(this.moveState.step);
       } else {
         // if animation ended it means it's time to reset variables and move tabs in the DOM
-        // this.moveState.checkedVisibleTabs.forEach(tab => {
-        //   tab.classList.remove("tab--banana");
-        //   tab.style.setProperty("--y-offset", 0 + "px");
-        // });
-        // this.moveState.uncheckedTabObjs.forEach(obj => {
-        //   obj.tab.classList.remove("tab--peach");
-        //   obj.tab.style.setProperty("--y-offset", 0 + "px");
-        // });
-        // this.moveState.moveTabsInTheDOM(
-        //   this.moveState.checkedVisibleTabs,
-        //   this.moveState.direction
-        // );
+        this.moveState.checkedVisibleTabs.forEach(tab => {
+          tab.classList.remove("tab--banana");
+          tab.style.setProperty("--y-offset", 0 + "px");
+        });
+        this.moveState.uncheckedTabObjs.forEach(obj => {
+          obj.tab.classList.remove("tab--peach");
+          obj.tab.style.setProperty("--y-offset", 0 + "px");
+        });
+        this.moveState.moveTabsInTheDOM(
+          this.moveState.checkedVisibleTabs,
+          this.moveState.direction
+        );
       }
     }.bind(this),
     moveTabsInTheDOM: function (tabsToMove) {
@@ -205,27 +180,18 @@ function moveTabs(direction) {
 
       if (this.moveState.direction === "bottom") {
         const lastIndex = this.orderedTabObjects.length - 1;
-
+        // window.requestAnimationFrame(() => {
         this.tabList.insertBefore(
           fragmentOfChecked,
           this.tabs[lastIndex].nextSibling
         );
+        this.tabs = [...this.tabList.children];
+        // });
       } else {
         this.tabList.insertBefore(fragmentOfChecked, this.tabList.firstChild);
       }
 
-      this.tabs = [...this.tabList.children];
-
-      this.visibleTabIds.forEach(id => {
-        const index = this.tabIndices[id][0];
-        const tab = this.tabs[index];
-        if (this.filterState.tabs[id]) {
-          tab.style.setProperty(
-            "--y-offset",
-            this.filterState.tabs[id].filterOffset + "px"
-          );
-        }
-      });
+      // this.tabs = [...this.tabList.children];
     }.bind(this)
   };
   const reorderedVisibleTabIds = [];
@@ -241,37 +207,23 @@ function moveTabs(direction) {
         if (obj.isChecked === false) {
           numUncheckedAbove += 1;
           // if no checked tabs exist above, there's no need to do anything else for this tab
-          if (numCheckedAbove === 0) return;
-          const initialTopPos =
-            this.tabIndices[id][1] * this.moveState.tabRowHeight;
+          // if (numCheckedAbove === 0) return;
           this.tabIndices[id] = [
             this.tabIndices[id][0] - numCheckedAbove,
             this.tabIndices[id][1] - numCheckedAbove
           ];
-          const totalDistanceToMove = numCheckedAbove * tabRowHeight * -1;
-          const tab = this.tabs[index];
+          const distanceToMove = numCheckedAbove * tabRowHeight * -1;
           let filterOffset = 0;
           if (this.filterState.tabs[id]) {
             filterOffset = this.filterState.tabs[id].filterOffset;
           }
-          tab.classList.add("tab--peach");
-          const uncheckedTabObj = {
-            tab,
-            initialTopPos,
-            currentTopPos: initialTopPos,
-            currentBottomPos: initialTopPos + tabHeight,
-            totalDistanceToMove,
-            totalOffset: 0,
-            moveOffset: 0,
-            filterOffset,
-            blockBasedOffset: 0,
-            indexOfLastBlockAbove: blockIndex,
-            blocksAbove: {}
-          };
-          this.moveState.uncheckedTabObjs.push(uncheckedTabObj);
-          // numUncheckedAbove += 1;
-          indexOfNextUncheckedTabObj += 1;
-          lastVisibleIsChecked = false;
+          const newOffset = distanceToMove + filterOffset;
+          const tab = this.tabs[index];
+          window.requestAnimationFrame(() => {
+            tab.style.setProperty("--moved-offset", distanceToMove + "px");
+            tab.classList.add("tab--peach");
+          });
+          // lastVisibleIsChecked = false;
         } else {
           // if tab IS checked
           const numCheckedBelow =
@@ -279,49 +231,57 @@ function moveTabs(direction) {
           const numUncheckedBelow =
             this.menuData.numUnchecked - numUncheckedAbove;
 
-          const visibleTopPos = this.tabIndices[id][1] * tabRowHeight;
           const tab = this.tabs[index];
-          tab.classList.add("tab--banana");
+          if (numCheckedAbove === 0) {
+            tab.onanimationend = e => {
+              if (e.animationName === "moving") {
+                // console.log("poop");
+                // this.moveState.moveTabsInTheDOM(
+                //   this.moveState.checkedVisibleTabs
+                // );
+                this.visibleTabIds.forEach(id => {
+                  const index = this.tabIndices[id][0];
+                  const tab = this.tabs[index];
+                  let newOffset = 0;
+                  if (this.filterState.tabs[id]) {
+                    newOffset = this.filterState.tabs[id].filterOffset;
+                  }
+
+                  window.requestAnimationFrame(() => {
+                    // tab.style.setProperty("--y-offset", newOffset + "px");
+                    // tab.style.setProperty("--moved-offset", 0 + "px");
+                    tab.classList.remove("tab--banana");
+                    tab.classList.remove("tab--peach");
+                  });
+                });
+
+                this.moveState.moveTabsInTheDOM(
+                  this.moveState.checkedVisibleTabs
+                );
+                tab.animationend = "";
+              }
+            };
+          }
+          const distanceToMove = numUncheckedBelow * tabRowHeight;
+          let filterOffset = 0;
+          if (this.filterState.tabs[id]) {
+            filterOffset = this.filterState.tabs[id].filterOffset;
+            this.filterState.tabs[id].filterOffset = movedTabFilterOffset;
+          }
+          const newOffset = distanceToMove + filterOffset;
+
+          window.requestAnimationFrame(() => {
+            tab.style.setProperty("--moved-offset", distanceToMove + "px");
+            tab.classList.add("tab--banana");
+          });
 
           this.tabIndices[id] = [
             lastTabIndex - numCheckedBelow,
             this.tabIndices[id][1] + numUncheckedBelow
           ];
-          if (this.filterState.tabs[id]) {
-            this.filterState.tabs[id].filterOffset = movedTabFilterOffset;
-          }
-
-          if (lastVisibleIsChecked === false) {
-            if (blockIndex === null) {
-              blockIndex = 0;
-            } else {
-              blockIndex += 1;
-            }
-            if (indexOfNextUncheckedTabObj === null && numUncheckedBelow > 0) {
-              indexOfNextUncheckedTabObj = 0;
-            }
-            const block = {
-              id,
-              height: tabHeight,
-              initialTopPos: visibleTopPos,
-              numUncheckedBelow,
-              topPos: visibleTopPos,
-              bottomPos: visibleTopPos + tabHeight,
-              totalDistanceToMove: numUncheckedBelow * tabRowHeight,
-              totalDistanceMoved: 0,
-              distanceToMoveInOneFrame: 0,
-              indexOfNextUncheckedTabObj,
-              tabs: [tab]
-            };
-            this.moveState.blocks[blockIndex] = block;
-          } else {
-            this.moveState.blocks[blockIndex].tabs.push(tab);
-            this.moveState.blocks[blockIndex].height += tabRowHeight;
-            this.moveState.blocks[blockIndex].bottomPos += tabRowHeight;
-          }
 
           numCheckedAbove += 1;
-          lastVisibleIsChecked = true;
+          // lastVisibleIsChecked = true;
         }
         reorderedVisibleTabIds[this.tabIndices[id][1]] = id;
       } else {
@@ -361,69 +321,85 @@ function moveTabs(direction) {
     reorderedTabObjects[this.tabIndices[id][0]] = obj;
   });
 
-  // console.log(this.orderedTabObjects);
-  // console.log(reorderedTabObjects);
-  // console.log(this.moveState);
-
-  // const getMoveDistance = block => {
-  //   let progress = Math.min(1, this.animationElapsed / this.animationDuration);
-  //   let prevDistanceMoved = block.totalDistanceMoved;
-
-  //   block.totalDistanceMoved = easeInOutQuad(
-  //     progress,
-  //     0,
-  //     block.totalDistanceToMove,
-  //     1
-  //   );
-  //   block.distanceToMoveInOneFrame =
-  //     block.totalDistanceMoved - prevDistanceMoved;
-
-  //   return block.distanceToMoveInOneFrame;
-  // };
-
-  // at first, try to move checked tabs only, without animating surrounding tabs
-
-  // const nstep = step.bind(moveState);
-  this.moveState.animation = window.requestAnimationFrame(this.moveState.step);
-
-  // animateMovement.call(moveState);
-
   // move tabs in the DOM
-  // const moveTabsInTheDOM = (tabsToMove, direction) => {
-  //   const fragmentOfChecked = document.createDocumentFragment();
+  const moveTabsInTheDOM = (tabsToMove, direction) => {
+    const fragmentOfChecked = document.createDocumentFragment();
 
-  //   tabsToMove.forEach(tab => {
-  //     fragmentOfChecked.appendChild(tab);
-  //   });
+    // console.log(tabsToMove);
+    tabsToMove.forEach(tab => {
+      fragmentOfChecked.appendChild(tab);
+    });
+    const lastIndex = this.orderedTabObjects.length - 1;
+    if (direction === "bottom") {
+      window.requestAnimationFrame(() => {
+        this.tabList.insertBefore(
+          fragmentOfChecked,
+          this.tabs[lastIndex].nextSibling
+        );
+        this.tabs = [...this.tabList.children];
+      });
+    } else {
+      // window.requestAnimationFrame(() => {
+      this.tabList.insertBefore(fragmentOfChecked, this.tabList.firstChild);
+      // });
+    }
 
-  //   if (direction === "bottom") {
-  //     const lastIndex = this.orderedTabObjects.length - 1;
+    // this.tabs = [...this.tabList.children];
+  };
 
-  //     this.tabList.insertBefore(
-  //       fragmentOfChecked,
-  //       this.tabs[lastIndex].nextSibling
-  //     );
-  //   } else {
-  //     this.tabList.insertBefore(fragmentOfChecked, this.tabList.firstChild);
-  //   }
+  const step = timestamp => {
+    if (this.moveState.animationStart === null) {
+      this.moveState.animationStart = timestamp;
+    }
 
-  //   this.tabs = [...this.tabList.children];
+    this.moveState.animationElapsed = timestamp - this.moveState.animationStart;
 
-  //   this.visibleTabIds.forEach(id => {
-  //     const index = this.tabIndices[id][0];
-  //     const tab = this.tabs[index];
-  //     if (this.filterState.tabs[id]) {
-  //       tab.style.setProperty(
-  //         "--y-offset",
-  //         this.filterState.tabs[id].filterOffset + "px"
-  //       );
-  //     }
-  //   });
-  // };
+    if (this.moveState.previousTimeStamp !== timestamp) {
+      this.moveState.previousTimeStamp = timestamp;
+    }
+
+    if (this.moveState.animationElapsed >= this.moveState.animationDuration) {
+      this.moveState.animation = null;
+    }
+
+    if (this.moveState.animation) {
+      window.requestAnimationFrame(step);
+    } else {
+      // if animation ended it means it's time to reset variables and move tabs in the DOM
+
+      window.requestAnimationFrame(() => {
+        this.moveState.moveTabsInTheDOM(this.moveState.checkedVisibleTabs);
+      });
+
+      this.visibleTabIds.forEach(id => {
+        const index = this.tabIndices[id][0];
+        const tab = this.tabs[index];
+        let newOffset = 0;
+        if (this.filterState.tabs[id]) {
+          newOffset = this.filterState.tabs[id].filterOffset;
+        }
+
+        window.requestAnimationFrame(() => {
+          tab.style.setProperty("--y-offset", newOffset + "px");
+          tab.classList.remove("tab--banana");
+          tab.classList.remove("tab--peach");
+        });
+      });
+    }
+  };
+
+  // const state = this;
+  // window.requestAnimationFrame(() => {
+  // this.moveState.moveTabsInTheDOM(this.moveState.checkedVisibleTabs);
+  // moveTabsInTheDOM.call(this, this.moveState.checkedVisibleTabs);
+  // });
+
+  // this.moveState.animation = window.requestAnimationFrame(step);
 
   // moveTabsInTheDOM(checkedVisibleTabs, direction);
   this.orderedTabObjects = reorderedTabObjects;
   this.visibleTabIds = reorderedVisibleTabIds;
+  adjustMenu.call(this);
 }
 
 module.exports = moveTabs;

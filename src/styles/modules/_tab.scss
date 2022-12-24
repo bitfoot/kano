@@ -9,6 +9,8 @@
   margin: 0 0 var(--lesser-padding) 0;
   padding: var(--greater-padding);
   // border-radius: var(--lesser-padding);
+  --moved-offset: 0px;
+  --filter-offset: 0px;
   --deleted-offset: 0px;
   --y-offset: 0px;
   --delay: 0;
@@ -25,7 +27,7 @@
   touch-action: none;
   stroke: transparent;
   // transition: stroke 200ms ease-out, background-color 200ms ease-in-out;
-  // transition: stroke 200ms ease-out;
+  // transition: none;
   // content-visibility: auto;
   // animation: 5000ms ease-in-out banana;
   font-family: 'Open Sans', sans-serif;
@@ -322,18 +324,24 @@
   }
 
   &--banana {
-    pointer-events: none;
+    // pointer-events: none;
     // opacity: var(--opacity);
-    // background: var(--color-two-hover);
-    transform: translateY(var(--y-offset)) scale(0.97);
-    // transition: transform 50ms ease-in-out, opacity 50ms ease-in-out, background-color 50ms ease-in-out;
-    z-index: 999;
+    // opacity: 0.5;
+    background: purple;
+    // transform: translateY(var(--y-offset)) scale(0.97);
+    // transform: translateY(var(--y-offset));
+    animation: 400ms ease-in forwards moving;
+    // transition: transform 4000ms ease-in-out;
+    // z-index: -10;
   }
 
   &--peach {
-    background: purple;
-    transition: none;
-    transform: translateY(var(--y-offset)) scale(var(--scale));
+    // background: purple;
+    // background: rgba(52, 72, 111, 0.5);
+    // transition: none;
+    // transition: transform 4000ms ease-in-out;
+    // transform: translateY(var(--y-offset));
+    animation: 400ms ease-in forwards moving;
   }
 
   &--moving {
@@ -394,14 +402,14 @@
   }
 }
 
-@keyframes banana {
+@keyframes moving {
 
   from {
-    background-color: transparent;
+    transform: translateY(var(--y-offset));
   }
 
   to {
-    background-color: var(--color-two);
+    transform: translateY(calc(var(--y-offset) + var(--moved-offset)));
   }
 }
 
