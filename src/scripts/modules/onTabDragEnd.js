@@ -81,9 +81,9 @@ function onTabDragPointerUp(event) {
       });
       // move the actual chrome tab
       const replacedTabIdInBrowser = +replacedTab.id.split("-")[1];
-      // chrome.tabs.get(replacedTabIdInBrowser).then(tabDetails => {
-      //   chrome.tabs.move(draggedTabIdInBrowser, { index: tabDetails.index });
-      // });
+      chrome.tabs.get(replacedTabIdInBrowser).then(tabDetails => {
+        chrome.tabs.move(draggedTabIdInBrowser, { index: tabDetails.index });
+      });
     }
   } else {
     // if tab was dragged below where it was originally.
@@ -144,9 +144,9 @@ function onTabDragPointerUp(event) {
       });
 
       const replacedTabIdInBrowser = +replacedTab.id.split("-")[1];
-      // chrome.tabs.get(replacedTabIdInBrowser).then(tabDetails => {
-      //   chrome.tabs.move(draggedTabIdInBrowser, { index: tabDetails.index });
-      // });
+      chrome.tabs.get(replacedTabIdInBrowser).then(tabDetails => {
+        chrome.tabs.move(draggedTabIdInBrowser, { index: tabDetails.index });
+      });
     }
   }
 

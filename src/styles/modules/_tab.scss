@@ -330,7 +330,7 @@
     background: purple;
     // transform: translateY(var(--y-offset)) scale(0.97);
     // transform: translateY(var(--y-offset));
-    animation: 400ms ease-in forwards moving;
+    animation: 2000ms ease-in forwards moving;
     // transition: transform 4000ms ease-in-out;
     // z-index: -10;
   }
@@ -341,7 +341,7 @@
     // transition: none;
     // transition: transform 4000ms ease-in-out;
     // transform: translateY(var(--y-offset));
-    animation: 400ms ease-in forwards moving;
+    animation: 2000ms ease-in forwards moving;
   }
 
   &--moving {

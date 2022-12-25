@@ -25,6 +25,7 @@ function moveTabs(direction) {
 
   // get info about tabs
   this.moveState = {
+    lastTabIndex,
     tabRowHeight,
     checkedVisibleTabs,
     uncheckedTabObjs: [],
@@ -180,13 +181,15 @@ function moveTabs(direction) {
 
       if (this.moveState.direction === "bottom") {
         const lastIndex = this.orderedTabObjects.length - 1;
-        // window.requestAnimationFrame(() => {
-        this.tabList.insertBefore(
-          fragmentOfChecked,
-          this.tabs[lastIndex].nextSibling
-        );
-        this.tabs = [...this.tabList.children];
-        // });
+        window.requestAnimationFrame(() => {
+          this.tabList.insertBefore(
+            fragmentOfChecked,
+            // this.tabs[lastIndex].nextSibling
+            this.tabList.lastChild.nextSibling
+          );
+          this.tabs = [...this.tabList.children];
+        });
+        console.log("tabs were moved in the dom!");
       } else {
         this.tabList.insertBefore(fragmentOfChecked, this.tabList.firstChild);
       }
@@ -235,30 +238,72 @@ function moveTabs(direction) {
           if (numCheckedAbove === 0) {
             tab.onanimationend = e => {
               if (e.animationName === "moving") {
-                // console.log("poop");
+                tab.onanimationend = "";
+                console.log("poop");
                 // this.moveState.moveTabsInTheDOM(
                 //   this.moveState.checkedVisibleTabs
                 // );
                 this.visibleTabIds.forEach(id => {
                   const index = this.tabIndices[id][0];
-                  const tab = this.tabs[index];
+                  // const tab = this.tabs[index];
+                  const tab = document.getElementById(id);
                   let newOffset = 0;
                   if (this.filterState.tabs[id]) {
                     newOffset = this.filterState.tabs[id].filterOffset;
                   }
 
                   window.requestAnimationFrame(() => {
-                    // tab.style.setProperty("--y-offset", newOffset + "px");
-                    // tab.style.setProperty("--moved-offset", 0 + "px");
                     tab.classList.remove("tab--banana");
                     tab.classList.remove("tab--peach");
+                    tab.style.setProperty("--y-offset", newOffset + "px");
                   });
                 });
 
                 this.moveState.moveTabsInTheDOM(
                   this.moveState.checkedVisibleTabs
                 );
-                tab.animationend = "";
+
+                const movedTabsBrowserIds = this.moveState.checkedVisibleTabs.map(
+                  tab => +tab.id.split("-")[1]
+                );
+
+                const moveBrowserTabsToIndex = async function (
+                  tabsToMove,
+                  index
+                ) {
+                  try {
+                    await chrome.tabs.move(movedTabsBrowserIds, {
+                      index: lastTabIndex
+                    });
+                  } catch (error) {
+                    if (
+                      error ==
+                      "Error: Tabs cannot be edited right now (user may be dragging a tab)."
+                    ) {
+                      setTimeout(() => moveBrowserTabsToIndex(index), 50);
+                    } else {
+                      console.error(error);
+                    }
+                  }
+                };
+
+                moveBrowserTabsToIndex(
+                  movedTabsBrowserIds,
+                  this.moveState.lastTabIndex
+                );
+
+                // async function moveToFirstPosition(activeInfo) {
+                //   try {
+                //     await chrome.tabs.move(activeInfo.tabId, {index: 0});
+                //     console.log('Success.');
+                //   } catch (error) {
+                //     if (error == 'Error: Tabs cannot be edited right now (user may be dragging a tab).') {
+                //       setTimeout(() => moveToFirstPosition(activeInfo), 50);
+                //     } else {
+                //       console.error(error);
+                //     }
+                //   }
+                // }
               }
             };
           }
