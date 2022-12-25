@@ -270,8 +270,8 @@ document.addEventListener(`keydown`, e => {
   console.log(e.code);
   if (e.code === "ShiftLeft" || e.code === "ShiftRight") {
     state.shiftKeyIsDown = true;
-  } else if (e.code !== "Space" && e.code !== "Enter") return;
-
+  }
+  if (e.code !== "Space" && e.code !== "Enter") return;
   if (
     e.target.classList.contains("tab__tab-button") &&
     state.dragState === null
@@ -281,6 +281,7 @@ document.addEventListener(`keydown`, e => {
     state.dragTimer = setTimeout(initializeTabDrag.bind(state, e), 300);
     tabButton.onkeyup = () => {
       clearTimeout(state.dragTimer);
+      tabButton.onkeyup = "";
       if (state.dragState === null) {
         tabButton.parentElement.classList.remove("tab--held-down");
         const tabId = e.target.parentElement.id;

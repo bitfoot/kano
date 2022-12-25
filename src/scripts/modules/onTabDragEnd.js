@@ -156,6 +156,7 @@ function onTabDragPointerUp(event) {
   dragState.draggedTab.onpointerup = null;
   dragState.draggedTab.onkeydown = null;
   dragState.draggedTab.onkeyup = null;
+  dragState.draggedTab.firstChild.onblur = "";
   dragState.draggedTab.classList.remove("tab--draggable");
 
   // reset style values of all the tabs to their defaults

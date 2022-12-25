@@ -7,7 +7,7 @@ function filter() {
   const state = this;
   const filterState = state.filterState;
   const filterString = filterState.input.value.toLowerCase();
-  state.filterState.filterTextBackground.innerText = filterString;
+  // state.filterState.filterTextBackground.innerText = filterString;
   state.visibleTabIds = [];
   // this.numOfVisibleTabs = 0;
   const TAB_HEIGHT = 46;

@@ -43,19 +43,21 @@
 
   }
 
-  &__text-background {
-    margin: 0;
-    pointer-events: none;
-    position: absolute;
-    top: var(--greater-padding);
-    left: var(--block-height);
-    // background: #9932CC;
-    background: var(--color-two-pressed);
-    font-size: 1rem;
-    // color: var(--color-three);
-    color: transparent;
-    white-space: pre-wrap;
-  }
+  // &__text-background {
+  //   margin: 0;
+  //   pointer-events: none;
+  //   position: absolute;
+  //   top: var(--greater-padding);
+  //   left: var(--block-height);
+  //   // background: #9932CC;
+  //   background: var(--color-two-pressed);
+  //   // background-image: linear-gradient(transparent 0% 90%, #9932CC 100%);
+  //   // linear-gradient(-45deg, #122428 0%, transparent 100%);
+  //   font-size: 1rem;
+  //   // color: var(--color-three);
+  //   color: transparent;
+  //   white-space: pre-wrap;
+  // }
 
   &__input {
     position: absolute;
@@ -141,6 +143,7 @@
       pointer-events: none;
       cursor: default;
       opacity: 0.5;
+      // opacity: 0;
       background: transparent;
       transition: opacity 80ms ease-out, background-color 30ms ease-in-out;
     }

@@ -79,6 +79,9 @@ function initializeTabDrag(event) {
     down: 420
   };
 
+  draggedTab.firstChild.onblur = () => {
+    draggedTab.firstChild.focus();
+  };
   // draggedTab.setPointerCapture(event.pointerId);
   resetTransitionVariables.call(this);
   draggedTab.classList.add("tab--draggable");
@@ -254,7 +257,7 @@ function initializeTabDrag(event) {
     },
     getDragDistance() {
       let dragDistance;
-      if (this.eventType == "pointerdown") {
+      if (this.eventType === "pointerdown") {
         let tabPosInViewport = this.tabPosInViewport.top;
         dragDistance = this.imaginaryTopPos - tabPosInViewport;
       } else {

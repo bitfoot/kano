@@ -179,22 +179,17 @@ function moveTabs(direction) {
         fragmentOfChecked.appendChild(tab);
       });
 
+      let tabToInsertBefore;
       if (this.moveState.direction === "bottom") {
-        const lastIndex = this.orderedTabObjects.length - 1;
-        window.requestAnimationFrame(() => {
-          this.tabList.insertBefore(
-            fragmentOfChecked,
-            // this.tabs[lastIndex].nextSibling
-            this.tabList.lastChild.nextSibling
-          );
-          this.tabs = [...this.tabList.children];
-        });
-        console.log("tabs were moved in the dom!");
+        tabToInsertBefore = this.tabList.lastChild.nextSibling;
       } else {
-        this.tabList.insertBefore(fragmentOfChecked, this.tabList.firstChild);
+        tabToInsertBefore = this.tabList.firstChild;
       }
 
-      // this.tabs = [...this.tabList.children];
+      window.requestAnimationFrame(() => {
+        this.tabList.insertBefore(fragmentOfChecked, tabToInsertBefore);
+        this.tabs = [...this.tabList.children];
+      });
     }.bind(this)
   };
   const reorderedVisibleTabIds = [];
@@ -239,10 +234,8 @@ function moveTabs(direction) {
             tab.onanimationend = e => {
               if (e.animationName === "moving") {
                 tab.onanimationend = "";
-                console.log("poop");
-                // this.moveState.moveTabsInTheDOM(
-                //   this.moveState.checkedVisibleTabs
-                // );
+
+                // animate tab movement, then move tabs in the DOM
                 this.visibleTabIds.forEach(id => {
                   const index = this.tabIndices[id][0];
                   // const tab = this.tabs[index];
@@ -263,47 +256,7 @@ function moveTabs(direction) {
                   this.moveState.checkedVisibleTabs
                 );
 
-                const movedTabsBrowserIds = this.moveState.checkedVisibleTabs.map(
-                  tab => +tab.id.split("-")[1]
-                );
-
-                const moveBrowserTabsToIndex = async function (
-                  tabsToMove,
-                  index
-                ) {
-                  try {
-                    await chrome.tabs.move(movedTabsBrowserIds, {
-                      index: lastTabIndex
-                    });
-                  } catch (error) {
-                    if (
-                      error ==
-                      "Error: Tabs cannot be edited right now (user may be dragging a tab)."
-                    ) {
-                      setTimeout(() => moveBrowserTabsToIndex(index), 50);
-                    } else {
-                      console.error(error);
-                    }
-                  }
-                };
-
-                moveBrowserTabsToIndex(
-                  movedTabsBrowserIds,
-                  this.moveState.lastTabIndex
-                );
-
-                // async function moveToFirstPosition(activeInfo) {
-                //   try {
-                //     await chrome.tabs.move(activeInfo.tabId, {index: 0});
-                //     console.log('Success.');
-                //   } catch (error) {
-                //     if (error == 'Error: Tabs cannot be edited right now (user may be dragging a tab).') {
-                //       setTimeout(() => moveToFirstPosition(activeInfo), 50);
-                //     } else {
-                //       console.error(error);
-                //     }
-                //   }
-                // }
+                // enable menu buttons and filter
               }
             };
           }
@@ -366,82 +319,29 @@ function moveTabs(direction) {
     reorderedTabObjects[this.tabIndices[id][0]] = obj;
   });
 
-  // move tabs in the DOM
-  const moveTabsInTheDOM = (tabsToMove, direction) => {
-    const fragmentOfChecked = document.createDocumentFragment();
+  // move browser tabs
+  const movedTabsBrowserIds = this.moveState.checkedVisibleTabs.map(
+    tab => +tab.id.split("-")[1]
+  );
 
-    // console.log(tabsToMove);
-    tabsToMove.forEach(tab => {
-      fragmentOfChecked.appendChild(tab);
-    });
-    const lastIndex = this.orderedTabObjects.length - 1;
-    if (direction === "bottom") {
-      window.requestAnimationFrame(() => {
-        this.tabList.insertBefore(
-          fragmentOfChecked,
-          this.tabs[lastIndex].nextSibling
-        );
-        this.tabs = [...this.tabList.children];
+  const moveBrowserTabsToIndex = async function (tabsToMove, index) {
+    try {
+      await chrome.tabs.move(movedTabsBrowserIds, {
+        index: lastTabIndex
       });
-    } else {
-      // window.requestAnimationFrame(() => {
-      this.tabList.insertBefore(fragmentOfChecked, this.tabList.firstChild);
-      // });
-    }
-
-    // this.tabs = [...this.tabList.children];
-  };
-
-  const step = timestamp => {
-    if (this.moveState.animationStart === null) {
-      this.moveState.animationStart = timestamp;
-    }
-
-    this.moveState.animationElapsed = timestamp - this.moveState.animationStart;
-
-    if (this.moveState.previousTimeStamp !== timestamp) {
-      this.moveState.previousTimeStamp = timestamp;
-    }
-
-    if (this.moveState.animationElapsed >= this.moveState.animationDuration) {
-      this.moveState.animation = null;
-    }
-
-    if (this.moveState.animation) {
-      window.requestAnimationFrame(step);
-    } else {
-      // if animation ended it means it's time to reset variables and move tabs in the DOM
-
-      window.requestAnimationFrame(() => {
-        this.moveState.moveTabsInTheDOM(this.moveState.checkedVisibleTabs);
-      });
-
-      this.visibleTabIds.forEach(id => {
-        const index = this.tabIndices[id][0];
-        const tab = this.tabs[index];
-        let newOffset = 0;
-        if (this.filterState.tabs[id]) {
-          newOffset = this.filterState.tabs[id].filterOffset;
-        }
-
-        window.requestAnimationFrame(() => {
-          tab.style.setProperty("--y-offset", newOffset + "px");
-          tab.classList.remove("tab--banana");
-          tab.classList.remove("tab--peach");
-        });
-      });
+    } catch (error) {
+      if (
+        error ==
+        "Error: Tabs cannot be edited right now (user may be dragging a tab)."
+      ) {
+        setTimeout(() => moveBrowserTabsToIndex(index), 50);
+      } else {
+        console.error(error);
+      }
     }
   };
 
-  // const state = this;
-  // window.requestAnimationFrame(() => {
-  // this.moveState.moveTabsInTheDOM(this.moveState.checkedVisibleTabs);
-  // moveTabsInTheDOM.call(this, this.moveState.checkedVisibleTabs);
-  // });
-
-  // this.moveState.animation = window.requestAnimationFrame(step);
-
-  // moveTabsInTheDOM(checkedVisibleTabs, direction);
+  moveBrowserTabsToIndex(movedTabsBrowserIds, this.moveState.lastTabIndex);
   this.orderedTabObjects = reorderedTabObjects;
   this.visibleTabIds = reorderedVisibleTabIds;
   adjustMenu.call(this);
