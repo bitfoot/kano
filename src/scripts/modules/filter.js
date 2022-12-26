@@ -7,6 +7,12 @@ function filter() {
   const state = this;
   const filterState = state.filterState;
   const filterString = filterState.input.value.toLowerCase();
+  const filter = document.getElementById("filter");
+  if (filterString.length !== 0) {
+    filter.classList.add("filter--active");
+  } else {
+    filter.classList.remove("filter--active");
+  }
   // state.filterState.filterTextBackground.innerText = filterString;
   state.visibleTabIds = [];
   // this.numOfVisibleTabs = 0;

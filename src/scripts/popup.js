@@ -38,7 +38,6 @@ const state = {
     filterIsActive: false,
     clearFilterBtn: document.getElementById("remove-filter-text-btn"),
     input: document.getElementById("filter-input"),
-    filterTextBackground: document.getElementById("filter-text-background"),
     tabs: {},
     numOfFilteredTabs: null,
     firstHiddenTabIndex: null,
@@ -131,7 +130,7 @@ document.addEventListener("click", e => {
     const tabIdsToDelete = state.visibleTabIds.filter(id => unluckyTabIds[id]);
     // console.log(tabIdsToDelete);
     deleteTabs.call(state, tabIdsToDelete);
-  } else if (e.target.classList.contains("tab__delete-button")) {
+  } else if (e.target.classList.contains("tab__close-tab-button")) {
     const tab = e.target.parentElement;
     if (!tab.classList.contains("tab--deleted")) {
       deleteTabs.call(state, [tab.id]);

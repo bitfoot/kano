@@ -37,11 +37,13 @@ function createTabComponent(tab) {
   p.textContent = tab.title;
 
   // create delete button
-  const deleteButton = document.createElement("button");
-  deleteButton.classList.add("tab__delete-button");
-  const deleteIcon = document.createElement("img");
-  deleteIcon.src = "images/delete-icon@20x20.svg";
-  deleteButton.appendChild(deleteIcon);
+  const closeTabBtn = document.createElement("button");
+  closeTabBtn.title = "Close tab";
+  closeTabBtn.classList.add("tab__close-tab-button");
+  const closeTabIcon = document.createElement("img");
+  closeTabIcon.src = "images/delete-icon@20x20.svg";
+  closeTabIcon.alt = "Close tab";
+  closeTabBtn.appendChild(closeTabIcon);
 
   // create tab button
   const tabButton = document.createElement("button");
@@ -60,9 +62,10 @@ function createTabComponent(tab) {
   if (tab.isDuplicate === true) {
     tabComponent.classList.add("tab--duplicate");
     const duplicateIndicator = createDuplicateIndicatorSvg();
+    duplicateIndicator.alt = "Duplicate tab indicator";
     tabComponent.appendChild(duplicateIndicator);
   }
-  tabComponent.appendChild(deleteButton);
+  tabComponent.appendChild(closeTabBtn);
   // tabComponent.appendChild(tabButton);
 
   return tabComponent;

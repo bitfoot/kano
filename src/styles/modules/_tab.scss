@@ -78,12 +78,10 @@
       content: "";
       width: 2rem;
       position: absolute;
-      right: calc(100% + 3px);
-      // right: 100%;
-      // border-radius: 0 var(--lesser-padding) var(--lesser-padding) 0;
+      // right: calc(100% + 3px);
+      right: calc(100% + 1px);
       top: 0;
       height: 100%;
-      // background: orange;
       background: lime;
     }
 
@@ -190,7 +188,7 @@
     overflow: hidden;
   }
 
-  &__delete-button {
+  &__close-tab-button {
     position: relative;
     z-index: 1;
     width: 1rem;
@@ -208,7 +206,7 @@
       // border-radius: var(--lesser-padding);
       z-index: -1;
       pointer-events: none;
-      transition: background-color 120ms ease-in-out;
+      transition: background-color 120ms ease-out;
     }
 
     &:focus {
@@ -337,7 +335,7 @@
   }
 
   &--peach {
-    // background: purple;
+    background: green;
     // background: rgba(52, 72, 111, 0.5);
     // transition: none;
     // transition: transform 4000ms ease-in-out;

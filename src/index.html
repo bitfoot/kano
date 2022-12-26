@@ -22,8 +22,8 @@
           </path>
         </g>
       </svg>
-      <span id="filter-text-background" class="filter__text-background"></span>
-      <button id="remove-filter-text-btn" class="filter__remove-text-btn filter__remove-text-btn--disabled" disabled>
+      <button id="remove-filter-text-btn" title="Remove filter text"
+        class="filter__remove-text-btn filter__remove-text-btn--disabled" disabled>
         <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink"
           xmlns:svgjs="http://svgjs.com/svgjs" viewBox="0 0 20 20" width="20" height="20"
           class="filter__remove-text-icon">
@@ -53,22 +53,6 @@
       Close
     </button>
 
-    <button type="button" id="move-to-top-btn" title="Move to the top" class="menu-item-btn menu-item-btn--disabled"
-      disabled>
-      <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink"
-        xmlns:svgjs="http://svgjs.com/svgjs" viewBox="0 0 20 20" width="20" height="20" class="menu-item-btn__icon">
-        <g transform="matrix(0.8333333333333334,0,0,0.8333333333333334,0,0)">
-          <path d="M12 0.748L12 11.248" fill="none" stroke="var(--color-three)" stroke-linecap="round"
-            stroke-linejoin="round" stroke-width="1.5"></path>
-          <path d="M8.25 4.498L12 0.748 15.75 4.498" fill="none" stroke="var(--color-three)" stroke-linecap="round"
-            stroke-linejoin="round" stroke-width="1.5"></path>
-          <path d="M0.750 15.748 L23.250 15.748 L23.250 23.248 L0.750 23.248 Z" fill="none" stroke="var(--color-three)"
-            stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path>
-        </g>
-      </svg>
-      Move to the top
-    </button>
-
     <button type="button" id="move-to-bottom-btn" title="Move to the bottom"
       class="menu-item-btn menu-item-btn--disabled" disabled>
       <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -83,6 +67,22 @@
         </g>
       </svg>
       Move to the bottom
+    </button>
+
+    <button type="button" id="move-to-top-btn" title="Move to the top" class="menu-item-btn menu-item-btn--disabled"
+      disabled>
+      <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink"
+        xmlns:svgjs="http://svgjs.com/svgjs" viewBox="0 0 20 20" width="20" height="20" class="menu-item-btn__icon">
+        <g transform="matrix(0.8333333333333334,0,0,0.8333333333333334,0,0)">
+          <path d="M12 0.748L12 11.248" fill="none" stroke="var(--color-three)" stroke-linecap="round"
+            stroke-linejoin="round" stroke-width="1.5"></path>
+          <path d="M8.25 4.498L12 0.748 15.75 4.498" fill="none" stroke="var(--color-three)" stroke-linecap="round"
+            stroke-linejoin="round" stroke-width="1.5"></path>
+          <path d="M0.750 15.748 L23.250 15.748 L23.250 23.248 L0.750 23.248 Z" fill="none" stroke="var(--color-three)"
+            stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path>
+        </g>
+      </svg>
+      Move to the top
     </button>
 
     <button type="button" id="close-duplicates-btn" title="Close duplicates"

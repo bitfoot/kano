@@ -1,15 +1,88 @@
 "use strict";
 
-function easeInOutQuad(time, b, c, duration) {
-  if ((time /= duration / 2) < 1) return (c / 2) * time * time + b;
-  return (-c / 2) * (--time * (time - 2) - 1) + b;
-}
-
 function getFaviconUrl(url) {
   let faviconUrl = new URL(`chrome-extension://${chrome.runtime.id}/_favicon/`);
   faviconUrl.searchParams.append("pageUrl", url);
   faviconUrl.searchParams.append("size", "32");
   return faviconUrl.href;
+}
+
+function disableOrEnableControls(options) {
+  const {
+    disable = isRequired("disable"),
+    disableFilter = true,
+    disableCloseSelected = true,
+    disableMoveToTheBottom = true,
+    disableMoveToTheTop = true,
+    disableCloseDuplicates = true,
+    disableSelectDeselectall = true
+  } = options;
+  if (disableFilter) {
+    const filter = document.getElementById("filter");
+    const removeFilterTextBtn = document.getElementById(
+      "remove-filter-text-btn"
+    );
+    const filterInput = this.filterState.input;
+    const filterIsActive = filterInput.value.length > 0;
+    if (disable === true) {
+      filterInput.setAttribute("disabled", true);
+      removeFilterTextBtn.setAttribute("disabled", true);
+      requestAnimationFrame(() => {
+        filter.classList.add("filter--disabled");
+        removeFilterTextBtn.classList.add("filter__remove-text-btn--disabled");
+      });
+    } else {
+      requestAnimationFrame(() => {
+        filterInput.removeAttribute("disabled");
+        filter.classList.remove("filter--disabled");
+      });
+      if (filterIsActive === true) {
+        removeFilterTextBtn.removeAttribute("disabled");
+        requestAnimationFrame(() => {
+          removeFilterTextBtn.classList.remove(
+            "filter__remove-text-btn--disabled"
+          );
+        });
+      }
+    }
+  }
+
+  const disableButton = btn => {
+    btn.setAttribute("disabled", true);
+    btn.classList.add("menu-item-btn--disabled");
+  };
+
+  if (disableCloseSelected) {
+    const closeSelectedBtn = document.getElementById("close-selected-btn");
+    disableButton(closeSelectedBtn);
+  }
+  if (disableMoveToTheBottom) {
+    const moveToTheBottomBtn = document.getElementById("move-to-bottom-btn");
+    disableButton(moveToTheBottomBtn);
+  }
+  if (disableMoveToTheTop) {
+    const moveToTheTopBtn = document.getElementById("move-to-top-btn");
+    disableButton(moveToTheTopBtn);
+  }
+  if (disableCloseDuplicates) {
+    const closeDuplicatesBtn = document.getElementById("close-duplicates-btn");
+    disableButton(closeDuplicatesBtn);
+  }
+  if (disableSelectDeselectall) {
+    const selectDeselectAllBtn = document.getElementById(
+      "select-deselect-all-btn"
+    );
+    disableButton(selectDeselectAllBtn);
+  }
+}
+
+function isRequired(argName) {
+  throw new Error(`${argName} is a required argument.`);
+}
+
+function easeInOutQuad(time, b, c, duration) {
+  if ((time /= duration / 2) < 1) return (c / 2) * time * time + b;
+  return (-c / 2) * (--time * (time - 2) - 1) + b;
 }
 
 function easeInQuad(time, b, c, duration) {
@@ -251,5 +324,6 @@ module.exports = {
   resetTransitionVariables,
   easeInOutQuad,
   easeInQuad,
-  getFaviconUrl
+  getFaviconUrl,
+  disableOrEnableControls
 };
