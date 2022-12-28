@@ -122,10 +122,12 @@ function getScrollbarHeight() {
 
 function resetTransitionVariables() {
   this.tabs.forEach(tab => {
-    tab.style.setProperty("--trans-delay", "0ms");
-    tab.style.setProperty("--opacity-delay", "0ms");
-    tab.style.setProperty("--trans-duration", "0ms");
-    tab.style.setProperty("--opacity-duration", "0ms");
+    window.requestAnimationFrame(() => {
+      tab.style.setProperty("--trans-delay", "0ms");
+      tab.style.setProperty("--opacity-delay", "0ms");
+      tab.style.setProperty("--trans-duration", "0ms");
+      tab.style.setProperty("--opacity-duration", "0ms");
+    });
   });
 }
 
@@ -142,84 +144,97 @@ function getMaxScrollTop() {
 function adjustScrollbar() {
   const container = this.scrollState.container;
   const scrollbarTrack = this.scrollState.scrollbarTrack;
+  const scrollState = this.scrollState;
 
   const prevContainerToContentRatio = this.scrollState.containerToContentRatio;
-  this.scrollState.containerToContentRatio = getContainerToContentRatio.call(
-    this
-  );
+  scrollState.containerToContentRatio = getContainerToContentRatio.call(this);
 
   const shouldTransformScrollbar =
     prevContainerToContentRatio !== null &&
     prevContainerToContentRatio !== this.scrollState.containerToContentRatio;
 
-  if (this.scrollState.containerToContentRatio >= 1) {
-    container.classList.add("tab-list-container--no-scroll");
-    container.children[0].classList.remove("tab-list--scrollable");
-    scrollbarTrack.classList.add("scrollbar-track--hidden");
+  if (scrollState.containerToContentRatio >= 1) {
+    window.requestAnimationFrame(() => {
+      container.classList.add("tab-list-container--no-scroll");
+      container.children[0].classList.remove("tab-list--scrollable");
+      scrollbarTrack.classList.add("scrollbar-track--hidden");
+    });
   } else {
-    container.classList.remove("tab-list-container--no-scroll");
-    container.children[0].classList.add("tab-list--scrollable");
-    scrollbarTrack.classList.remove("scrollbar-track--hidden");
+    window.requestAnimationFrame(() => {
+      container.classList.remove("tab-list-container--no-scroll");
+      container.children[0].classList.add("tab-list--scrollable");
+      scrollbarTrack.classList.remove("scrollbar-track--hidden");
+    });
   }
 
-  const scrollbarThumb = this.scrollState.scrollbarThumb;
-  let prevScrollbarHeight = this.scrollState.scrollbarHeight;
-  this.scrollState.scrollbarHeight = getScrollbarHeight.call(this);
-  this.scrollState.scrollbarTrackSpace = getScrollbarTrackSpace.call(this);
-  this.scrollState.trackSpaceToContainerHeightRatio =
-    this.scrollState.scrollbarTrackSpace / this.scrollState.maxContainerHeight;
+  const scrollbarThumb = scrollState.scrollbarThumb;
+  let prevScrollbarHeight = scrollState.scrollbarHeight;
+  scrollState.scrollbarHeight = getScrollbarHeight.call(this);
+  scrollState.scrollbarTrackSpace = getScrollbarTrackSpace.call(this);
+  scrollState.trackSpaceToContainerHeightRatio =
+    scrollState.scrollbarTrackSpace / scrollState.maxContainerHeight;
   if (prevScrollbarHeight === null) {
-    prevScrollbarHeight = this.scrollState.scrollbarHeight;
+    prevScrollbarHeight = scrollState.scrollbarHeight;
   }
   const scrollbarThumbChange =
-    this.scrollState.scrollbarHeight / prevScrollbarHeight;
+    scrollState.scrollbarHeight / prevScrollbarHeight;
 
-  this.scrollState.maxScrollbarThumbOffset =
-    this.scrollState.scrollbarTrackSpace - this.scrollState.scrollbarHeight;
-  this.scrollState.maxScrollTop = getMaxScrollTop.call(this);
+  scrollState.maxScrollbarThumbOffset =
+    scrollState.scrollbarTrackSpace - scrollState.scrollbarHeight;
+  scrollState.maxScrollTop = getMaxScrollTop.call(this);
 
-  if (this.scrollState.scrollTop > this.scrollState.maxScrollTop) {
-    this.scrollState.adjustingScrollbar = true;
-    this.scrollState.container.classList.add("tab-list-container--no-scroll");
-    this.scrollState.thumbOffset =
-      this.scrollState.maxScrollTop * this.scrollState.containerToContentRatio;
+  if (scrollState.scrollTop > scrollState.maxScrollTop) {
+    scrollState.adjustingScrollbar = true;
+    window.requestAnimationFrame(() => {
+      scrollState.container.classList.add("tab-list-container--no-scroll");
+    });
 
-    this.scrollState.container.scroll({
-      top: this.scrollState.maxScrollTop,
+    scrollState.thumbOffset =
+      scrollState.maxScrollTop * scrollState.containerToContentRatio;
+
+    scrollState.container.scroll({
+      top: scrollState.maxScrollTop,
       left: 0,
       behavior: "smooth"
     });
   } else {
-    this.scrollState.thumbOffset =
-      this.scrollState.scrollTop *
-      this.scrollState.containerToContentRatio *
-      this.scrollState.trackSpaceToContainerHeightRatio;
+    scrollState.thumbOffset =
+      scrollState.scrollTop *
+      scrollState.containerToContentRatio *
+      scrollState.trackSpaceToContainerHeightRatio;
   }
 
   requestAnimationFrame(() => {
     scrollbarThumb.style.setProperty(
       "--thumb-offset",
-      this.scrollState.thumbOffset + "px"
+      scrollState.thumbOffset + "px"
     );
+  });
 
-    if (shouldTransformScrollbar) {
+  if (shouldTransformScrollbar) {
+    window.requestAnimationFrame(() => {
       scrollbarThumb.style.setProperty("--ratio", scrollbarThumbChange);
       scrollbarThumb.classList.add("scrollbar-track__thumb--transforming");
-      scrollbarThumb.ontransitionend = () => {
-        scrollbarThumb.ontransitionend = "";
+    });
+
+    scrollbarThumb.ontransitionend = () => {
+      scrollbarThumb.ontransitionend = "";
+      window.requestAnimationFrame(() => {
         scrollbarThumb.classList.remove("scrollbar-track__thumb--transforming");
         scrollbarThumb.style.setProperty(
           "--thumb-height",
-          this.scrollState.scrollbarHeight + "px"
+          scrollState.scrollbarHeight + "px"
         );
-      };
-    } else {
+      });
+    };
+  } else {
+    window.requestAnimationFrame(() => {
       scrollbarThumb.style.setProperty(
         "--thumb-height",
-        this.scrollState.scrollbarHeight + "px"
+        scrollState.scrollbarHeight + "px"
       );
-    }
-  });
+    });
+  }
 }
 
 function createCheckboxSvg() {

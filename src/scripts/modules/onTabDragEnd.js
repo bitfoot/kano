@@ -11,7 +11,11 @@ function onTabDragPointerUp(event) {
     dragState.animation = null;
   }
 
-  dragState.tabListContainer.classList.remove("tab-list-container--no-scroll");
+  window.requestAnimationFrame(() => {
+    dragState.tabListContainer.classList.remove(
+      "tab-list-container--no-scroll"
+    );
+  });
 
   const draggedTabId = state.dragState.draggedTab.id;
   const draggedTabTopPos = dragState.tabPosInList;
@@ -48,7 +52,7 @@ function onTabDragPointerUp(event) {
     });
 
     if (replacedTab) {
-      replacedTabTitle = replacedTab.querySelector(".tab__title").innerText;
+      // replacedTabTitle = replacedTab.querySelector(".tab__title").innerText;
       replacedTabId = replacedTab.id;
       // isMoved = true;
       movedDirection = "up";
@@ -65,20 +69,18 @@ function onTabDragPointerUp(event) {
         if (state.filterState.tabs[draggedTabId]) {
           newFilterOffset = state.filterState.tabs[replacedTab.id].filterOffset;
           state.filterState.tabs[draggedTabId].filterOffset = newFilterOffset;
-          dragState.tabsPosInfo[draggedTabId].filterOffset = newFilterOffset;
+          // dragState.tabsPosInfo[draggedTabId].filterOffset = newFilterOffset;
         }
       }
-
       dragState.tabList.insertBefore(dragState.draggedTab, replacedTab);
-      dragState.draggedTab.style.setProperty(
-        "--y-offset",
-        newFilterOffset + "px"
-      );
+      // requestAnimationFrame(() => {
+      //   // dragState.tabList.insertBefore(dragState.draggedTab, replacedTab);
+      //   dragState.draggedTab.style.setProperty(
+      //     "--y-offset",
+      //     newFilterOffset + "px"
+      //   );
+      // });
 
-      requestAnimationFrame(() => {
-        const tabButton = dragState.draggedTab.firstChild;
-        tabButton.focus();
-      });
       // move the actual chrome tab
       const replacedTabIdInBrowser = +replacedTab.id.split("-")[1];
       chrome.tabs.get(replacedTabIdInBrowser).then(tabDetails => {
@@ -109,7 +111,7 @@ function onTabDragPointerUp(event) {
     });
 
     if (replacedTab) {
-      replacedTabTitle = replacedTab.querySelector(".tab__title").innerText;
+      // replacedTabTitle = replacedTab.querySelector(".tab__title").innerText;
       replacedTabId = replacedTab.id;
       // isMoved = true;
       movedDirection = "down";
@@ -127,21 +129,19 @@ function onTabDragPointerUp(event) {
         if (state.filterState.tabs[draggedTabId]) {
           newFilterOffset = state.filterState.tabs[replacedTab.id].filterOffset;
           state.filterState.tabs[draggedTabId].filterOffset = newFilterOffset;
-          dragState.tabsPosInfo[draggedTabId].filterOffset = newFilterOffset;
+          // dragState.tabsPosInfo[draggedTabId].filterOffset = newFilterOffset;
         }
       }
       dragState.tabList.insertBefore(
         dragState.draggedTab,
         replacedTab.nextSibling
       );
-      dragState.draggedTab.style.setProperty(
-        "--y-offset",
-        newFilterOffset + "px"
-      );
-      requestAnimationFrame(() => {
-        const tabButton = dragState.draggedTab.firstChild;
-        tabButton.focus();
-      });
+      // requestAnimationFrame(() => {
+      //   dragState.draggedTab.style.setProperty(
+      //     "--y-offset",
+      //     newFilterOffset + "px"
+      //   );
+      // });
 
       const replacedTabIdInBrowser = +replacedTab.id.split("-")[1];
       chrome.tabs.get(replacedTabIdInBrowser).then(tabDetails => {
@@ -150,23 +150,30 @@ function onTabDragPointerUp(event) {
     }
   }
 
-  dragState.tabList.style.setProperty("--y-offset", 0 + "px");
-  dragState.tabList.classList.remove("tab-list--scroll");
   dragState.draggedTab.onpointermove = null;
   dragState.draggedTab.onpointerup = null;
   dragState.draggedTab.onkeydown = null;
   dragState.draggedTab.onkeyup = null;
-  dragState.draggedTab.firstChild.onblur = "";
-  dragState.draggedTab.classList.remove("tab--draggable");
+  dragState.draggedTab.firstChild.onblur = null;
+  window.requestAnimationFrame(() => {
+    dragState.tabList.style.setProperty("--y-offset", 0 + "px");
+    dragState.tabList.classList.remove("tab-list--scroll");
+    dragState.draggedTab.classList.remove("tab--draggable");
+  });
 
   // reset style values of all the tabs to their defaults
   dragState.listedTabs.forEach(tab => {
-    let filterOffset = dragState.tabsPosInfo[tab.id].filterOffset;
+    // let filterOffset = dragState.tabsPosInfo[tab.id].filterOffset;
+    let filterOffset = 0;
+    if (state.filterState.tabs[tab.id]) {
+      filterOffset = state.filterState.tabs[tab.id].filterOffset;
+    }
+
     requestAnimationFrame(() => {
       tab.style.setProperty("--y-offset", filterOffset + "px");
       tab.style.setProperty("--opacity", 1);
-      tab.style.setProperty("--scale", 0.99);
-      tab.classList.remove("tab--moving");
+      tab.style.setProperty("--scale", 1);
+      tab.classList.remove("tab--floating");
     });
   });
 

@@ -24,10 +24,13 @@ function deleteTabs(idsOfTabsToDelete) {
   let lastDeletedTabVisibleIndex = null;
 
   this.orderedTabObjects.forEach((obj, i) => {
+    const tab = this.tabs[i];
     if (!tabsToDelete[obj.id]) {
       if (this.tabIdsByURL[obj.url].length < 2) {
         obj.isDuplicate = false;
-        this.tabs[i].classList.remove("tab--duplicate");
+        window.requestAnimationFrame(() => {
+          tab.classList.remove("tab--duplicate");
+        });
       }
       // if tab is not hidden, save its visible index to a variable and update that index
       if (this.tabIndices[obj.id][1] !== null) {
@@ -38,7 +41,9 @@ function deleteTabs(idsOfTabsToDelete) {
       this.tabIndices[obj.id][0] = reorderedTabObjects.length;
       reorderedTabObjects[this.tabIndices[obj.id][0]] = obj;
       const deletedOffset = numDeleted * -46 + "px";
-      this.tabs[i].style.setProperty("--deleted-offset", deletedOffset);
+      window.requestAnimationFrame(() => {
+        tab.style.setProperty("--deleted-offset", deletedOffset);
+      });
     } else {
       numDeleted += 1;
       const visibleIndex = this.tabIndices[obj.id][1];
@@ -53,7 +58,10 @@ function deleteTabs(idsOfTabsToDelete) {
       } else {
         consecutiveDeletedTabs = 1;
       }
-      this.tabs[i].classList.add("tab--deleted");
+      window.requestAnimationFrame(() => {
+        tab.classList.add("tab--deleted");
+      });
+
       lastDeletedTabVisibleIndex = visibleIndex;
       delete this.tabIndices[obj.id];
     }
@@ -69,10 +77,12 @@ function deleteTabs(idsOfTabsToDelete) {
   );
 
   const timeoutDuration = 100 + animationDuration;
-  document.documentElement.style.setProperty(
-    "--below-deleted-animation-duration",
-    animationDuration + "ms"
-  );
+  window.requestAnimationFrame(() => {
+    document.documentElement.style.setProperty(
+      "--below-deleted-animation-duration",
+      animationDuration + "ms"
+    );
+  });
   this.tabs = this.tabs.filter(tab => !tabsToDelete[tab.id]);
   adjustMenu.call(this);
   adjustScrollbar.call(this);
@@ -93,19 +103,6 @@ function deleteTabs(idsOfTabsToDelete) {
       }
       browserTabIds.push(parseInt(id.split("-")[1]));
     });
-    // this.tabs = this.tabs.filter(tab => !tabsToDelete[tab.id]);
-    // this.visibleTabIds = this.visibleTabIds.filter(id => !tabsToDelete[id]);
-    // adjustMenu.call(this);
-    // adjustScrollbar.call(this);
-    // chrome.tabs.remove(browserTabIds);
-    // requestAnimationFrame(() => {
-    //   const containerHeight = this.scrollState.container.offsetHeight;
-    //   const headerHeight = this.scrollState.headerHeight;
-    //   if (containerHeight < this.scrollState.maxContainerHeight) {
-    //     document.documentElement.style.height =
-    //       containerHeight + headerHeight + "px";
-    //   }
-    // });
   }, timeoutDuration);
 }
 

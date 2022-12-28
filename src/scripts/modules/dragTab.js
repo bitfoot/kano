@@ -21,7 +21,12 @@ function dragTab(options = {}) {
     dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset +
     dragState.tabsPosInfo[dragState.draggedTab.id].filterOffset;
 
-  dragState.draggedTab.style.setProperty("--y-offset", draggedTabOffset + "px");
+  window.requestAnimationFrame(() => {
+    dragState.draggedTab.style.setProperty(
+      "--y-offset",
+      draggedTabOffset + "px"
+    );
+  });
 
   const currentDraggedTabPos = dragState.tabPosInList;
 

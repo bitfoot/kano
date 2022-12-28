@@ -38,9 +38,12 @@ function scroll(options = {}) {
         this.scrollState.tabListOffset,
         this.scrollState.scrollTop * -1
       );
-      tabList.classList.add("tab-list--scroll");
-      const newOffset = this.scrollState.tabListOffset * -1;
-      tabList.style.setProperty("--y-offset", newOffset + "px");
+      // const newOffset = this.scrollState.tabListOffset * -1;
+      window.requestAnimationFrame(() => {
+        const newOffset = this.scrollState.tabListOffset * -1;
+        tabList.classList.add("tab-list--scroll");
+        tabList.style.setProperty("--y-offset", newOffset + "px");
+      });
     } else {
       this.scrollState.tabListOffset = Math.min(
         this.scrollState.tabListOffset,
@@ -51,7 +54,9 @@ function scroll(options = {}) {
         this.scrollState.scrollTop * -1
       );
       const newOffset = this.scrollState.tabListOffset * -1;
-      tabList.style.setProperty("--y-offset", newOffset + "px");
+      window.requestAnimationFrame(() => {
+        tabList.style.setProperty("--y-offset", newOffset + "px");
+      });
     }
   }
 }

@@ -2,26 +2,24 @@
 const onTabDragPointerMove = require("./onTabDragPointerMove");
 const onTabDragEnd = require("./onTabDragEnd");
 const resetTransitionVariables = require("./util").resetTransitionVariables;
+const disableOrEnableControls = require("./util").disableOrEnableControls;
 const easeInQuad = require("./util").easeInQuad;
 const easeInOutQuad = require("./util").easeInOutQuad;
 const dragTab = require("./dragTab");
 const scroll = require("./scroll");
 
 function initializeTabDrag(event) {
+  disableOrEnableControls.call(this, { disable: true });
   const eventType = event.type;
-  // let sign;
-  // if (eventType == "pointerdown") {
-  //   console.log(`drag initiated from pointerdown event.`);
-  // } else {
-  //   console.log(`drag initiated from keydown event.`);
-  // }
-
   const draggedTab = event.target.parentElement;
   const pointerPosition = event.pageY;
   const container = this.scrollState.container;
 
   // disable system scrolling while tab is being dragged
-  container.classList.add("tab-list-container--no-scroll");
+  window.requestAnimationFrame(() => {
+    container.classList.add("tab-list-container--no-scroll");
+  });
+
   const tabList = this.tabList;
   const scrollState = this.scrollState;
   const scrollTop = scrollState.scrollTop;
@@ -84,13 +82,18 @@ function initializeTabDrag(event) {
   };
   // draggedTab.setPointerCapture(event.pointerId);
   resetTransitionVariables.call(this);
-  draggedTab.classList.add("tab--draggable");
-  draggedTab.classList.remove("tab--held-down");
+  window.requestAnimationFrame(() => {
+    draggedTab.classList.add("tab--draggable");
+    draggedTab.classList.remove("tab--held-down");
+  });
 
   listedTabs
     .filter(t => t.id !== draggedTab.id)
     .forEach(t => {
-      t.classList.add("tab--moving");
+      window.requestAnimationFrame(() => {
+        t.style.setProperty("--scale", 0.99);
+        t.classList.add("tab--floating");
+      });
     });
 
   this.dragState = {

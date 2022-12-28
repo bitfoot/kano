@@ -145,6 +145,7 @@ button {
   width: calc(var(--lesser-padding) * 3);
   height: 100%;
   padding: 0 var(--lesser-padding);
+  // background: chocolate;
 
   &__thumb {
     --x-pos: 0;

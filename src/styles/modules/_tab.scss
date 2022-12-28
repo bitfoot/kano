@@ -22,11 +22,12 @@
   --x-pos: 17rem;
   --y-pos: 1rem;
   // --scale: 0.99;
-  --scale: 0.99;
+  --scale: 1;
   visibility: visible;
   touch-action: none;
   stroke: transparent;
-  // transition: transform 60ms ease-out, background-color 60ms ease-out;
+  // transform: scale(1);
+  // transition: transform 200ms ease-out;
   // transition: none;
   // content-visibility: auto;
   // animation: 5000ms ease-in-out banana;
@@ -48,6 +49,7 @@
   }
 
   &--filtered-out {
+    pointer-events: none;
     visibility: hidden;
     opacity: 0;
     transition: opacity var(--opacity-duration) var(--opacity-delay) ease-in-out, transform var(--trans-duration) var(--trans-delay) ease-in-out, visibility var(--opacity-duration) var(--opacity-delay);
@@ -323,27 +325,19 @@
   }
 
   &--banana {
-    // pointer-events: none;
-    // opacity: var(--opacity);
-    // opacity: 0.5;
-    background: purple;
-    // transform: translateY(var(--y-offset)) scale(0.97);
-    // transform: translateY(var(--y-offset));
-    animation: 2000ms ease-in forwards moving;
-    // transition: transform 4000ms ease-in-out;
-    // z-index: -10;
+    pointer-events: none;
+    opacity: 0.5;
+    transform: translateY(var(--y-offset)) scale(var(--scale));
+    animation: 400ms 200ms ease-in forwards moving;
+    transition: transform 200ms ease-in, opacity 200ms ease-in;
+    z-index: -1;
   }
 
   &--peach {
-    background: green;
-    // background: rgba(52, 72, 111, 0.5);
-    // transition: none;
-    // transition: transform 4000ms ease-in-out;
-    // transform: translateY(var(--y-offset));
-    animation: 2000ms ease-in forwards moving;
+    animation: 600ms ease-in forwards moving;
   }
 
-  &--moving {
+  &--floating {
     pointer-events: none;
     opacity: var(--opacity);
     background: var(--color-two-hover);
@@ -406,11 +400,11 @@
 @keyframes moving {
 
   from {
-    transform: translateY(var(--y-offset));
+    transform: translateY(var(--y-offset)) scale(var(--scale));
   }
 
   to {
-    transform: translateY(calc(var(--y-offset) + var(--moved-offset)));
+    transform: translateY(calc(var(--y-offset) + var(--moved-offset))) scale(var(--scale));
   }
 }
 
