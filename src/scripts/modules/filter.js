@@ -203,7 +203,7 @@ function filter() {
         tab.style.setProperty("--trans-duration", transformDuration + "ms");
         tab.style.setProperty("--opacity-duration", opacityDuration + "ms");
         tab.style.setProperty(
-          "--y-offset",
+          "--filter-offset",
           filteredTabObject.filterOffset + "px"
         );
         if (filteredTabObject.isFilteredOut == true) {

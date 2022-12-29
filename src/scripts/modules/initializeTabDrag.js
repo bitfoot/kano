@@ -1,15 +1,15 @@
 "use strict";
 const onTabDragPointerMove = require("./onTabDragPointerMove");
 const onTabDragEnd = require("./onTabDragEnd");
-const resetTransitionVariables = require("./util").resetTransitionVariables;
-const disableOrEnableControls = require("./util").disableOrEnableControls;
+const resetTabCSSVariables = require("./util").resetTabCSSVariables;
+const disableHeaderControls = require("./util").disableHeaderControls;
 const easeInQuad = require("./util").easeInQuad;
 const easeInOutQuad = require("./util").easeInOutQuad;
 const dragTab = require("./dragTab");
 const scroll = require("./scroll");
 
 function initializeTabDrag(event) {
-  disableOrEnableControls.call(this, { disable: true });
+  disableHeaderControls.call(this);
   const eventType = event.type;
   const draggedTab = event.target.parentElement;
   const pointerPosition = event.pageY;
@@ -81,8 +81,9 @@ function initializeTabDrag(event) {
     draggedTab.firstChild.focus();
   };
   // draggedTab.setPointerCapture(event.pointerId);
-  resetTransitionVariables.call(this);
+  resetTabCSSVariables(this.tabs);
   window.requestAnimationFrame(() => {
+    draggedTab.style.setProperty("--scale", 1.01);
     draggedTab.classList.add("tab--draggable");
     draggedTab.classList.remove("tab--held-down");
   });

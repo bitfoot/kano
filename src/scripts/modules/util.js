@@ -7,15 +7,14 @@ function getFaviconUrl(url) {
   return faviconUrl.href;
 }
 
-function disableOrEnableControls(options) {
+function disableHeaderControls(options = {}) {
   const {
-    disable = isRequired("disable"),
     disableFilter = true,
     disableCloseSelected = true,
     disableMoveToTheBottom = true,
     disableMoveToTheTop = true,
     disableCloseDuplicates = true,
-    disableSelectDeselectall = true
+    disableSelectDeselectAll = true
   } = options;
   if (disableFilter) {
     const filter = document.getElementById("filter");
@@ -23,28 +22,13 @@ function disableOrEnableControls(options) {
       "remove-filter-text-btn"
     );
     const filterInput = this.filterState.input;
-    const filterIsActive = filterInput.value.length > 0;
-    if (disable === true) {
-      filterInput.setAttribute("disabled", true);
-      removeFilterTextBtn.setAttribute("disabled", true);
-      requestAnimationFrame(() => {
-        filter.classList.add("filter--disabled");
-        removeFilterTextBtn.classList.add("filter__remove-text-btn--disabled");
-      });
-    } else {
-      requestAnimationFrame(() => {
-        filterInput.removeAttribute("disabled");
-        filter.classList.remove("filter--disabled");
-      });
-      if (filterIsActive === true) {
-        removeFilterTextBtn.removeAttribute("disabled");
-        requestAnimationFrame(() => {
-          removeFilterTextBtn.classList.remove(
-            "filter__remove-text-btn--disabled"
-          );
-        });
-      }
-    }
+    // const filterIsActive = filterInput.value.length > 0;
+    filterInput.setAttribute("disabled", true);
+    removeFilterTextBtn.setAttribute("disabled", true);
+    requestAnimationFrame(() => {
+      filter.classList.add("filter--disabled");
+      removeFilterTextBtn.classList.add("filter__remove-text-btn--disabled");
+    });
   }
 
   const disableButton = btn => {
@@ -68,11 +52,44 @@ function disableOrEnableControls(options) {
     const closeDuplicatesBtn = document.getElementById("close-duplicates-btn");
     disableButton(closeDuplicatesBtn);
   }
-  if (disableSelectDeselectall) {
+  if (disableSelectDeselectAll) {
     const selectDeselectAllBtn = document.getElementById(
       "select-deselect-all-btn"
     );
     disableButton(selectDeselectAllBtn);
+  }
+}
+
+function enableHeaderControls(options = {}) {
+  const {
+    enableFilter = true,
+    enableCloseSelected = true,
+    enableMoveToTheBottom = true,
+    enableMoveToTheTop = true,
+    enableCloseDuplicates = true,
+    enableSelectDeselectAll = true
+  } = options;
+
+  if (enableFilter) {
+    const filter = document.getElementById("filter");
+    const removeFilterTextBtn = document.getElementById(
+      "remove-filter-text-btn"
+    );
+    const filterInput = this.filterState.input;
+    const filterIsActive = filterInput.value.length > 0;
+
+    requestAnimationFrame(() => {
+      filterInput.removeAttribute("disabled");
+      filter.classList.remove("filter--disabled");
+    });
+    if (filterIsActive === true) {
+      removeFilterTextBtn.removeAttribute("disabled");
+      requestAnimationFrame(() => {
+        removeFilterTextBtn.classList.remove(
+          "filter__remove-text-btn--disabled"
+        );
+      });
+    }
   }
 }
 
@@ -120,13 +137,15 @@ function getScrollbarHeight() {
   return scrollbarHeight;
 }
 
-function resetTransitionVariables() {
-  this.tabs.forEach(tab => {
+function resetTabCSSVariables(tabs) {
+  tabs.forEach(tab => {
     window.requestAnimationFrame(() => {
       tab.style.setProperty("--trans-delay", "0ms");
       tab.style.setProperty("--opacity-delay", "0ms");
       tab.style.setProperty("--trans-duration", "0ms");
       tab.style.setProperty("--opacity-duration", "0ms");
+      tab.style.setProperty("--scale", 1);
+      tab.style.setProperty("--opacity", 1);
     });
   });
 }
@@ -336,9 +355,10 @@ module.exports = {
   getMaxScrollTop,
   createDuplicateIndicatorSvg,
   getScrollbarHeight,
-  resetTransitionVariables,
+  resetTabCSSVariables,
   easeInOutQuad,
   easeInQuad,
   getFaviconUrl,
-  disableOrEnableControls
+  disableHeaderControls,
+  enableHeaderControls
 };

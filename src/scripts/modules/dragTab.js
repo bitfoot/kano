@@ -17,13 +17,16 @@ function dragTab(options = {}) {
     )
   );
 
+  // const draggedTabOffset =
+  //   dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset +
+  //   dragState.tabsPosInfo[dragState.draggedTab.id].filterOffset;
+
   const draggedTabOffset =
-    dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset +
-    dragState.tabsPosInfo[dragState.draggedTab.id].filterOffset;
+    dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset;
 
   window.requestAnimationFrame(() => {
     dragState.draggedTab.style.setProperty(
-      "--y-offset",
+      "--drag-offset",
       draggedTabOffset + "px"
     );
   });
@@ -36,10 +39,11 @@ function dragTab(options = {}) {
       Math.abs(Math.abs(offset) - dragState.midPoint) / dragState.midPoint;
 
     requestAnimationFrame(() => {
-      tab.style.setProperty(
-        "--y-offset",
-        offset + dragState.tabsPosInfo[tab.id].filterOffset + "px"
-      );
+      // tab.style.setProperty(
+      //   "--y-offset",
+      //   offset + dragState.tabsPosInfo[tab.id].filterOffset + "px"
+      // );
+      tab.style.setProperty("--drag-offset", offset + "px");
       tab.style.setProperty("--opacity", Math.max(ratioToMidPoint, 0.4));
       tab.style.setProperty("--scale", Math.max(ratioToMidPoint - 0.01, 0.97));
     });

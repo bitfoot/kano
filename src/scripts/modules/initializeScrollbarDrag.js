@@ -6,7 +6,7 @@ function initializeScrollbarDrag(e) {
   const scrollBar = e.target;
   const pointerPos = e.pageY;
   const initialPos = this.scrollState.thumbOffset;
-  const headerHeight = document.getElementById("header").offsetHeight;
+  const headerHeight = this.scrollState.headerHeight;
   const shiftY = pointerPos - initialPos - headerHeight;
   scrollBar.setPointerCapture(e.pointerId);
 

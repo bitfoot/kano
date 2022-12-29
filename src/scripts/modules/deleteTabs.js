@@ -2,6 +2,7 @@
 
 const adjustMenu = require("./adjustMenu");
 const adjustScrollbar = require("./util").adjustScrollbar;
+const resetTabCSSVariables = require("./util").resetTabCSSVariables;
 
 function deleteTabs(idsOfTabsToDelete) {
   if (idsOfTabsToDelete.length === 0) return;
@@ -16,12 +17,14 @@ function deleteTabs(idsOfTabsToDelete) {
     return a;
   }, {});
 
+  resetTabCSSVariables(this.tabs);
   const reorderedTabObjects = [];
   let numDeleted = 0;
   let consecutiveDeletedTabs = 0;
   let mostConsecutiveDeletedTabs = 0;
   let mostConsecutiveDeletedTabsBeforeVisibleTab = 0;
   let lastDeletedTabVisibleIndex = null;
+  let firstHiddenTabIndex = null;
 
   this.orderedTabObjects.forEach((obj, i) => {
     const tab = this.tabs[i];
@@ -32,13 +35,22 @@ function deleteTabs(idsOfTabsToDelete) {
           tab.classList.remove("tab--duplicate");
         });
       }
+
+      // update tab's browser index
+      this.tabIndices[obj.id][0] = reorderedTabObjects.length;
+
       // if tab is not hidden, save its visible index to a variable and update that index
       if (this.tabIndices[obj.id][1] !== null) {
         mostConsecutiveDeletedTabsBeforeVisibleTab = mostConsecutiveDeletedTabs;
         this.tabIndices[obj.id][1] -= numDeleted;
+      } else {
+        // update lastHiddenTabIndex in filterState, in case it changed
+        this.filterState.lastHiddenTabIndex = this.tabIndices[obj.id][0];
+        if (firstHiddenTabIndex === null) {
+          firstHiddenTabIndex = this.tabIndices[obj.id][0];
+        }
       }
-      // update tab's browser index
-      this.tabIndices[obj.id][0] = reorderedTabObjects.length;
+
       reorderedTabObjects[this.tabIndices[obj.id][0]] = obj;
       const deletedOffset = numDeleted * -46 + "px";
       window.requestAnimationFrame(() => {
@@ -67,6 +79,8 @@ function deleteTabs(idsOfTabsToDelete) {
     }
   });
 
+  // update firstHiddenTabIndex, in case it changed
+  this.filterState.firstHiddenTabIndex = firstHiddenTabIndex;
   let animationDuration = 100;
   this.orderedTabObjects = reorderedTabObjects;
   this.visibleTabIds = this.visibleTabIds.filter(id => !tabsToDelete[id]);

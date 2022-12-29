@@ -12,12 +12,14 @@
   --moved-offset: 0px;
   --filter-offset: 0px;
   --deleted-offset: 0px;
+  --drag-offset: 0px;
   --y-offset: 0px;
   --delay: 0;
   --trans-delay: 0ms;
   --opacity-delay: 0ms;
   --trans-duration: 0ms;
   --opacity-duration: 0ms;
+  --animation-duration: 0ms;
   --opacity: 1;
   --x-pos: 17rem;
   --y-pos: 1rem;
@@ -27,17 +29,21 @@
   touch-action: none;
   stroke: transparent;
   // transform: scale(1);
-  // transition: transform 200ms ease-out;
+  transition: background-color 100ms ease-out;
   // transition: none;
   // content-visibility: auto;
   // animation: 5000ms ease-in-out banana;
+  // transform: scale(1);
+  // transition: transform 1000ms ease-out;
+  animation: 100ms ease-out returnToNormal;
   font-family: 'Open Sans', sans-serif;
   z-index: 0;
+
 
   &:hover {
     // background: transparent;
     // color: var(--color-three-hover);
-    transition: transform 60ms ease-out, opacity 200ms ease-in-out, box-shadow 200ms ease-in-out, stroke 200ms ease-out;
+    // transition: transform 60ms ease-out, background-color 1000ms ease-out, opacity 200ms ease-in-out, box-shadow 200ms ease-in-out, stroke 200ms ease-out;
 
     & .tab__tab-button {
       &::after {
@@ -52,8 +58,8 @@
     pointer-events: none;
     visibility: hidden;
     opacity: 0;
+    transform: translateY(var(--filter-offset));
     transition: opacity var(--opacity-duration) var(--opacity-delay) ease-in-out, transform var(--trans-duration) var(--trans-delay) ease-in-out, visibility var(--opacity-duration) var(--opacity-delay);
-    transform: translateY(var(--y-offset));
 
     &:hover {
       transition: opacity var(--opacity-duration) var(--opacity-delay) ease-in-out, transform var(--trans-duration) var(--trans-delay) ease-in-out, visibility var(--opacity-duration) var(--opacity-delay);
@@ -62,7 +68,7 @@
 
   &--filtered {
     opacity: 1;
-    transform: translateY(var(--y-offset));
+    transform: translateY(var(--filter-offset));
     transition: transform var(--trans-duration) var(--trans-delay) ease-in-out, opacity var(--opacity-duration) var(--opacity-delay) ease-in-out, stroke 200ms ease-out;
 
 
@@ -239,9 +245,9 @@
 
   &--held-down {
     position: relative;
-    transform: translateY(var(--y-offset)) scale(0.99);
+    transform: translateY(var(--filter-offset)) scale(0.99);
     background: transparent;
-    transition: background-color 300ms ease-out, transform 300ms ease-out, opacity 300ms ease-out;
+    transition: transform 300ms ease-out, opacity 300ms ease-out;
 
     &:hover {
       background: transparent;
@@ -287,7 +293,8 @@
     animation: 60ms ease-out forwards draggable;
     cursor: grabbing;
     background: transparent;
-    transform: translateY(var(--y-offset));
+    // transform: translateY(var(--y-offset));
+    transform: translateY(calc(var(--filter-offset) + var(--drag-offset)));
     transition: none;
     box-shadow: none;
 
@@ -326,15 +333,16 @@
 
   &--banana {
     pointer-events: none;
-    opacity: 0.5;
-    transform: translateY(var(--y-offset)) scale(var(--scale));
-    animation: 400ms 200ms ease-in forwards moving;
-    transition: transform 200ms ease-in, opacity 200ms ease-in;
+    opacity: var(--opacity);
+    transform: translateY(var(--filter-offset)) scale(var(--scale));
+    animation: var(--animation-duration) 100ms ease-in forwards moving;
+    transition: transform 100ms ease-in, opacity 100ms ease-in;
+    // transition: transform 200ms ease-in, opacity 200ms ease-in;
     z-index: -1;
   }
 
   &--peach {
-    animation: 600ms ease-in forwards moving;
+    animation: var(--animation-duration) ease-in forwards moving;
   }
 
   &--floating {
@@ -342,7 +350,7 @@
     opacity: var(--opacity);
     background: var(--color-two-hover);
     // background: purple;
-    transform: translateY(var(--y-offset)) scale(var(--scale));
+    transform: translateY(calc(var(--filter-offset) + var(--drag-offset))) scale(var(--scale));
     transition: transform 60ms ease-in-out, opacity 60ms ease-in-out, background-color 60ms ease-in-out;
     z-index: -1000;
   }
@@ -378,33 +386,71 @@
 
 @keyframes belowDeleted {
   from {
-    transform: translateY(var(--y-offset));
+    transform: translateY(var(--filter-offset));
   }
 
   to {
     // transform: translateY(calc(var(--y-offset) - var(--block-height) - var(--lesser-padding)));
-    transform: translateY(calc(var(--y-offset) + var(--deleted-offset)));
+    transform: translateY(calc(var(--filter-offset) + var(--deleted-offset)));
   }
 }
 
 @keyframes draggable {
   from {
-    transform: translateY(var(--y-offset)) scale(0.99)
+    // transform: translateY(var(--y-offset)) scale(0.99)
+    transform: translateY(calc(var(--filter-offset) + var(--drag-offset))) scale(0.99)
   }
 
   to {
-    transform: translateY(var(--y-offset)) scale(1.01)
+    // transform: translateY(var(--y-offset)) scale(1.01)
+    transform: translateY(calc(var(--filter-offset) + var(--drag-offset))) scale(var(--scale))
   }
 }
 
+// @keyframes moving {
+
+//   from {
+//     transform: translateY(var(--y-offset)) scale(var(--scale));
+//   }
+
+//   to {
+//     transform: translateY(calc(var(--y-offset) + var(--moved-offset))) scale(var(--scale));
+//   }
+// }
 @keyframes moving {
 
-  from {
-    transform: translateY(var(--y-offset)) scale(var(--scale));
+  0% {
+    transform: translateY(var(--filter-offset)) scale(var(--scale));
   }
 
   to {
-    transform: translateY(calc(var(--y-offset) + var(--moved-offset))) scale(var(--scale));
+    transform: translateY(calc(var(--filter-offset) + var(--moved-offset))) scale(var(--scale));
+  }
+}
+
+// @keyframes returnToNormal {
+
+//   0% {
+//     opacity: var(--opacity);
+//     transform: translateY(var(--y-offset)) scale(var(--scale));
+//   }
+
+//   to {
+//     opacity: 1;
+//     transform: translateY(0) scale(1);
+//   }
+// }
+@keyframes returnToNormal {
+
+  from {
+    opacity: var(--opacity);
+    // transform: translateY(calc(var(--y-offset) + var(--filter-offset))) scale(var(--scale));
+    transform: translateY(calc(var(--y-offset) + var(--filter-offset))) scale(var(--scale));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(var(--filter-offset)) scale(1);
   }
 }
 

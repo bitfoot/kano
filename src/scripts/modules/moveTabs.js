@@ -2,7 +2,9 @@
 
 const easeInOutQuad = require("./util").easeInOutQuad;
 const easeInQuad = require("./util").easeInQuad;
-const disableOrEnableControls = require("./util").disableOrEnableControls;
+const disableHeaderControls = require("./util").disableHeaderControls;
+const enableHeaderControls = require("./util").enableHeaderControls;
+const resetTabCSSVariables = require("./util").resetTabCSSVariables;
 const adjustMenu = require("./adjustMenu");
 
 function moveTabs(destinaton) {
@@ -17,11 +19,22 @@ function moveTabs(destinaton) {
     destinaton === "bottom" ? numHiddenTabs * tabRowHeight * -1 : 0;
   let numCheckedAbove = 0;
   let numUncheckedAbove = 0;
+  let animationDuration;
+  // let firstHiddenTabIndex = null;
 
-  disableOrEnableControls.call(this, { disable: true });
+  disableHeaderControls.call(this);
+
+  // reset variables
+  const visibleTabs = this.visibleTabIds.map(id => {
+    const index = this.tabIndices[id][0];
+    return this.tabs[index];
+  });
+
+  resetTabCSSVariables(visibleTabs);
 
   // get info about tabs
   this.moveState = {
+    firstHiddenTabIndex: null,
     lastTabIndex,
     tabRowHeight,
     checkedVisibleTabs,
@@ -38,16 +51,17 @@ function moveTabs(destinaton) {
         window.requestAnimationFrame(() => {
           tab.classList.remove("tab--banana");
           tab.classList.remove("tab--peach");
-          tab.style.setProperty("--y-offset", newOffset + "px");
+          tab.style.setProperty("--filter-offset", newOffset + "px");
           tab.style.setProperty("--moved-offset", 0 + "px");
-          tab.style.setProperty("--scale", 1);
+          // tab.style.setProperty("--scale", 1);
         });
       });
 
+      this.filterState.firstHiddenTabIndex = this.moveState.firstHiddenTabIndex;
       this.moveState.moveTabsInTheDOM(this.moveState.checkedVisibleTabs);
 
       // enable menu buttons and filter
-      disableOrEnableControls.call(this, { disable: false });
+      enableHeaderControls.call(this);
       window.requestAnimationFrame(() => adjustMenu.call(this));
     }.bind(this),
     moveTabsInTheDOM: function (tabsToMove) {
@@ -91,6 +105,10 @@ function moveTabs(destinaton) {
             const tab = this.tabs[index];
             window.requestAnimationFrame(() => {
               tab.style.setProperty("--moved-offset", distanceToMove + "px");
+              tab.style.setProperty(
+                "--animation-duration",
+                animationDuration + 100 + "ms"
+              );
               tab.classList.add("tab--peach");
             });
           }
@@ -103,9 +121,12 @@ function moveTabs(destinaton) {
           const numUncheckedBelow =
             this.menuData.numUnchecked - numUncheckedAbove;
 
+          const distanceToMove = numUncheckedBelow * tabRowHeight;
+
           const tab = this.tabs[index];
           if (numCheckedAbove === 0) {
             if (numUncheckedBelow > 0) {
+              animationDuration = Math.min(distanceToMove * 3, 400);
               tab.onanimationend = e => {
                 if (e.animationName === "moving") {
                   tab.onanimationend = "";
@@ -123,10 +144,15 @@ function moveTabs(destinaton) {
             this.filterState.tabs[id].filterOffset = movedTabFilterOffset;
           }
           if (numUncheckedBelow > 0) {
-            const distanceToMove = numUncheckedBelow * tabRowHeight;
+            // const distanceToMove = numUncheckedBelow * tabRowHeight;
             window.requestAnimationFrame(() => {
               tab.style.setProperty("--moved-offset", distanceToMove + "px");
               tab.style.setProperty("--scale", 0.96);
+              tab.style.setProperty("--opacity", 0.5);
+              tab.style.setProperty(
+                "--animation-duration",
+                animationDuration + "ms"
+              );
               tab.classList.add("tab--banana");
             });
           }
@@ -137,11 +163,9 @@ function moveTabs(destinaton) {
       } else {
         // if tab is hidden
         this.tabIndices[id][0] -= numCheckedAbove;
-        if (this.filterState.tabs[id]) {
-          this.filterState.lastHiddenTabIndex = this.tabIndices[id][0];
-          if (this.filterState.firstHiddenTabIndex === null) {
-            this.filterState.firstHiddenTabIndex = this.tabIndices[id][0];
-          }
+        this.filterState.lastHiddenTabIndex = this.tabIndices[id][0];
+        if (this.moveState.firstHiddenTabIndex === null) {
+          this.moveState.firstHiddenTabIndex = this.tabIndices[id][0];
         }
       }
     } else {
@@ -160,6 +184,10 @@ function moveTabs(destinaton) {
             const tab = this.tabs[index];
             window.requestAnimationFrame(() => {
               tab.style.setProperty("--moved-offset", distanceToMove + "px");
+              tab.style.setProperty(
+                "--animation-duration",
+                animationDuration + 100 + "ms"
+              );
               tab.classList.add("tab--peach");
             });
           }
@@ -170,9 +198,13 @@ function moveTabs(destinaton) {
 
           const numCheckedBelow =
             this.menuData.numChecked - numCheckedAbove - 1;
+
+          const distanceToMove = numUncheckedAbove * tabRowHeight * -1;
           const tab = this.tabs[index];
+
           if (numCheckedBelow === 0) {
             if (numUncheckedAbove > 0) {
+              animationDuration = Math.min(Math.abs(distanceToMove) * 3, 400);
               tab.onanimationend = e => {
                 if (e.animationName === "moving") {
                   tab.onanimationend = "";
@@ -188,10 +220,15 @@ function moveTabs(destinaton) {
           }
 
           if (numUncheckedAbove > 0) {
-            const distanceToMove = numUncheckedAbove * tabRowHeight * -1;
+            // const distanceToMove = numUncheckedAbove * tabRowHeight * -1;
             window.requestAnimationFrame(() => {
               tab.style.setProperty("--moved-offset", distanceToMove + "px");
               tab.style.setProperty("--scale", 0.96);
+              tab.style.setProperty("--opacity", 0.5);
+              tab.style.setProperty(
+                "--animation-duration",
+                animationDuration + "ms"
+              );
               tab.classList.add("tab--banana");
             });
           }
@@ -203,17 +240,17 @@ function moveTabs(destinaton) {
         // if tab is hidden
         const numCheckedBelow = this.menuData.numChecked - numCheckedAbove;
         this.tabIndices[id][0] += numCheckedBelow;
-        if (this.filterState.tabs[id]) {
-          this.filterState.lastHiddenTabIndex = this.tabIndices[id][0];
-          if (this.filterState.firstHiddenTabIndex === null) {
-            this.filterState.firstHiddenTabIndex = this.tabIndices[id][0];
-          }
+
+        this.filterState.lastHiddenTabIndex = this.tabIndices[id][0];
+        if (this.moveState.firstHiddenTabIndex === null) {
+          this.moveState.firstHiddenTabIndex = this.tabIndices[id][0];
         }
       }
     }
     reorderedTabObjects[this.tabIndices[id][0]] = obj;
   });
 
+  // this.filterState.firstHiddenTabIndex = this.tabIndices[id][0];
   // move browser tabs
   const movedTabsBrowserIds = this.moveState.checkedVisibleTabs.map(
     tab => +tab.id.split("-")[1]

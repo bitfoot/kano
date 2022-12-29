@@ -1,6 +1,7 @@
 "use strict";
 
 const adjustMenu = require("./adjustMenu");
+const enableHeaderControls = require("./util").enableHeaderControls;
 
 function onTabDragPointerUp(event) {
   const state = this;
@@ -73,13 +74,6 @@ function onTabDragPointerUp(event) {
         }
       }
       dragState.tabList.insertBefore(dragState.draggedTab, replacedTab);
-      // requestAnimationFrame(() => {
-      //   // dragState.tabList.insertBefore(dragState.draggedTab, replacedTab);
-      //   dragState.draggedTab.style.setProperty(
-      //     "--y-offset",
-      //     newFilterOffset + "px"
-      //   );
-      // });
 
       // move the actual chrome tab
       const replacedTabIdInBrowser = +replacedTab.id.split("-")[1];
@@ -136,12 +130,6 @@ function onTabDragPointerUp(event) {
         dragState.draggedTab,
         replacedTab.nextSibling
       );
-      // requestAnimationFrame(() => {
-      //   dragState.draggedTab.style.setProperty(
-      //     "--y-offset",
-      //     newFilterOffset + "px"
-      //   );
-      // });
 
       const replacedTabIdInBrowser = +replacedTab.id.split("-")[1];
       chrome.tabs.get(replacedTabIdInBrowser).then(tabDetails => {
@@ -170,9 +158,10 @@ function onTabDragPointerUp(event) {
     }
 
     requestAnimationFrame(() => {
-      tab.style.setProperty("--y-offset", filterOffset + "px");
+      tab.style.setProperty("--filter-offset", filterOffset + "px");
+      tab.style.setProperty("--drag-offset", 0 + "px");
       tab.style.setProperty("--opacity", 1);
-      tab.style.setProperty("--scale", 1);
+      // tab.style.setProperty("--scale", 1);
       tab.classList.remove("tab--floating");
     });
   });
@@ -211,6 +200,7 @@ function onTabDragPointerUp(event) {
     adjustMenu.call(state);
   }
 
+  enableHeaderControls.call(this);
   this.dragState = null;
 }
 
