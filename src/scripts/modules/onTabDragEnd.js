@@ -30,6 +30,8 @@ function onTabDragPointerUp(event) {
   let replacedTabVisibleIndex = null;
   let replacedTabId = null;
   let replacedTabTitle = null;
+  let draggedTabPosDifference =
+    draggedTabTopPos - dragState.tabsPosInfo[draggedTabId].initialPos;
 
   // if tab was dragged above where it was originally
   if (draggedTabTopPos < dragState.initialTabPos) {
@@ -64,6 +66,11 @@ function onTabDragPointerUp(event) {
       dragState.tabsAbove.slice(replacedTabIndex).forEach(tab => {
         state.tabIndices[tab.id][0] += 1;
       });
+
+      const replacedTabInitialPos =
+        dragState.tabsPosInfo[replacedTab.id].initialPos;
+      draggedTabPosDifference = draggedTabTopPos - replacedTabInitialPos;
+      // console.log(posDifference);
 
       let newFilterOffset = 0;
       if (state.filterState.tabs[replacedTab.id]) {
@@ -118,6 +125,11 @@ function onTabDragPointerUp(event) {
           state.tabIndices[tab.id][0] -= 1;
         });
 
+      const replacedTabInitialPos =
+        dragState.tabsPosInfo[replacedTab.id].initialPos;
+      draggedTabPosDifference = draggedTabTopPos - replacedTabInitialPos;
+      // console.log(posDifference);
+
       let newFilterOffset = 0;
       if (state.filterState.tabs[replacedTab.id]) {
         if (state.filterState.tabs[draggedTabId]) {
@@ -143,9 +155,38 @@ function onTabDragPointerUp(event) {
   dragState.draggedTab.onkeydown = null;
   dragState.draggedTab.onkeyup = null;
   dragState.draggedTab.firstChild.onblur = null;
+  dragState.draggedTab.onanimationend = e => {
+    if (e.animationName === "returnToNormal") {
+      console.log("poopy");
+      dragState.draggedTab.onanimationend = null;
+      // dragState.draggedTab.onanimationcancel = null;
+      // window.requestAnimationFrame(() => {
+      //   dragState.draggedTab.style.setProperty("--misc-offset", 0 + "px");
+      //   dragState.draggedTab.style.setProperty("--special-z-index", 0);
+      //   // if (tab.id === draggedTabId) {
+      //   //   tab.style.setProperty("z-index", 0);
+      //   // }
+      // });
+      dragState.listedTabs.forEach(tab => {
+        window.requestAnimationFrame(() => {
+          tab.style.setProperty("--misc-offset", 0 + "px");
+          if (tab.id === draggedTabId) {
+            // tab.style.setProperty("--misc-offset", 0 + "px");
+            tab.style.setProperty("--special-z-index", 0);
+          }
+        });
+      });
+    }
+  };
+
   window.requestAnimationFrame(() => {
     dragState.tabList.style.setProperty("--y-offset", 0 + "px");
     dragState.tabList.classList.remove("tab-list--scroll");
+    // dragState.draggedTab.style.setProperty(
+    //   "--misc-offset",
+    //   draggedTabPosDifference + "px"
+    // );
+    dragState.draggedTab.style.setProperty("--special-z-index", 9000);
     dragState.draggedTab.classList.remove("tab--draggable");
   });
 
@@ -157,10 +198,30 @@ function onTabDragPointerUp(event) {
       filterOffset = state.filterState.tabs[tab.id].filterOffset;
     }
 
+    let posDifference = 0;
+
+    if (tab.id === draggedTabId) {
+      posDifference = draggedTabPosDifference;
+    } else {
+      const initialPos = dragState.tabsPosInfo[tab.id].initialPos;
+      const dragOffset = dragState.tabsPosInfo[tab.id].dragOffset;
+      const currentPos = initialPos + dragOffset;
+      let newPos;
+      if (dragOffset > dragState.midPoint) {
+        newPos = initialPos + dragState.tabRowHeight;
+      } else if (dragOffset < dragState.midPoint * -1) {
+        newPos = initialPos - dragState.tabRowHeight;
+      } else newPos = initialPos;
+      posDifference = currentPos - newPos;
+      // console.log(
+      //   `initialPos: ${initialPos}, dragOffset: ${dragOffset}, currentPos: ${currentPos}, newPos: ${newPos}, posDifference: ${posDifference}`
+      // );
+    }
     requestAnimationFrame(() => {
       tab.style.setProperty("--filter-offset", filterOffset + "px");
       tab.style.setProperty("--drag-offset", 0 + "px");
       tab.style.setProperty("--opacity", 1);
+      tab.style.setProperty("--misc-offset", posDifference + "px");
       // tab.style.setProperty("--scale", 1);
       tab.classList.remove("tab--floating");
     });

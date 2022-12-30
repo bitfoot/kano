@@ -13,13 +13,14 @@
   --filter-offset: 0px;
   --deleted-offset: 0px;
   --drag-offset: 0px;
-  --y-offset: 0px;
+  // --y-offset: 0px;
   --delay: 0;
   --trans-delay: 0ms;
   --opacity-delay: 0ms;
   --trans-duration: 0ms;
   --opacity-duration: 0ms;
-  --animation-duration: 0ms;
+  --misc-offset: 0;
+  // --animation-duration: 0ms;
   --opacity: 1;
   --x-pos: 17rem;
   --y-pos: 1rem;
@@ -35,9 +36,10 @@
   // animation: 5000ms ease-in-out banana;
   // transform: scale(1);
   // transition: transform 1000ms ease-out;
-  animation: 100ms ease-out returnToNormal;
+  animation: 1000ms ease-out returnToNormal;
   font-family: 'Open Sans', sans-serif;
-  z-index: 0;
+  --special-z-index: 0;
+  z-index: var(--special-z-index);
 
 
   &:hover {
@@ -247,11 +249,11 @@
     position: relative;
     transform: translateY(var(--filter-offset)) scale(0.99);
     background: transparent;
-    transition: transform 300ms ease-out, opacity 300ms ease-out;
+    transition: transform 60ms ease-out;
 
     &:hover {
-      background: transparent;
-      transition: transform 300ms ease-out, opacity 300ms ease-out;
+      // background: transparent;
+      // transition: transform 138ms ease-out;
 
       & .tab__tab-button {
         &::after {
@@ -276,7 +278,7 @@
         transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%)) scale(0.1);
         transition: none;
         background: radial-gradient(circle at center, transparent 0.5%, var(--color-two) 1% 100%);
-        animation: 300ms ease-in forwards heldDown;
+        animation: 320ms ease-in forwards heldDown;
       }
 
       &::after {
@@ -290,13 +292,14 @@
 
   &--draggable {
     pointer-events: none;
-    animation: 60ms ease-out forwards draggable;
+    animation: 80ms ease-out forwards draggable;
     cursor: grabbing;
     background: transparent;
     // transform: translateY(var(--y-offset));
     transform: translateY(calc(var(--filter-offset) + var(--drag-offset)));
     transition: none;
     box-shadow: none;
+    // z-index: 9000;
 
     &:hover {
       // transition: none;
@@ -335,14 +338,14 @@
     pointer-events: none;
     opacity: var(--opacity);
     transform: translateY(var(--filter-offset)) scale(var(--scale));
-    animation: var(--animation-duration) 100ms ease-in forwards moving;
+    animation: var(--animation-duration) 138ms ease-in forwards moving;
     transition: transform 100ms ease-in, opacity 100ms ease-in;
     // transition: transform 200ms ease-in, opacity 200ms ease-in;
     z-index: -1;
   }
 
   &--peach {
-    animation: var(--animation-duration) ease-in forwards moving;
+    animation: calc(var(--animation-duration) + 100ms) ease-in forwards moving;
   }
 
   &--floating {
@@ -351,7 +354,8 @@
     background: var(--color-two-hover);
     // background: purple;
     transform: translateY(calc(var(--filter-offset) + var(--drag-offset))) scale(var(--scale));
-    transition: transform 60ms ease-in-out, opacity 60ms ease-in-out, background-color 60ms ease-in-out;
+    // transform: translateY(calc(var(--drag-offset) + var(--misc-offset))) scale(var(--scale));
+    transition: transform 60ms ease-in-out, opacity 60ms ease-in-out;
     z-index: -1000;
   }
 
@@ -443,12 +447,14 @@
 @keyframes returnToNormal {
 
   from {
+    // z-index: 1;
     opacity: var(--opacity);
     // transform: translateY(calc(var(--y-offset) + var(--filter-offset))) scale(var(--scale));
-    transform: translateY(calc(var(--y-offset) + var(--filter-offset))) scale(var(--scale));
+    transform: translateY(calc(var(--misc-offset) + var(--filter-offset))) scale(var(--scale));
   }
 
   to {
+    // z-index: 0;
     opacity: 1;
     transform: translateY(var(--filter-offset)) scale(1);
   }

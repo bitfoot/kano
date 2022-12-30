@@ -60,7 +60,7 @@ function dragTab(options = {}) {
       Math.min(difference * 1.3, dragState.tabHeight + dragState.margin),
       0
     );
-    // dragState.tabsPosInfo[tab.id].dragOffset = offset;
+    dragState.tabsPosInfo[tab.id].dragOffset = offset;
 
     const options = {
       tab,
@@ -80,7 +80,7 @@ function dragTab(options = {}) {
       Math.max(difference * 1.3, (dragState.tabHeight + dragState.margin) * -1),
       0
     );
-    // dragState.tabsPosInfo[tab.id].dragOffset = offset;
+    dragState.tabsPosInfo[tab.id].dragOffset = offset;
 
     const options = {
       tab,

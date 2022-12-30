@@ -19,7 +19,7 @@ function moveTabs(destinaton) {
     destinaton === "bottom" ? numHiddenTabs * tabRowHeight * -1 : 0;
   let numCheckedAbove = 0;
   let numUncheckedAbove = 0;
-  let animationDuration;
+  // let animationDuration;
   // let firstHiddenTabIndex = null;
 
   disableHeaderControls.call(this);
@@ -87,6 +87,7 @@ function moveTabs(destinaton) {
   const reorderedVisibleTabIds = [];
   const reorderedTabObjects = [];
   let animateMovement = true;
+  let maxDistanceToMove = 0;
 
   this.orderedTabObjects.forEach((obj, index) => {
     const id = obj.id;
@@ -105,12 +106,21 @@ function moveTabs(destinaton) {
             const tab = this.tabs[index];
             window.requestAnimationFrame(() => {
               tab.style.setProperty("--moved-offset", distanceToMove + "px");
-              tab.style.setProperty(
-                "--animation-duration",
-                animationDuration + 100 + "ms"
-              );
+              // tab.style.setProperty(
+              //   "--animation-duration",
+              //   animationDuration + 100 + "ms"
+              // );
               tab.classList.add("tab--peach");
             });
+
+            const numUncheckedBelow =
+              this.menuData.numUnchecked - numUncheckedAbove - 1;
+            if (numUncheckedBelow === 0) {
+              maxDistanceToMove =
+                Math.abs(distanceToMove) > maxDistanceToMove
+                  ? Math.abs(distanceToMove)
+                  : maxDistanceToMove;
+            }
           }
 
           numUncheckedAbove += 1;
@@ -126,10 +136,14 @@ function moveTabs(destinaton) {
           const tab = this.tabs[index];
           if (numCheckedAbove === 0) {
             if (numUncheckedBelow > 0) {
-              animationDuration = Math.min(distanceToMove * 3, 400);
+              maxDistanceToMove =
+                distanceToMove > maxDistanceToMove
+                  ? distanceToMove
+                  : maxDistanceToMove;
+              // animationDuration = Math.min(distanceToMove * 2.174, 400);
               tab.onanimationend = e => {
                 if (e.animationName === "moving") {
-                  tab.onanimationend = "";
+                  tab.onanimationend = null;
                   this.moveState.onMoveEnd.call(this);
                 }
               };
@@ -144,15 +158,14 @@ function moveTabs(destinaton) {
             this.filterState.tabs[id].filterOffset = movedTabFilterOffset;
           }
           if (numUncheckedBelow > 0) {
-            // const distanceToMove = numUncheckedBelow * tabRowHeight;
             window.requestAnimationFrame(() => {
               tab.style.setProperty("--moved-offset", distanceToMove + "px");
               tab.style.setProperty("--scale", 0.96);
               tab.style.setProperty("--opacity", 0.5);
-              tab.style.setProperty(
-                "--animation-duration",
-                animationDuration + "ms"
-              );
+              // tab.style.setProperty(
+              //   "--animation-duration",
+              //   animationDuration + "ms"
+              // );
               tab.classList.add("tab--banana");
             });
           }
@@ -171,7 +184,7 @@ function moveTabs(destinaton) {
     } else {
       // if tab is visible
       if (this.tabIndices[id][1] !== null) {
-        this.moveState[id] = {};
+        // this.moveState[id] = {};
         // if tab is NOT checked
         if (obj.isChecked === false) {
           const numCheckedBelow = this.menuData.numChecked - numCheckedAbove;
@@ -181,15 +194,21 @@ function moveTabs(destinaton) {
               this.tabIndices[id][1] + numCheckedBelow
             ];
             const distanceToMove = numCheckedBelow * tabRowHeight;
+
             const tab = this.tabs[index];
             window.requestAnimationFrame(() => {
               tab.style.setProperty("--moved-offset", distanceToMove + "px");
-              tab.style.setProperty(
-                "--animation-duration",
-                animationDuration + 100 + "ms"
-              );
+              // tab.style.setProperty(
+              //   "--animation-duration",
+              //   animationDuration + 100 + "ms"
+              // );
               tab.classList.add("tab--peach");
             });
+
+            maxDistanceToMove =
+              distanceToMove > maxDistanceToMove
+                ? distanceToMove
+                : maxDistanceToMove;
           }
 
           numUncheckedAbove += 1;
@@ -204,10 +223,18 @@ function moveTabs(destinaton) {
 
           if (numCheckedBelow === 0) {
             if (numUncheckedAbove > 0) {
-              animationDuration = Math.min(Math.abs(distanceToMove) * 3, 400);
+              // animationDuration = Math.min(
+              //   Math.abs(distanceToMove) * 2.174,
+              //   400
+              // );
+
+              maxDistanceToMove =
+                Math.abs(distanceToMove) > maxDistanceToMove
+                  ? Math.abs(distanceToMove)
+                  : maxDistanceToMove;
               tab.onanimationend = e => {
                 if (e.animationName === "moving") {
-                  tab.onanimationend = "";
+                  tab.onanimationend = null;
                   this.moveState.onMoveEnd.call(this);
                 }
               };
@@ -225,10 +252,10 @@ function moveTabs(destinaton) {
               tab.style.setProperty("--moved-offset", distanceToMove + "px");
               tab.style.setProperty("--scale", 0.96);
               tab.style.setProperty("--opacity", 0.5);
-              tab.style.setProperty(
-                "--animation-duration",
-                animationDuration + "ms"
-              );
+              // tab.style.setProperty(
+              //   "--animation-duration",
+              //   animationDuration + "ms"
+              // );
               tab.classList.add("tab--banana");
             });
           }
@@ -250,7 +277,11 @@ function moveTabs(destinaton) {
     reorderedTabObjects[this.tabIndices[id][0]] = obj;
   });
 
-  // this.filterState.firstHiddenTabIndex = this.tabIndices[id][0];
+  const animationDuration = Math.min(maxDistanceToMove * 2.174, 300);
+  document.documentElement.style.setProperty(
+    "--animation-duration",
+    animationDuration + "ms"
+  );
   // move browser tabs
   const movedTabsBrowserIds = this.moveState.checkedVisibleTabs.map(
     tab => +tab.id.split("-")[1]

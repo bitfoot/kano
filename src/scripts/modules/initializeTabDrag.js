@@ -33,20 +33,20 @@ function initializeTabDrag(event) {
 
   const listedTabs = this.tabs;
 
-  const tabsPosInfo = listedTabs.reduce((a, t) => {
-    const offsetTop = t.offsetTop;
+  const tabsPosInfo = listedTabs.reduce((a, tab) => {
+    const offsetTop = tab.offsetTop;
     const dragOffset = 0;
     let filterOffset = 0;
-    if (this.filterState.tabs[t.id]) {
-      filterOffset = this.filterState.tabs[t.id].filterOffset;
+    if (this.filterState.tabs[tab.id]) {
+      filterOffset = this.filterState.tabs[tab.id].filterOffset;
     }
     const initialPos = offsetTop + filterOffset;
 
-    a[t.id] = {
-      offsetTop,
+    a[tab.id] = {
       filterOffset,
       initialPos,
       dragOffset
+      // newPos: initialPos
     };
 
     return a;

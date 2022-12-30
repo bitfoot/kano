@@ -237,9 +237,10 @@ document.addEventListener("pointerdown", e => {
       parent.style.setProperty("--y-pos", e.clientY - bounds.top + "px");
     });
 
-    state.dragTimer = setTimeout(initializeTabDrag.bind(state, e), 300);
+    state.dragTimer = setTimeout(initializeTabDrag.bind(state, e), 320);
     tabButton.onpointerup = () => {
       clearTimeout(state.dragTimer);
+      tabButton.onpointerup = null;
       tabButton.releasePointerCapture(pointerId);
       if (state.dragState === null) {
         tabButton.parentElement.classList.remove("tab--held-down");
@@ -277,7 +278,7 @@ document.addEventListener(`keydown`, e => {
   ) {
     const tabButton = e.target;
     tabButton.parentElement.classList.add("tab--held-down");
-    state.dragTimer = setTimeout(initializeTabDrag.bind(state, e), 300);
+    state.dragTimer = setTimeout(initializeTabDrag.bind(state, e), 320);
     tabButton.onkeyup = () => {
       clearTimeout(state.dragTimer);
       tabButton.onkeyup = "";

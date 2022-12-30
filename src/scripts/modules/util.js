@@ -146,6 +146,9 @@ function resetTabCSSVariables(tabs) {
       tab.style.setProperty("--opacity-duration", "0ms");
       tab.style.setProperty("--scale", 1);
       tab.style.setProperty("--opacity", 1);
+      tab.style.setProperty("--drag-offset", 0 + "px");
+      tab.style.setProperty("--misc-offset", 0 + "px");
+      // tab.style.setProperty("", 1);
     });
   });
 }
