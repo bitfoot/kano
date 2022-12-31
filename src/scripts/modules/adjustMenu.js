@@ -44,12 +44,6 @@ function adjustMenu() {
     numCheckedBelowFirstUnchecked: 0
   };
 
-  // console.log(`From adjustMenu. this.tabs is:`);
-  // console.log(this.tabs);
-  console.log(`From adjustMenu. VisibleTabIds is:`);
-  console.log(this.visibleTabIds);
-  // console.log(`orderedTabObjects is:`);
-  // console.log(this.orderedTabObjects);
   this.menuData = this.visibleTabIds.reduce((a, id) => {
     const indexInBrowser = this.tabIndices[id][0];
     const tabObject = this.orderedTabObjects[indexInBrowser];

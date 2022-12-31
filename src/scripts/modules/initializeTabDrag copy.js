@@ -1,63 +1,57 @@
 "use strict";
 const onTabDragPointerMove = require("./onTabDragPointerMove");
-const onTabDragEnd = require("./onTabDragEnd");
-const resetTabCSSVariables = require("./util").resetTabCSSVariables;
-const disableHeaderControls = require("./util").disableHeaderControls;
-const easeInQuad = require("./util").easeInQuad;
-const easeInOutQuad = require("./util").easeInOutQuad;
+const onTabDragPointerUp = require("./onTabDragPointerUp");
+const resetTransitionVariables = require("./util").resetTransitionVariables;
 const dragTab = require("./dragTab");
-const scroll = require("./scroll");
 
 function initializeTabDrag(event) {
-  disableHeaderControls.call(this);
   const eventType = event.type;
+  if (eventType == "pointerdown") {
+    console.log(`drag initiated from pointerdown event.`);
+  } else {
+    console.log(`drag initiated from keydown event.`);
+  }
+
+  const state = this;
   const draggedTab = event.target.parentElement;
   const pointerPosition = event.pageY;
   const container = this.scrollState.container;
-
+  const bodyHeight = document.body.offsetHeight;
   // disable system scrolling while tab is being dragged
-  window.requestAnimationFrame(() => {
-    container.classList.add("tab-list-container--no-scroll");
-  });
-
+  container.classList.add("tab-list-container--no-scroll");
   const tabList = this.tabList;
   const scrollState = this.scrollState;
-  const scrollTop = scrollState.scrollTop;
+  const scrollTop = this.scrollState.scrollTop;
   const tabListHeight = tabList.offsetHeight;
-  const headerHeight = scrollState.headerHeight;
+  // const headerHeight = document.getElementById("header").offsetHeight;
+  const headerHeight = this.scrollState.headerHeight;
   const tabHeight = draggedTab.offsetHeight;
   const margin = 6;
-  const tabRowHeight = tabHeight + margin;
 
-  const wholeContentHeight = this.visibleTabIds.length * (tabHeight + margin);
+  const wholeContentHeight = state.visibleTabIds.length * (tabHeight + margin);
 
-  // const listedTabs = this.tabs;
-  const listedTabs = this.visibleTabIds.map(id => {
-    const index = this.tabIndices[id][0];
-    return this.tabs[index];
-  });
+  const listedTabs = state.tabs;
 
-  const tabsPosInfo = listedTabs.reduce((a, tab, index) => {
-    // const offsetTop = tab.offsetTop;
+  const tabsPosInfo = listedTabs.reduce((a, t) => {
+    const offsetTop = t.offsetTop;
     const dragOffset = 0;
-    // let filterOffset = 0;
-    // if (this.filterState.tabs[tab.id]) {
-    //   filterOffset = this.filterState.tabs[tab.id].filterOffset;
-    // }
-    const initialPos = index * tabRowHeight;
+    let filterOffset = 0;
+    if (this.filterState.tabs[t.id]) {
+      filterOffset = state.filterState.tabs[t.id].filterOffset;
+    }
+    const initialPos = offsetTop + filterOffset;
 
-    a[tab.id] = {
-      // filterOffset,
+    a[t.id] = {
+      offsetTop,
+      filterOffset,
       initialPos,
       dragOffset
-      // newPos: initialPos
     };
 
     return a;
   }, {});
 
-  // const tabIndex = this.tabIndices[draggedTab.id][0];
-  const tabIndex = this.tabIndices[draggedTab.id][1];
+  const tabIndex = state.tabIndices[draggedTab.id][0];
   const tabsAbove = listedTabs.slice(0, tabIndex);
   const tabsBelow = listedTabs.slice(tabIndex + 1);
   const initialTabPos = tabsPosInfo[draggedTab.id].initialPos;
@@ -66,7 +60,7 @@ function initializeTabDrag(event) {
     initialTabPos +
     headerHeight -
     scrollState.scrollTop -
-    scrollState.tabListOffset;
+    this.scrollState.tabListOffset;
   const initialBottomPosInViewport = initialTopPosInViewport + tabHeight;
 
   const shiftY = pointerPosition - initialTabPos - headerHeight + scrollTop;
@@ -75,63 +69,50 @@ function initializeTabDrag(event) {
   const minTabPosInList = 0;
   const minTabOffsetInList = initialTabPos * -1;
   const maxTabOffsetInList = maxTabPosInList - initialTabPos;
-  const midPoint = (tabHeight + margin) / 2;
 
   const defaultScrollBoundary = {
     up: 184,
     down: 420
   };
 
-  draggedTab.firstChild.onblur = () => {
-    draggedTab.firstChild.focus();
-  };
   // draggedTab.setPointerCapture(event.pointerId);
-  resetTabCSSVariables(this.tabs);
-  window.requestAnimationFrame(() => {
-    draggedTab.style.setProperty("--scale", 1.01);
-    draggedTab.classList.add("tab--draggable");
-    draggedTab.classList.remove("tab--held-down");
-  });
-
+  draggedTab.classList.add("tab--draggable");
+  draggedTab.classList.remove("tab--held-down");
+  resetTransitionVariables.call(this);
   listedTabs
-    .filter(t => t.id !== draggedTab.id)
+    .filter(t => t.id != draggedTab.id)
     .forEach(t => {
-      window.requestAnimationFrame(() => {
-        t.style.setProperty("--scale", 0.99);
-        t.classList.add("tab--floating");
-      });
+      t.classList.add("tab--moveable", "tab--moving");
     });
 
   this.dragState = {
-    tabRowHeight,
-    defaultAnimationDuration: 220,
-    sign: null,
-    direction: null,
-    arrowKeyIsHeldDown: null,
-    totalDistance: tabRowHeight,
-    animationDuration: 220,
-    animation: null,
     animationStart: null,
     animationElapsed: 0,
-    distanceToDragInOneFrame: 0,
+    distance: 0,
+    distanceToDrag: 0,
     elapsed: 0,
     eventType,
     start: null,
     previousTimeStamp: null,
     done: null,
     distanceDraggedViaKb: 0,
+    kbDragProgress: 0,
+    // get kbDragProgress() {
+    //   return this.distanceDraggedViaKb / 46;
+    // },
+    kbDragAnimation: null,
     tabsPosInfo,
     scrollState,
+    animation: null,
     scroll: false,
     draggedTab,
-    midPoint,
     pointerPosition,
     // lastPointerPos: pointerPosition,
     get imaginaryTopPos() {
       if (this.eventType == "pointerdown") {
         return this.pointerPosition - this.shiftY;
       } else {
-        return this.tabPosInViewport.top + this.distanceToDragInOneFrame;
+        return this.tabPosInViewport.top + this.distanceToDrag;
       }
     },
     headerHeight,
@@ -172,11 +153,11 @@ function initializeTabDrag(event) {
     tabHeight,
     shiftY,
     listedTabs,
-
+    tabIndex,
     tabsAbove,
     tabsBelow,
     tabMinPosInViewport: headerHeight,
-    // tabMaxPosInViewport: bodyHeight - margin - tabHeight,
+    tabMaxPosInViewport: bodyHeight - margin - tabHeight,
     tabPositionInTheList: 0,
     minTabPosInList,
     maxTabPosInList,
@@ -188,7 +169,7 @@ function initializeTabDrag(event) {
         this.maxTabOffsetInList -
         this.scrollState.maxScrollTop +
         this.scrollState.tabListOffset +
-        this.scrollState.scrollTop;
+        this.scrollTop;
 
       return maxOffset;
     },
@@ -196,9 +177,10 @@ function initializeTabDrag(event) {
       const minOffset =
         this.minTabOffsetInList +
         this.scrollState.tabListOffset +
-        this.scrollState.scrollTop;
+        this.scrollTop;
       return minOffset;
     },
+
     getScrollDistance() {
       const imaginaryTopPos = this.imaginaryTopPos;
       const imaginaryBottomPos = imaginaryTopPos + this.tabHeight;
@@ -263,112 +245,12 @@ function initializeTabDrag(event) {
       };
 
       return getDistance();
-    },
-    getDragDistance() {
-      let dragDistance;
-      if (this.eventType === "pointerdown") {
-        let tabPosInViewport = this.tabPosInViewport.top;
-        dragDistance = this.imaginaryTopPos - tabPosInViewport;
-      } else {
-        const prevSign = this.sign;
-        this.sign = this.direction === "down" ? 1 : -1;
-        let progress = Math.min(
-          1,
-          this.animationElapsed / this.animationDuration
-        );
-        let prevDistance = this.distanceDraggedViaKb;
-        // if sign changed, then:
-        if (prevSign !== null && prevSign !== this.sign) {
-          this.animationStart = null;
-          this.animationElapsed = 0;
-          progress = 0;
-          prevDistance = 0;
-          const currentPos = this.tabPosInList;
-          let desiredPos;
-          let desiredIndex;
-          if (this.direction === "down") {
-            desiredIndex = Math.ceil(currentPos / this.tabRowHeight);
-            desiredPos = desiredIndex * this.tabRowHeight;
-            this.totalDistance = desiredPos - currentPos;
-          } else {
-            desiredIndex = Math.floor(currentPos / this.tabRowHeight);
-            desiredPos = desiredIndex * this.tabRowHeight;
-            this.totalDistance = currentPos - desiredPos;
-          }
-          this.animationDuration =
-            (this.totalDistance / this.tabRowHeight) *
-            this.defaultAnimationDuration;
-        }
-
-        this.distanceDraggedViaKb =
-          easeInOutQuad(progress, 0, this.totalDistance, 1) * this.sign;
-        this.distanceToDragInOneFrame =
-          this.distanceDraggedViaKb - prevDistance;
-        dragDistance = this.distanceToDragInOneFrame;
-      }
-      return dragDistance;
-    },
-    step: function (timestamp) {
-      if (this.dragState === null) return;
-      if (this.dragState.animationStart === null) {
-        this.dragState.animationStart = timestamp;
-      }
-
-      this.dragState.animationElapsed =
-        timestamp - this.dragState.animationStart;
-
-      if (this.dragState.previousTimeStamp !== timestamp) {
-        this.dragState.previousTimeStamp = timestamp;
-        const dragDistance = this.dragState.getDragDistance();
-        const scrollDistance = this.dragState.getScrollDistance();
-
-        if (scrollDistance !== 0) {
-          scroll.call(this, { distance: scrollDistance });
-        }
-
-        if (
-          this.dragState.eventType === "keydown" ||
-          this.dragState.animation
-        ) {
-          dragTab.call(this, { distance: dragDistance });
-        }
-
-        if (
-          this.dragState.eventType === "pointerdown" &&
-          scrollDistance === 0 &&
-          (this.dragState.tabPosInList >= this.dragState.minTabPosInList ||
-            this.dragState.tabPosInList <= this.dragState.maxTabPosInList)
-        ) {
-          this.dragState.animation = null;
-        }
-      }
-
-      if (this.dragState.eventType === "keydown") {
-        if (
-          this.dragState.animationElapsed >= this.dragState.animationDuration
-        ) {
-          this.dragState.animationElapsed = 0;
-          this.dragState.distanceDraggedViaKb = 0;
-          this.dragState.animationStart = null;
-          this.dragState.distanceToDragInOneFrame = 0;
-          this.dragState.totalDistance = this.dragState.tabRowHeight;
-          this.dragState.animationDuration = this.dragState.defaultAnimationDuration;
-
-          if (this.dragState.arrowKeyIsHeldDown === false) {
-            this.dragState.animation = null;
-          }
-        }
-      }
-
-      if (this.dragState.animation) {
-        window.requestAnimationFrame(this.dragState.step);
-      }
-    }.bind(this)
+    }
   };
 
   if (eventType == "pointerdown") {
     draggedTab.onpointermove = onTabDragPointerMove.bind(this);
-    draggedTab.onpointerup = onTabDragEnd.bind(this);
+    draggedTab.onpointerup = onTabDragPointerUp.bind(this);
   } else {
     draggedTab.onkeydown = e => {
       if (e.code === "ArrowDown" || e.code === "ArrowUp") {
@@ -376,11 +258,8 @@ function initializeTabDrag(event) {
       }
     };
     draggedTab.onkeyup = e => {
-      // console.log(e.code);
-      if (e.code === "Space" || e.code === "Enter") {
-        onTabDragEnd.call(this);
-      } else if (e.code === "ArrowDown" || e.code === "ArrowUp") {
-        this.dragState.arrowKeyIsHeldDown = false;
+      if (e.code === "Space") {
+        onTabDragPointerUp.call(this);
       }
     };
   }

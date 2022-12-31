@@ -2,9 +2,11 @@
 
 const util = require("./util");
 const adjustMenu = require("./adjustMenu");
+// const resetTabCSSVariables = require("./util").resetTabCSSVariables;
 
 function filter() {
   const state = this;
+  // resetTabCSSVariables(state.tabs);
   const filterState = state.filterState;
   const filterString = filterState.input.value.toLowerCase();
   const filter = document.getElementById("filter");

@@ -243,8 +243,8 @@ document.addEventListener("pointerdown", e => {
       tabButton.onpointerup = null;
       tabButton.releasePointerCapture(pointerId);
       if (state.dragState === null) {
-        tabButton.parentElement.classList.remove("tab--held-down");
-        const tabId = e.target.parentElement.id;
+        parent.classList.remove("tab--held-down");
+        const tabId = parent.id;
         const browserTabId = parseInt(tabId.split("-")[1]);
         chrome.tabs.get(browserTabId, function (tab) {
           chrome.tabs.highlight({ tabs: tab.index }, function () { });
