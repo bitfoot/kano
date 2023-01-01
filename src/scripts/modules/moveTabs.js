@@ -161,7 +161,7 @@ function moveTabs(destinaton) {
             window.requestAnimationFrame(() => {
               tab.style.setProperty("--moved-offset", distanceToMove + "px");
               tab.style.setProperty("--scale", 0.96);
-              tab.style.setProperty("--opacity", 0.5);
+              tab.style.setProperty("--opacity", 0.4);
               // tab.style.setProperty(
               //   "--animation-duration",
               //   animationDuration + "ms"
@@ -251,7 +251,7 @@ function moveTabs(destinaton) {
             window.requestAnimationFrame(() => {
               tab.style.setProperty("--moved-offset", distanceToMove + "px");
               tab.style.setProperty("--scale", 0.96);
-              tab.style.setProperty("--opacity", 0.5);
+              tab.style.setProperty("--opacity", 0.4);
               // tab.style.setProperty(
               //   "--animation-duration",
               //   animationDuration + "ms"
@@ -277,7 +277,7 @@ function moveTabs(destinaton) {
     reorderedTabObjects[this.tabIndices[id][0]] = obj;
   });
 
-  const animationDuration = Math.min(maxDistanceToMove * 2.174, 300);
+  const animationDuration = Math.min(maxDistanceToMove * 2.174, 260);
   document.documentElement.style.setProperty(
     "--animation-duration",
     animationDuration + "ms"

@@ -34,7 +34,8 @@
   --pointer-y-pos: 0;
 
   --animation-duration: 0;
-  --below-deleted-animation-duration: 200ms;
+  --animation-delay: 0;
+  // --below-deleted-animation-duration: 200ms;
   --color-three: #eee;
   --color-three-hover: #fff;
   --color-four: #ccc;
@@ -188,8 +189,10 @@ button {
     &--transforming {
       transform-origin: top;
       transform: translateY(var(--thumb-offset)) scaleY(var(--ratio));
-      transition: transform var(--below-deleted-animation-duration) ease-out;
-      background: #9932CC;
+      // transition: transform var(--below-deleted-animation-duration) var(--animation-delay) ease-out;
+      background-color: #9932CC;
+      // transition: transform var(--animation-duration) var(--animation-delay) ease-out, background-color var(--animation-duration) var(--animation-delay) ease-out;
+      transition: transform var(--animation-duration) ease-out, background-color var(--animation-duration) ease-out;
 
       &:hover {
         &::after {

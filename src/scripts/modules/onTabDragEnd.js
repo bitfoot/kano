@@ -26,6 +26,8 @@ function onTabDragPointerUp(event) {
   const draggedTabInitialVisibleIndex = state.tabIndices[draggedTabId][1];
   // let movedDirection = null;
   let replacedTabVisibleIndex = null;
+  let draggedTabNewOffset = 0;
+  // let remainingDistance = 0;
   // let draggedTabPosDifference =
   //   draggedTabTopPos - dragState.tabsPosInfo[draggedTabId].initialPos;
   let dragDirection = null;
@@ -41,15 +43,18 @@ function onTabDragPointerUp(event) {
     let newVisibleIndex;
     let positionAbove;
     let visibleIndexAbove;
-    let remainingDistance;
+    let distanceToPositionAbove;
 
     visibleIndexAbove = Math.floor(currentPos / dragState.tabRowHeight);
     positionAbove = visibleIndexAbove * dragState.tabRowHeight;
-    remainingDistance = currentPos - positionAbove;
-    if (remainingDistance < dragState.midPoint) {
+    distanceToPositionAbove = currentPos - positionAbove;
+    if (distanceToPositionAbove < dragState.midPoint) {
       newVisibleIndex = visibleIndexAbove;
+      draggedTabNewOffset = distanceToPositionAbove;
     } else {
       newVisibleIndex = visibleIndexAbove + 1;
+      draggedTabNewOffset =
+        (dragState.tabRowHeight - distanceToPositionAbove) * -1;
     }
 
     replacedTabVisibleIndex = newVisibleIndex;
@@ -86,16 +91,19 @@ function onTabDragPointerUp(event) {
     let newVisibleIndex;
     let positionBelow;
     let visibleIndexBelow;
-    let remainingDistance;
+    let distanceToPositionBelow;
+    // let offset = 0;
 
     visibleIndexBelow = Math.ceil(currentPos / dragState.tabRowHeight);
     positionBelow = visibleIndexBelow * dragState.tabRowHeight;
-    remainingDistance = positionBelow - currentPos;
+    distanceToPositionBelow = positionBelow - currentPos;
 
-    if (remainingDistance < dragState.midPoint) {
+    if (distanceToPositionBelow < dragState.midPoint) {
       newVisibleIndex = visibleIndexBelow;
+      draggedTabNewOffset = distanceToPositionBelow * -1;
     } else {
       newVisibleIndex = visibleIndexBelow - 1;
+      draggedTabNewOffset = dragState.tabRowHeight - distanceToPositionBelow;
     }
 
     replacedTabVisibleIndex = newVisibleIndex;
@@ -103,9 +111,9 @@ function onTabDragPointerUp(event) {
     const replacedTabIndex = state.tabIndices[replacedTabId][0];
     const replacedTab = state.tabs[replacedTabIndex];
 
-    console.log(
-      `replacedTabId: ${replacedTabId}, replacedTabIndex: ${replacedTabIndex}, remainingDistance: ${remainingDistance}`
-    );
+    // console.log(
+    //   `replacedTabId: ${replacedTabId}, replacedTabIndex: ${replacedTabIndex}, remainingDistance: ${remainingDistance}`
+    // );
 
     // update tab indices
     state.tabIndices[draggedTabId][0] = replacedTabIndex;
@@ -140,7 +148,25 @@ function onTabDragPointerUp(event) {
   dragState.draggedTab.firstChild.onblur = null;
   dragState.draggedTab.onanimationend = e => {
     if (e.animationName === "returnToNormal") {
-      console.log("poopy");
+      console.log("ended");
+      dragState.draggedTab.onanimationend = null;
+      dragState.draggedTab.onanimationcancel = null;
+      dragState.listedTabs.forEach(tab => {
+        window.requestAnimationFrame(() => {
+          tab.style.setProperty("--misc-offset", 0 + "px");
+          tab.style.setProperty("--special-z-index", 0);
+          if (tab.id === draggedTabId) {
+            tab.style.setProperty("--backdrop-filter", "none");
+            // tab.style.setProperty("--special-z-index", 0);
+          }
+        });
+      });
+    }
+  };
+  dragState.draggedTab.onanimationcancel = e => {
+    if (e.animationName === "returnToNormal") {
+      console.log("cancelled");
+      dragState.draggedTab.onanimationcancel = null;
       dragState.draggedTab.onanimationend = null;
       dragState.listedTabs.forEach(tab => {
         window.requestAnimationFrame(() => {
@@ -175,27 +201,32 @@ function onTabDragPointerUp(event) {
     // let specialZIndex = 0;
     // tab.style.setProperty("--special-z-index", 0);
 
-    // specialZIndex = -1;
-    const initialPos = dragState.tabsPosInfo[tab.id].initialPos;
-    const dragOffset = dragState.tabsPosInfo[tab.id].dragOffset;
-    const currentPos = initialPos + dragOffset;
-    let newPos;
-    if (dragOffset > dragState.midPoint) {
-      newPos = initialPos + dragState.tabRowHeight;
-    } else if (dragOffset < dragState.midPoint * -1) {
-      newPos = initialPos - dragState.tabRowHeight;
-    } else newPos = initialPos;
-    posDifference = currentPos - newPos;
-    // console.log(
-    //   `id: ${tab.id
-    //   } initialPos: ${initialPos}, dragOffset: ${dragOffset}, currentPos: ${currentPos}, newPos: ${newPos}, posDifference: ${posDifference}`
-    // );
+    if (tab.id === draggedTabId) {
+      posDifference = draggedTabNewOffset;
+      console.log(`id: ${tab.id} posDifference: ${posDifference}`);
+    } else {
+      const initialPos = dragState.tabsPosInfo[tab.id].initialPos;
+      const dragOffset = dragState.tabsPosInfo[tab.id].dragOffset;
+      const currentPos = initialPos + dragOffset;
+      let newPos;
+      if (dragOffset > dragState.midPoint) {
+        newPos = initialPos + dragState.tabRowHeight;
+      } else if (dragOffset < dragState.midPoint * -1) {
+        newPos = initialPos - dragState.tabRowHeight;
+      } else newPos = initialPos;
+      posDifference = currentPos - newPos;
+
+      // console.log(
+      //   `id: ${tab.id
+      //   } initialPos: ${initialPos}, dragOffset: ${dragOffset}, currentPos: ${currentPos}, newPos: ${newPos}, posDifference: ${posDifference}`
+      // );
+    }
 
     requestAnimationFrame(() => {
       tab.style.setProperty("--filter-offset", filterOffset + "px");
       tab.style.setProperty("--drag-offset", 0 + "px");
       tab.style.setProperty("--opacity", 1);
-      // tab.style.setProperty("--misc-offset", posDifference + "px");
+      tab.style.setProperty("--misc-offset", posDifference + "px");
       tab.classList.remove("tab--floating");
     });
   });

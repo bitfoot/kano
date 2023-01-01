@@ -39,12 +39,8 @@ function dragTab(options = {}) {
       Math.abs(Math.abs(offset) - dragState.midPoint) / dragState.midPoint;
 
     requestAnimationFrame(() => {
-      // tab.style.setProperty(
-      //   "--y-offset",
-      //   offset + dragState.tabsPosInfo[tab.id].filterOffset + "px"
-      // );
       tab.style.setProperty("--drag-offset", offset + "px");
-      tab.style.setProperty("--opacity", Math.max(ratioToMidPoint, 0.4));
+      tab.style.setProperty("--opacity", Math.max(ratioToMidPoint, 0.41));
       tab.style.setProperty("--scale", Math.max(ratioToMidPoint - 0.01, 0.97));
     });
   };

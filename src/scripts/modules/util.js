@@ -148,7 +148,7 @@ function resetTabCSSVariables(tabs) {
       tab.style.setProperty("--opacity", 1);
       tab.style.setProperty("--drag-offset", 0 + "px");
       tab.style.setProperty("--misc-offset", 0 + "px");
-      // tab.style.setProperty("--backdrop-filter", "none");
+      tab.style.setProperty("--animation-iteration-count", 1);
       // tab.style.setProperty("", 1);
     });
   });

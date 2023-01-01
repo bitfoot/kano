@@ -27,16 +27,19 @@
   --opacity: 1;
   --x-pos: 17rem;
   --y-pos: 1rem;
+  --animation-iteration-count: 0;
   // --scale: 0.99;
   --scale: 1;
   visibility: visible;
   touch-action: none;
   stroke: transparent;
+
   // transform: scale(1);
   backdrop-filter: var(--backdrop-filter);
   // transform: translateY(--filter-offset);
-  transition: background-color 2000ms ease-out;
-  animation: 2000ms ease-out returnToNormal;
+  transition: background-color 100ms ease-out;
+  animation: returnToNormal 100ms ease-out var(--animation-iteration-count);
+  // animation-fill-mode: unset;
   font-family: 'Open Sans', sans-serif;
   --special-z-index: 0;
   z-index: var(--special-z-index);

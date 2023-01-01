@@ -21,8 +21,6 @@ function filter() {
   }
   state.visibleTabIds = [];
   const TAB_ROW_HEIGHT = 46;
-  let maxChangeInPosition = 0;
-  let transitionDuration = 138;
 
   const matchesFilter = (title, filterString) => {
     return title.toLowerCase().includes(filterString);
@@ -38,6 +36,8 @@ function filter() {
     filterState.newlyFilteredOut = 0;
     let filteredOutAbove = 0;
     let filteredIndex = 0;
+
+    let maxChangeInPosition = 0;
 
     tabObjects.forEach((obj, index) => {
       const newFilterOffset = filteredOutAbove * TAB_ROW_HEIGHT * -1;
@@ -111,11 +111,6 @@ function filter() {
   };
 
   prepareFilteredTabObjects(state.orderedTabObjects);
-  if (maxChangeInPosition > 0) {
-    transitionDuration = Math.min(maxChangeInPosition * 2.8, 200);
-  }
-  // const transitionDuration = Math.min(maxChangeInPosition * 3, 250);
-  // console.log(`maxChangeInPosition: ${maxChangeInPosition}`);
 
   const hideTab = tab => {
     tab.ariaHidden = "true";
@@ -153,10 +148,10 @@ function filter() {
       const alreadyVisible = !tabObj.isFilteredOut && !tabObj.isNewlyFilteredIn;
 
       if (tabObj.isFilteredOut) {
-        transformDelay = transitionDuration;
+        transformDelay = 200;
       } else if (alreadyVisible) {
         if (filterState.newlyFilteredOut) {
-          transformDelay = transitionDuration;
+          transformDelay = 200;
         }
       } else if (tabObj.isNewlyFilteredIn) {
         transformDelay = 0;
@@ -168,13 +163,13 @@ function filter() {
     const getTransformDuration = tabObj => {
       let transformDuration = 0;
       if (!tabObj.isFilteredOut && !tabObj.isNewlyFilteredIn) {
-        transformDuration = transitionDuration;
+        transformDuration = 200;
       }
       return transformDuration;
     };
 
     const getOpacityDuration = tabObj => {
-      let opacityDuration = transitionDuration;
+      let opacityDuration = 200;
       if (tabObj.isFilteredOut && !tabObj.isNewlyFilteredOut) {
         opacityDuration = 0;
       }
@@ -191,20 +186,20 @@ function filter() {
         opacityDelay = 0;
       } else if (tabObj.isNewlyFilteredIn) {
         if (filterState.lastVisibleTabIndex !== null) {
-          // if some tabs are filtered out between it and the next visible tab, it needs twice as much delay
+          // if some tabs are filtered out between it and the next visible tab, it needs 400 delay
           if (
             tabObj.newlyFilteredOutAbove ||
             filterState.newlyFilteredOut > tabObj.newlyFilteredOutAbove
           ) {
-            opacityDelay = transitionDuration * 2;
+            opacityDelay = 400;
           } else if (
             filterState.lastVisibleTabIndex >
             filterState.firstNewlyFilteredInTabIndex
           ) {
-            opacityDelay = transitionDuration;
+            opacityDelay = 200;
           }
         } else if (filterState.lastNewlyFilteredOutTabIndex !== null) {
-          opacityDelay = transitionDuration;
+          opacityDelay = 200;
         }
       }
 
@@ -237,14 +232,6 @@ function filter() {
   };
 
   requestAnimationFrame(() => {
-    document.documentElement.style.setProperty(
-      "--animation-duration",
-      transitionDuration + "ms"
-    );
-    document.documentElement.style.setProperty(
-      "--animation-delay",
-      transitionDuration + "ms"
-    );
     if (filterString.length > 0) {
       filterState.clearFilterBtn.classList.remove(
         "filter__remove-text-btn--disabled"
