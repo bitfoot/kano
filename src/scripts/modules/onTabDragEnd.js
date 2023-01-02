@@ -141,45 +141,29 @@ function onTabDragPointerUp(event) {
     });
   }
 
+  const onAnimationEnd = e => {
+    if (e.animationName === "returnToNormal") {
+      dragState.draggedTab.onanimationend = null;
+      dragState.draggedTab.onanimationcancel = null;
+      dragState.listedTabs.forEach(tab => {
+        window.requestAnimationFrame(() => {
+          tab.style.setProperty("--misc-offset", 0 + "px");
+          if (tab.id === draggedTabId) {
+            tab.style.setProperty("--backdrop-filter", "none");
+            tab.style.setProperty("--special-z-index", 0);
+          }
+        });
+      });
+    }
+  };
+
   dragState.draggedTab.onpointermove = null;
   dragState.draggedTab.onpointerup = null;
   dragState.draggedTab.onkeydown = null;
   dragState.draggedTab.onkeyup = null;
   dragState.draggedTab.firstChild.onblur = null;
-  dragState.draggedTab.onanimationend = e => {
-    if (e.animationName === "returnToNormal") {
-      console.log("ended");
-      dragState.draggedTab.onanimationend = null;
-      dragState.draggedTab.onanimationcancel = null;
-      dragState.listedTabs.forEach(tab => {
-        window.requestAnimationFrame(() => {
-          tab.style.setProperty("--misc-offset", 0 + "px");
-          tab.style.setProperty("--special-z-index", 0);
-          if (tab.id === draggedTabId) {
-            tab.style.setProperty("--backdrop-filter", "none");
-            // tab.style.setProperty("--special-z-index", 0);
-          }
-        });
-      });
-    }
-  };
-  dragState.draggedTab.onanimationcancel = e => {
-    if (e.animationName === "returnToNormal") {
-      console.log("cancelled");
-      dragState.draggedTab.onanimationcancel = null;
-      dragState.draggedTab.onanimationend = null;
-      dragState.listedTabs.forEach(tab => {
-        window.requestAnimationFrame(() => {
-          tab.style.setProperty("--misc-offset", 0 + "px");
-          tab.style.setProperty("--special-z-index", 0);
-          if (tab.id === draggedTabId) {
-            tab.style.setProperty("--backdrop-filter", "none");
-            // tab.style.setProperty("--special-z-index", 0);
-          }
-        });
-      });
-    }
-  };
+  dragState.draggedTab.onanimationend = onAnimationEnd;
+  dragState.draggedTab.onanimationcancel = onAnimationEnd;
 
   window.requestAnimationFrame(() => {
     dragState.tabList.style.setProperty("--y-offset", 0 + "px");
@@ -198,12 +182,9 @@ function onTabDragPointerUp(event) {
     }
 
     let posDifference = 0;
-    // let specialZIndex = 0;
-    // tab.style.setProperty("--special-z-index", 0);
 
     if (tab.id === draggedTabId) {
       posDifference = draggedTabNewOffset;
-      console.log(`id: ${tab.id} posDifference: ${posDifference}`);
     } else {
       const initialPos = dragState.tabsPosInfo[tab.id].initialPos;
       const dragOffset = dragState.tabsPosInfo[tab.id].dragOffset;
@@ -215,17 +196,12 @@ function onTabDragPointerUp(event) {
         newPos = initialPos - dragState.tabRowHeight;
       } else newPos = initialPos;
       posDifference = currentPos - newPos;
-
-      // console.log(
-      //   `id: ${tab.id
-      //   } initialPos: ${initialPos}, dragOffset: ${dragOffset}, currentPos: ${currentPos}, newPos: ${newPos}, posDifference: ${posDifference}`
-      // );
     }
 
     requestAnimationFrame(() => {
       tab.style.setProperty("--filter-offset", filterOffset + "px");
       tab.style.setProperty("--drag-offset", 0 + "px");
-      tab.style.setProperty("--opacity", 1);
+      // tab.style.setProperty("--opacity", 1);
       tab.style.setProperty("--misc-offset", posDifference + "px");
       tab.classList.remove("tab--floating");
     });

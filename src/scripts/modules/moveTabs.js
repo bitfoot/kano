@@ -11,12 +11,15 @@ function moveTabs(destinaton) {
   const tabHeight = 40;
   const margin = 6;
   const tabRowHeight = tabHeight + margin;
-  const checkedVisibleTabs = this.menuData.checkedVisibleTabs;
+  const checkedVisibleTabs = this.menu.checkedVisibleTabs;
   const lastTabIndex = this.orderedTabObjects.length - 1;
   const numHiddenTabs =
     this.orderedTabObjects.length - this.visibleTabIds.length;
   const movedTabFilterOffset =
     destinaton === "bottom" ? numHiddenTabs * tabRowHeight * -1 : 0;
+
+  const numChecked = this.menu.checkedVisibleTabs.length;
+  const numUnchecked = this.visibleTabIds.length - numChecked;
   let numCheckedAbove = 0;
   let numUncheckedAbove = 0;
   // let animationDuration;
@@ -113,8 +116,7 @@ function moveTabs(destinaton) {
               tab.classList.add("tab--peach");
             });
 
-            const numUncheckedBelow =
-              this.menuData.numUnchecked - numUncheckedAbove - 1;
+            const numUncheckedBelow = numUnchecked - numUncheckedAbove - 1;
             if (numUncheckedBelow === 0) {
               maxDistanceToMove =
                 Math.abs(distanceToMove) > maxDistanceToMove
@@ -126,10 +128,8 @@ function moveTabs(destinaton) {
           numUncheckedAbove += 1;
         } else {
           // if tab IS checked
-          const numCheckedBelow =
-            this.menuData.numChecked - numCheckedAbove - 1;
-          const numUncheckedBelow =
-            this.menuData.numUnchecked - numUncheckedAbove;
+          const numCheckedBelow = numChecked - numCheckedAbove - 1;
+          const numUncheckedBelow = numUnchecked - numUncheckedAbove;
 
           const distanceToMove = numUncheckedBelow * tabRowHeight;
 
@@ -187,7 +187,7 @@ function moveTabs(destinaton) {
         // this.moveState[id] = {};
         // if tab is NOT checked
         if (obj.isChecked === false) {
-          const numCheckedBelow = this.menuData.numChecked - numCheckedAbove;
+          const numCheckedBelow = numChecked - numCheckedAbove;
           if (numCheckedBelow > 0) {
             this.tabIndices[id] = [
               this.tabIndices[id][0] + numCheckedBelow,
@@ -215,8 +215,7 @@ function moveTabs(destinaton) {
         } else {
           // if tab IS checked
 
-          const numCheckedBelow =
-            this.menuData.numChecked - numCheckedAbove - 1;
+          const numCheckedBelow = numChecked - numCheckedAbove - 1;
 
           const distanceToMove = numUncheckedAbove * tabRowHeight * -1;
           const tab = this.tabs[index];
@@ -265,7 +264,7 @@ function moveTabs(destinaton) {
         reorderedVisibleTabIds[this.tabIndices[id][1]] = id;
       } else {
         // if tab is hidden
-        const numCheckedBelow = this.menuData.numChecked - numCheckedAbove;
+        const numCheckedBelow = numChecked - numCheckedAbove;
         this.tabIndices[id][0] += numCheckedBelow;
 
         this.filterState.lastHiddenTabIndex = this.tabIndices[id][0];

@@ -1,140 +1,130 @@
 "use strict";
 
-/* needs to be called when:
-  checking tab checkbox
-  unchecking tab checkbox
-  deleting tab
-  calling filter
-*/
 function adjustMenu() {
   const disableButton = btn => {
-    btn.setAttribute("disabled", true);
-    btn.classList.add("menu-item-btn--disabled");
+    window.requestAnimationFrame(() => {
+      btn.setAttribute("disabled", true);
+      btn.classList.add("menu-item-btn--disabled");
+    });
   };
 
   const enableButton = btn => {
-    btn.removeAttribute("disabled");
-    btn.classList.remove("menu-item-btn--disabled");
+    window.requestAnimationFrame(() => {
+      btn.removeAttribute("disabled");
+      btn.classList.remove("menu-item-btn--disabled");
+    });
   };
 
-  // get the buttons
-  const moveToTopBtn = document.getElementById("move-to-top-btn");
-  const moveToBottomBtn = document.getElementById("move-to-bottom-btn");
-  const closeSelectedBtn = document.getElementById("close-selected-btn");
-  const closeDuplicatesBtn = document.getElementById("close-duplicates-btn");
-  const selectDeselectAllBtn = document.getElementById(
-    "select-deselect-all-btn"
-  );
+  if (this.menu.closeSelectedBtn.element === null) {
+    this.menu.closeSelectedBtn.element = document.getElementById(
+      "close-selected-btn"
+    );
+    this.menu.moveToTheBottomBtn.element = document.getElementById(
+      "move-to-bottom-btn"
+    );
+    this.menu.moveToTheTopBtn.element = document.getElementById(
+      "move-to-top-btn"
+    );
+    this.menu.closeDuplicatesBtn.element = document.getElementById(
+      "close-duplicates-btn"
+    );
+    this.menu.selectDeselectAllBtn.element = document.getElementById(
+      "select-deselect-all-btn"
+    );
+  }
 
-  const allTabsAreHidden = this.visibleTabIds.length === 0;
+  this.menu.checkedVisibleTabs = [];
+  let firstUncheckedVisibleIndex = null;
+  let lastCheckedVisibleIndex = null;
+  const firstHiddenTabIndex = this.filterState.firstHiddenTabIndex;
+  let lastUncheckedVisibleIndex = null;
+  let firstCheckedVisibleIndex = null;
+  const lastHiddenTabIndex = this.filterState.lastHiddenTabIndex;
+  let visibleDuplicatesExist = false;
 
-  const accumulator = {
-    checkedVisibleTabs: [],
-    uncheckedVisibleTabs: [],
-    firstUncheckedVisibleIndex: null,
-    lastCheckedVisibleIndex: null,
-    firstHiddenTabIndex: this.filterState.firstHiddenTabIndex,
-    lastUncheckedVisibleIndex: null,
-    firstCheckedVisibleIndex: null,
-    lastHiddenTabIndex: this.filterState.lastHiddenTabIndex,
-    duplicateVisibleTabIds: [],
-    numChecked: 0,
-    numUnchecked: 0,
-    numCheckedAboveLastUnchecked: 0,
-    numCheckedBelowFirstUnchecked: 0
-  };
-
-  this.menuData = this.visibleTabIds.reduce((a, id) => {
+  this.visibleTabIds.forEach(id => {
     const indexInBrowser = this.tabIndices[id][0];
     const tabObject = this.orderedTabObjects[indexInBrowser];
     if (tabObject.isDuplicate) {
-      a.duplicateVisibleTabIds.push(tabObject.id);
+      visibleDuplicatesExist = true;
     }
 
     if (tabObject.isChecked) {
-      if (a.firstCheckedVisibleIndex === null) {
-        a.firstCheckedVisibleIndex = indexInBrowser;
+      if (firstCheckedVisibleIndex === null) {
+        firstCheckedVisibleIndex = indexInBrowser;
       }
-      a.lastCheckedVisibleIndex = indexInBrowser;
-      a.checkedVisibleTabs.push(this.tabs[indexInBrowser]);
-      a.numChecked += 1;
-      if (a.firstUncheckedVisibleIndex !== null) {
-        a.numCheckedBelowFirstUnchecked += 1;
-      }
+      lastCheckedVisibleIndex = indexInBrowser;
+      this.menu.checkedVisibleTabs.push(this.tabs[indexInBrowser]);
     } else {
-      if (a.firstUncheckedVisibleIndex === null) {
-        a.firstUncheckedVisibleIndex = indexInBrowser;
+      if (firstUncheckedVisibleIndex === null) {
+        firstUncheckedVisibleIndex = indexInBrowser;
       }
-      a.lastUncheckedVisibleIndex = indexInBrowser;
-      a.uncheckedVisibleTabs.push(this.tabs[indexInBrowser]);
-      a.numCheckedAboveLastUnchecked = a.numChecked;
-      a.numUnchecked += 1;
+      lastUncheckedVisibleIndex = indexInBrowser;
     }
+  });
 
-    return a;
-  }, accumulator);
-
-  const checkedVisibleTabsExist =
-    this.menuData.lastCheckedVisibleIndex !== null;
-  let enableMoveToTopBtn = false;
-  let enableMoveToBottomBtn = false;
-  let enableCloseSelectedBtn = false;
+  const buttonsToDisable = [];
+  const buttonsToEnable = [];
+  const checkedVisibleTabsExist = lastCheckedVisibleIndex !== null;
 
   if (checkedVisibleTabsExist) {
-    enableCloseSelectedBtn = true;
-
     const uncheckedVisibleTabsAboveExist =
-      this.menuData.firstUncheckedVisibleIndex !== null &&
-      this.menuData.firstUncheckedVisibleIndex <
-      this.menuData.lastCheckedVisibleIndex;
+      firstUncheckedVisibleIndex !== null &&
+      firstUncheckedVisibleIndex < lastCheckedVisibleIndex;
 
     const hiddenTabsAboveExist =
-      this.menuData.firstHiddenTabIndex !== null &&
-      this.menuData.firstHiddenTabIndex < this.menuData.lastCheckedVisibleIndex;
-
-    enableMoveToTopBtn = uncheckedVisibleTabsAboveExist || hiddenTabsAboveExist;
+      firstHiddenTabIndex !== null &&
+      firstHiddenTabIndex < lastCheckedVisibleIndex;
 
     const uncheckedVisibleTabsBelowExist =
-      this.menuData.lastUncheckedVisibleIndex !== null &&
-      this.menuData.lastUncheckedVisibleIndex >
-      this.menuData.firstCheckedVisibleIndex;
+      lastUncheckedVisibleIndex !== null &&
+      lastUncheckedVisibleIndex > firstCheckedVisibleIndex;
 
     const hiddenTabsBelowExist =
-      this.menuData.lastHiddenTabIndex !== null &&
-      this.menuData.lastHiddenTabIndex > this.menuData.firstCheckedVisibleIndex;
+      lastHiddenTabIndex !== null &&
+      lastHiddenTabIndex > firstCheckedVisibleIndex;
 
-    enableMoveToBottomBtn =
-      uncheckedVisibleTabsBelowExist || hiddenTabsBelowExist;
+    if (uncheckedVisibleTabsAboveExist || hiddenTabsAboveExist) {
+      buttonsToEnable.push(this.menu.moveToTheTopBtn);
+    } else {
+      buttonsToDisable.push(this.menu.moveToTheTopBtn);
+    }
+
+    if (uncheckedVisibleTabsBelowExist || hiddenTabsBelowExist) {
+      buttonsToEnable.push(this.menu.moveToTheBottomBtn);
+    } else {
+      buttonsToDisable.push(this.menu.moveToTheBottomBtn);
+    }
+
+    buttonsToEnable.push(this.menu.closeSelectedBtn);
+  } else {
+    buttonsToDisable.push(this.menu.closeSelectedBtn);
+    buttonsToDisable.push(this.menu.moveToTheBottomBtn);
+    buttonsToDisable.push(this.menu.moveToTheTopBtn);
   }
 
-  // if there are no visible tabs (when they are all filtered out), disable selectDeselectAllBtn
-  if (allTabsAreHidden) {
-    disableButton(selectDeselectAllBtn);
+  const allTabsAreHidden = this.visibleTabIds.length === 0;
+  if (allTabsAreHidden === false) {
+    buttonsToEnable.push(this.menu.selectDeselectAllBtn);
   } else {
-    enableButton(selectDeselectAllBtn);
+    buttonsToDisable.push(this.menu.selectDeselectAllBtn);
   }
-  // if there are duplicate tabs visible, enable the "Close Duplicates" button
-  if (this.menuData.duplicateVisibleTabIds.length > 0) {
-    enableButton(closeDuplicatesBtn);
+
+  if (visibleDuplicatesExist === true) {
+    buttonsToEnable.push(this.menu.closeDuplicatesBtn);
   } else {
-    disableButton(closeDuplicatesBtn);
+    buttonsToDisable.push(this.menu.closeDuplicatesBtn);
   }
-  // if some tabs are checked, enable move & delete buttons
-  if (enableMoveToTopBtn) {
-    enableButton(moveToTopBtn);
-  } else {
-    disableButton(moveToTopBtn);
-  }
-  if (enableMoveToBottomBtn) {
-    enableButton(moveToBottomBtn);
-  } else {
-    disableButton(moveToBottomBtn);
-  }
-  if (enableCloseSelectedBtn) {
-    enableButton(closeSelectedBtn);
-  } else {
-    disableButton(closeSelectedBtn);
-  }
+
+  buttonsToDisable.forEach(button => {
+    button.shouldBeEnabled = false;
+    disableButton(button.element);
+  });
+
+  buttonsToEnable.forEach(button => {
+    button.shouldBeEnabled = true;
+    enableButton(button.element);
+  });
 }
 
 module.exports = adjustMenu;

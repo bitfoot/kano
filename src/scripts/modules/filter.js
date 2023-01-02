@@ -22,7 +22,7 @@ function filter() {
   state.visibleTabIds = [];
   const TAB_ROW_HEIGHT = 46;
   let maxChangeInPosition = 0;
-  let transitionDuration = 138;
+  let transitionDuration = 180;
 
   const matchesFilter = (title, filterString) => {
     return title.toLowerCase().includes(filterString);
@@ -111,9 +111,9 @@ function filter() {
   };
 
   prepareFilteredTabObjects(state.orderedTabObjects);
-  if (maxChangeInPosition > 0) {
-    transitionDuration = Math.min(maxChangeInPosition * 2.8, 200);
-  }
+  // if (maxChangeInPosition > 0) {
+  //   transitionDuration = Math.min(maxChangeInPosition * 3, 200);
+  // }
   // const transitionDuration = Math.min(maxChangeInPosition * 3, 250);
   // console.log(`maxChangeInPosition: ${maxChangeInPosition}`);
 
