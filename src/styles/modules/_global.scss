@@ -142,6 +142,8 @@ button {
   --scrolltop: 0;
   transform: translateY(var(--scrolltop));
   position: absolute;
+  // z-index: -1;
+  // position: fixed;
   top: 0;
   left: calc(34rem - var(--lesser-padding) * 3);
   width: calc(var(--lesser-padding) * 3);
@@ -150,6 +152,7 @@ button {
   // background: chocolate;
 
   &__thumb {
+    z-index: 1;
     --x-pos: 0;
     --y-pos: 0;
     --ratio: 1;

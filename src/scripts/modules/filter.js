@@ -29,7 +29,7 @@ function filter() {
   };
 
   const prepareFilteredTabObjects = tabObjects => {
-    filterState.numOfFilteredTabs = 0;
+    // filterState.numOfFilteredTabs = 0;
     filterState.firstHiddenTabIndex = null;
     filterState.lastHiddenTabIndex = null;
     filterState.lastVisibleTabIndex = null;
@@ -66,7 +66,7 @@ function filter() {
         newFilteredTabObj.filteredIndex = filteredIndex;
         filteredIndex += 1;
         // obj.isVisible = true;
-        filterState.numOfFilteredTabs += 1;
+        // filterState.numOfFilteredTabs += 1;
         if (wasFilteredOut) {
           newFilteredTabObj.isNewlyFilteredIn = true;
           if (filterState.firstNewlyFilteredInTabIndex === null) {
@@ -100,9 +100,6 @@ function filter() {
           newFilteredTabObj.isNewlyFilteredOut = true;
           filterState.newlyFilteredOut += 1;
           filterState.lastNewlyFilteredOutTabIndex = index;
-          if (filterState.firstNewlyFilteredOutTabIndex === null) {
-            filterState.firstNewlyFilteredOutTabIndex = index;
-          }
         }
       }
 

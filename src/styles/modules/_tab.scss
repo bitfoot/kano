@@ -38,7 +38,7 @@
   backdrop-filter: var(--backdrop-filter);
   // transform: translateY(--filter-offset);
   transition: background-color 100ms ease-out;
-  animation: returnToNormal 100ms ease-out var(--animation-iteration-count);
+  animation: returnToNormal 80ms ease-out var(--animation-iteration-count);
   // animation-fill-mode: unset;
   font-family: 'Open Sans', sans-serif;
   --special-z-index: 0;
@@ -370,14 +370,14 @@
     pointer-events: none;
     opacity: var(--opacity);
     transform: translateY(var(--filter-offset)) scale(var(--scale));
-    animation: var(--animation-duration) 138ms ease-in forwards moving;
-    transition: transform 100ms ease-in, opacity 100ms ease-in;
+    animation: var(--animation-duration) 80ms ease-in forwards moving;
+    transition: transform 80ms ease-in, opacity 80ms ease-in;
     // transition: transform 200ms ease-in, opacity 200ms ease-in;
     z-index: -1;
   }
 
   &--peach {
-    animation: calc(var(--animation-duration) + 100ms) ease-in forwards moving;
+    animation: calc(var(--animation-duration) + 80ms) ease-in forwards moving;
   }
 
   &--floating {

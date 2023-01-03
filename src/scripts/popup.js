@@ -14,7 +14,6 @@ const state = {
   orderedTabObjects: [],
   tabs: [],
   visibleTabIds: [],
-  hiddenTabIds: [],
   tabIndices: {},
   tabIdsByURL: {
     // "https://www.google.com" : ["tab-1", "tab-2", "tab-3"]
@@ -23,7 +22,6 @@ const state = {
   deleteTabs,
   shiftKeyIsDown: null,
   lastCheckedTabId: null,
-  // have to keep order of all tab Ids so that they can be moved on UI (before actual browser tabs are moved)
   dragState: null,
   moveState: null,
   dragTimer: null,
@@ -52,28 +50,17 @@ const state = {
       }
     }
   },
-  // maxScrollbarThumbOffset: 0,
-  // totalFilteredOutTabs: 0,
-  // lastFilteredOutTabs: 0,
-  // filteredInTabs: 0,
-  // filterIsActive: false,
   selectedTabs: [],
   filterState: {
     filterIsActive: false,
-    // clearFilterBtn: document.getElementById("remove-filter-text-btn"),
+    clearFilterBtn: document.getElementById("remove-filter-text-btn"),
     input: document.getElementById("filter-input"),
     tabs: {},
-    numOfFilteredTabs: null,
     firstHiddenTabIndex: null,
     lastHiddenTabIndex: null,
-    firstVisibleTabIndex: null,
     lastVisibleTabIndex: null,
-    firstNewlyFilteredOutTabIndex: null,
     lastNewlyFilteredOutTabIndex: null,
-    firstNewlyFilteredInTabIndex: null,
-    lastNewlyFilteredInTabIndex: null,
-    lastMatchedTabIndex: null,
-    scrollingUp: false
+    firstNewlyFilteredInTabIndex: null
   },
   scrollState: {
     maxScrollbarThumbOffset: null,
@@ -91,20 +78,33 @@ const state = {
 };
 
 // render tabs
-chrome.tabs.query({ windowId: chrome.windows.WINDOW_ID_CURRENT }, function (
-  tabs
-) {
+// chrome.tabs.query({ windowId: chrome.windows.WINDOW_ID_CURRENT }, function (
+//   tabs
+// ) {
+//   tabs.forEach(tab => {
+//     state.addTab(tab);
+//   });
+//   renderTabComponents.call(state);
+//   util.adjustScrollbar.call(state);
+//   adjustMenu.call(state);
+// });
+
+async function getTabs() {
+  let queryOptions = { windowId: chrome.windows.WINDOW_ID_CURRENT };
+  let tabs = await chrome.tabs.query(queryOptions);
+  return tabs;
+}
+
+// render tabs
+getTabs().then(tabs => {
   tabs.forEach(tab => {
     state.addTab(tab);
   });
+
   renderTabComponents.call(state);
   util.adjustScrollbar.call(state);
   adjustMenu.call(state);
 });
-
-// document.addEventListener("pointermove", e => {
-//   console.log(e.clientX, e.clientY);
-// });
 
 document.addEventListener("click", e => {
   if (e.target.id === "close-duplicates-btn") {
@@ -325,17 +325,8 @@ document.addEventListener(`keyup`, e => {
 });
 
 document.addEventListener("pointermove", e => {
-  // requestAnimationFrame(() => {
-  //   document.documentElement.style.setProperty(
-  //     "--pointer-x-pos",
-  //     e.clientX + "px"
-  //   );
-  //   document.documentElement.style.setProperty(
-  //     "--pointer-y-pos",
-  //     e.clientY + "px"
-  //   );
-  // });
-  // console.log(e);
+  // insead of getBoundingClientRect(), use intersection observer to avoid reflow
+  if (state.dragState) return;
   if (e.target.classList.contains("tab__tab-button")) {
     const tabButton = e.target;
     const parent = tabButton.parentElement;

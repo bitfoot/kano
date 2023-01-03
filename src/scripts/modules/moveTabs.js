@@ -64,8 +64,10 @@ function moveTabs(destinaton) {
       this.moveState.moveTabsInTheDOM(this.moveState.checkedVisibleTabs);
 
       // enable menu buttons and filter
-      enableHeaderControls.call(this);
-      window.requestAnimationFrame(() => adjustMenu.call(this));
+      window.requestAnimationFrame(() => {
+        adjustMenu.call(this);
+        enableHeaderControls.call(this);
+      });
     }.bind(this),
     moveTabsInTheDOM: function (tabsToMove) {
       const fragmentOfChecked = document.createDocumentFragment();
@@ -276,7 +278,7 @@ function moveTabs(destinaton) {
     reorderedTabObjects[this.tabIndices[id][0]] = obj;
   });
 
-  const animationDuration = Math.min(maxDistanceToMove * 2.174, 260);
+  const animationDuration = Math.min(maxDistanceToMove * 2.174, 240);
   document.documentElement.style.setProperty(
     "--animation-duration",
     animationDuration + "ms"

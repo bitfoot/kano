@@ -12,7 +12,7 @@ function onScroll(e) {
   let newScrollTop = e.target.scrollTop;
   let prevScrolltop = scrollState.scrollTop;
 
-  if (scrollState.adjustingScrollbar == true) {
+  if (scrollState.adjustingScrollbar === true) {
     if (newScrollTop <= scrollState.maxScrollTop) {
       scrollState.adjustingScrollbar = false;
       requestAnimationFrame(() => {
