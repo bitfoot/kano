@@ -15,20 +15,20 @@ function adjustMenu() {
     });
   };
 
-  if (this.menu.closeSelectedBtn.element === null) {
-    this.menu.closeSelectedBtn.element = document.getElementById(
+  if (this.menu.buttons.closeSelected.element === null) {
+    this.menu.buttons.closeSelected.element = document.getElementById(
       "close-selected-btn"
     );
-    this.menu.moveToTheBottomBtn.element = document.getElementById(
+    this.menu.buttons.moveToTheBottom.element = document.getElementById(
       "move-to-bottom-btn"
     );
-    this.menu.moveToTheTopBtn.element = document.getElementById(
+    this.menu.buttons.moveToTheTop.element = document.getElementById(
       "move-to-top-btn"
     );
-    this.menu.closeDuplicatesBtn.element = document.getElementById(
+    this.menu.buttons.closeDuplicates.element = document.getElementById(
       "close-duplicates-btn"
     );
-    this.menu.selectDeselectAllBtn.element = document.getElementById(
+    this.menu.buttons.selectDeselectAll.element = document.getElementById(
       "select-deselect-all-btn"
     );
   }
@@ -85,35 +85,35 @@ function adjustMenu() {
       lastHiddenTabIndex > firstCheckedVisibleIndex;
 
     if (uncheckedVisibleTabsAboveExist || hiddenTabsAboveExist) {
-      buttonsToEnable.push(this.menu.moveToTheTopBtn);
+      buttonsToEnable.push(this.menu.buttons.moveToTheTop);
     } else {
-      buttonsToDisable.push(this.menu.moveToTheTopBtn);
+      buttonsToDisable.push(this.menu.buttons.moveToTheTop);
     }
 
     if (uncheckedVisibleTabsBelowExist || hiddenTabsBelowExist) {
-      buttonsToEnable.push(this.menu.moveToTheBottomBtn);
+      buttonsToEnable.push(this.menu.buttons.moveToTheBottom);
     } else {
-      buttonsToDisable.push(this.menu.moveToTheBottomBtn);
+      buttonsToDisable.push(this.menu.buttons.moveToTheBottom);
     }
 
-    buttonsToEnable.push(this.menu.closeSelectedBtn);
+    buttonsToEnable.push(this.menu.buttons.closeSelected);
   } else {
-    buttonsToDisable.push(this.menu.closeSelectedBtn);
-    buttonsToDisable.push(this.menu.moveToTheBottomBtn);
-    buttonsToDisable.push(this.menu.moveToTheTopBtn);
+    buttonsToDisable.push(this.menu.buttons.closeSelected);
+    buttonsToDisable.push(this.menu.buttons.moveToTheBottom);
+    buttonsToDisable.push(this.menu.buttons.moveToTheTop);
   }
 
   const allTabsAreHidden = this.visibleTabIds.length === 0;
   if (allTabsAreHidden === false) {
-    buttonsToEnable.push(this.menu.selectDeselectAllBtn);
+    buttonsToEnable.push(this.menu.buttons.selectDeselectAll);
   } else {
-    buttonsToDisable.push(this.menu.selectDeselectAllBtn);
+    buttonsToDisable.push(this.menu.buttons.selectDeselectAll);
   }
 
   if (visibleDuplicatesExist === true) {
-    buttonsToEnable.push(this.menu.closeDuplicatesBtn);
+    buttonsToEnable.push(this.menu.buttons.closeDuplicates);
   } else {
-    buttonsToDisable.push(this.menu.closeDuplicatesBtn);
+    buttonsToDisable.push(this.menu.buttons.closeDuplicates);
   }
 
   buttonsToDisable.forEach(button => {

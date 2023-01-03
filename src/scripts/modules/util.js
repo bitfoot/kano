@@ -7,90 +7,58 @@ function getFaviconUrl(url) {
   return faviconUrl.href;
 }
 
-function disableHeaderControls(options = {}) {
-  const {
-    disableFilter = true,
-    disableCloseSelected = true,
-    disableMoveToTheBottom = true,
-    disableMoveToTheTop = true,
-    disableCloseDuplicates = true,
-    disableSelectDeselectAll = true
-  } = options;
-  if (disableFilter) {
-    const filter = document.getElementById("filter");
-    const removeFilterTextBtn = document.getElementById(
-      "remove-filter-text-btn"
-    );
-    const filterInput = this.filterState.input;
-    // const filterIsActive = filterInput.value.length > 0;
-    filterInput.setAttribute("disabled", true);
-    removeFilterTextBtn.setAttribute("disabled", true);
-    requestAnimationFrame(() => {
-      filter.classList.add("filter--disabled");
-      removeFilterTextBtn.classList.add("filter__remove-text-btn--disabled");
-    });
-  }
-
+function disableHeaderControls() {
   const disableButton = btn => {
-    btn.setAttribute("disabled", true);
-    btn.classList.add("menu-item-btn--disabled");
+    window.requestAnimationFrame(() => {
+      btn.setAttribute("disabled", true);
+      btn.classList.add("menu-item-btn--disabled");
+    });
   };
+  const filter = document.getElementById("filter");
+  const removeFilterTextBtn = document.getElementById("remove-filter-text-btn");
+  Object.entries(this.menu.buttons).forEach(entry => {
+    const btn = entry[1].element;
+    disableButton(btn);
+  });
 
-  if (disableCloseSelected) {
-    const closeSelectedBtn = document.getElementById("close-selected-btn");
-    disableButton(closeSelectedBtn);
-  }
-  if (disableMoveToTheBottom) {
-    const moveToTheBottomBtn = document.getElementById("move-to-bottom-btn");
-    disableButton(moveToTheBottomBtn);
-  }
-  if (disableMoveToTheTop) {
-    const moveToTheTopBtn = document.getElementById("move-to-top-btn");
-    disableButton(moveToTheTopBtn);
-  }
-  if (disableCloseDuplicates) {
-    const closeDuplicatesBtn = document.getElementById("close-duplicates-btn");
-    disableButton(closeDuplicatesBtn);
-  }
-  if (disableSelectDeselectAll) {
-    const selectDeselectAllBtn = document.getElementById(
-      "select-deselect-all-btn"
-    );
-    disableButton(selectDeselectAllBtn);
-  }
+  const filterInput = this.filterState.input;
+  filterInput.setAttribute("disabled", true);
+  removeFilterTextBtn.setAttribute("disabled", true);
+  requestAnimationFrame(() => {
+    filter.classList.add("filter--disabled");
+    removeFilterTextBtn.classList.add("filter__remove-text-btn--disabled");
+  });
 }
 
-function enableHeaderControls(options = {}) {
-  const {
-    enableFilter = true,
-    enableCloseSelected = true,
-    enableMoveToTheBottom = true,
-    enableMoveToTheTop = true,
-    enableCloseDuplicates = true,
-    enableSelectDeselectAll = true
-  } = options;
+function enableHeaderControls() {
+  const filter = document.getElementById("filter");
+  const removeFilterTextBtn = document.getElementById("remove-filter-text-btn");
+  const filterInput = this.filterState.input;
+  const filterIsActive = filterInput.value.length > 0;
 
-  if (enableFilter) {
-    const filter = document.getElementById("filter");
-    const removeFilterTextBtn = document.getElementById(
-      "remove-filter-text-btn"
-    );
-    const filterInput = this.filterState.input;
-    const filterIsActive = filterInput.value.length > 0;
-
+  requestAnimationFrame(() => {
+    filterInput.removeAttribute("disabled");
+    filter.classList.remove("filter--disabled");
+  });
+  if (filterIsActive === true) {
+    removeFilterTextBtn.removeAttribute("disabled");
     requestAnimationFrame(() => {
-      filterInput.removeAttribute("disabled");
-      filter.classList.remove("filter--disabled");
+      removeFilterTextBtn.classList.remove("filter__remove-text-btn--disabled");
     });
-    if (filterIsActive === true) {
-      removeFilterTextBtn.removeAttribute("disabled");
-      requestAnimationFrame(() => {
-        removeFilterTextBtn.classList.remove(
-          "filter__remove-text-btn--disabled"
-        );
-      });
-    }
   }
+
+  const enableButton = btn => {
+    window.requestAnimationFrame(() => {
+      btn.removeAttribute("disabled");
+      btn.classList.remove("menu-item-btn--disabled");
+    });
+  };
+
+  Object.entries(this.menu.buttons).forEach(entry => {
+    if (entry[1].shouldBeEnabled === true) {
+      enableButton(entry[1].element);
+    }
+  });
 }
 
 function isRequired(argName) {

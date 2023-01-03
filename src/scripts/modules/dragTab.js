@@ -17,10 +17,6 @@ function dragTab(options = {}) {
     )
   );
 
-  // const draggedTabOffset =
-  //   dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset +
-  //   dragState.tabsPosInfo[dragState.draggedTab.id].filterOffset;
-
   const draggedTabOffset =
     dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset;
 
@@ -53,7 +49,7 @@ function dragTab(options = {}) {
     const difference = totalDifference + dragState.tabHeight;
     // calculate tab offset (should be min of 0, max of 46)
     const offset = Math.max(
-      Math.min(difference * 1.3, dragState.tabHeight + dragState.margin),
+      Math.min(difference * 1.3, dragState.tabRowHeight),
       0
     );
     dragState.tabsPosInfo[tab.id].dragOffset = offset;
@@ -73,7 +69,7 @@ function dragTab(options = {}) {
     const difference = totalDifference - dragState.tabHeight;
     // calculate tab offset (should be max of 0, min of -46)
     const offset = Math.min(
-      Math.max(difference * 1.3, (dragState.tabHeight + dragState.margin) * -1),
+      Math.max(difference * 1.3, dragState.tabRowHeight * -1),
       0
     );
     dragState.tabsPosInfo[tab.id].dragOffset = offset;

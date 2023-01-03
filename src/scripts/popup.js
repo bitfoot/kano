@@ -29,26 +29,27 @@ const state = {
   dragTimer: null,
   menu: {
     checkedVisibleTabs: [],
-    buttons: null,
-    closeSelectedBtn: {
-      shouldBeEnabled: false,
-      element: null
-    },
-    moveToTheBottomBtn: {
-      shouldBeEnabled: false,
-      element: null
-    },
-    moveToTheTopBtn: {
-      shouldBeEnabled: false,
-      element: null
-    },
-    closeDuplicatesBtn: {
-      shouldBeEnabled: false,
-      element: null
-    },
-    selectDeselectAllBtn: {
-      shouldBeEnabled: false,
-      element: null
+    buttons: {
+      closeSelected: {
+        shouldBeEnabled: false,
+        element: null
+      },
+      moveToTheBottom: {
+        shouldBeEnabled: false,
+        element: null
+      },
+      moveToTheTop: {
+        shouldBeEnabled: false,
+        element: null
+      },
+      closeDuplicates: {
+        shouldBeEnabled: false,
+        element: null
+      },
+      selectDeselectAll: {
+        shouldBeEnabled: false,
+        element: null
+      }
     }
   },
   // maxScrollbarThumbOffset: 0,
@@ -59,7 +60,7 @@ const state = {
   selectedTabs: [],
   filterState: {
     filterIsActive: false,
-    clearFilterBtn: document.getElementById("remove-filter-text-btn"),
+    // clearFilterBtn: document.getElementById("remove-filter-text-btn"),
     input: document.getElementById("filter-input"),
     tabs: {},
     numOfFilteredTabs: null,
