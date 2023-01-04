@@ -21,7 +21,7 @@ const state = {
   addTab,
   deleteTabs,
   shiftKeyIsDown: null,
-  lastCheckedTabId: null,
+  lastCheckedOrUncheckedTabId: null,
   dragState: null,
   moveState: null,
   dragTimer: null,
@@ -175,6 +175,7 @@ document.addEventListener("click", e => {
       state.orderedTabObjects[tabIndex].isChecked = shouldBeChecked;
       checkbox.checked = shouldBeChecked;
     });
+    state.lastCheckedOrUncheckedTabId = null;
     adjustMenu.call(state);
   } else if (e.target.id === "close-selected-btn") {
     const tabIds = state.visibleTabIds.filter(id => {
@@ -206,28 +207,60 @@ document.addEventListener(`input`, e => {
     if (state.shiftKeyIsDown) {
       // check/uncheck all visible tabs between shiftCheckedTabIndex and tabIndex
       // find out if lastCheckedTabId belongs to a visible tab
-      const lastCheckedTabVisibleIndex =
-        state.tabIndices[state.lastCheckedTabId][1];
-      if (lastCheckedTabVisibleIndex !== null) {
+      if (state.lastCheckedOrUncheckedTabId === null) {
+        state.lastCheckedOrUncheckedTabId = tabId;
+      }
+      const lastCheckedOrUncheckedTabVisibleIndex =
+        state.tabIndices[state.lastCheckedOrUncheckedTabId][1];
+      if (lastCheckedOrUncheckedTabVisibleIndex !== null) {
+        // const lastCheckedOrUncheckedTabIndex =
+        //   state.tabIndices[state.lastCheckedOrUncheckedTabId][0];
         const tabVisibleIndex = state.tabIndices[tabId][1];
         let idsOfTabsToAffect;
-        if (tabVisibleIndex < lastCheckedTabVisibleIndex) {
+        let newlyCheckedOrUncheckedTabs;
+        if (tabVisibleIndex < lastCheckedOrUncheckedTabVisibleIndex) {
           idsOfTabsToAffect = state.visibleTabIds.slice(
             tabVisibleIndex,
-            lastCheckedTabVisibleIndex + 1
+            lastCheckedOrUncheckedTabVisibleIndex + 1
           );
-        } else if (tabVisibleIndex > lastCheckedTabVisibleIndex) {
+
+          newlyCheckedOrUncheckedTabs = idsOfTabsToAffect.slice(
+            0,
+            idsOfTabsToAffect.length - 1
+          );
+        } else if (tabVisibleIndex > lastCheckedOrUncheckedTabVisibleIndex) {
           idsOfTabsToAffect = state.visibleTabIds.slice(
-            lastCheckedTabVisibleIndex,
+            lastCheckedOrUncheckedTabVisibleIndex,
             tabVisibleIndex + 1
           );
+
+          newlyCheckedOrUncheckedTabs = idsOfTabsToAffect.slice(1);
         } else {
           idsOfTabsToAffect = [tabId];
+          newlyCheckedOrUncheckedTabs = [tabId];
         }
-        // const
+        // const lastCheckedOrUncheckedTabIsChecked =
+        //   state.orderedTabObjects[lastCheckedOrUncheckedTabIndex].isChecked;
+        const someTabsAreUnchecked = newlyCheckedOrUncheckedTabs.some(id => {
+          const index = state.tabIndices[id][0];
+          if (state.orderedTabObjects[index].isChecked === false) {
+            return true;
+          }
+        });
+        let shouldBeChecked;
+        if (someTabsAreUnchecked) {
+          shouldBeChecked = true;
+        } else {
+          shouldBeChecked = false;
+        }
+        idsOfTabsToAffect.forEach(id => {
+          const index = state.tabIndices[id][0];
+          state.orderedTabObjects[index].isChecked = shouldBeChecked;
+          state.tabs[index].children[1].firstChild.checked = shouldBeChecked;
+        });
       }
     }
-    state.lastCheckedTabId = tabId;
+    state.lastCheckedOrUncheckedTabId = tabId;
     if (e.target.checked) {
       label.classList.add(`tab__checkbox-label--checked`);
       state.orderedTabObjects[tabIndex].isChecked = true;
