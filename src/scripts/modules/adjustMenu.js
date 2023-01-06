@@ -63,7 +63,7 @@ function adjustMenu() {
     }
   });
 
-  console.log(this.menu.checkedVisibleTabs);
+  // console.log(this.menu.checkedVisibleTabs);
   const buttonsToDisable = [];
   const buttonsToEnable = [];
   const checkedVisibleTabsExist = lastCheckedVisibleIndex !== null;

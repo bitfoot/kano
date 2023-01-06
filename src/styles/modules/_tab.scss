@@ -27,6 +27,8 @@
   --opacity: 1;
   --x-pos: 17rem;
   --y-pos: 1rem;
+  --bounds-left: var(--lesser-padding);
+  --bounds-top: 0;
   --animation-iteration-count: 0;
   // --scale: 0.99;
   --scale: 1;
@@ -106,7 +108,7 @@
       right: calc(100% + 1px);
       top: 0;
       height: 100%;
-      background: lime;
+      background: var(--color-accent-one);
     }
 
   }
@@ -118,18 +120,13 @@
     overflow: hidden;
     width: 100%;
     height: 100%;
-    // z-index: -1;
-    // z-index: 0;
-    // z-index: 200;
     background: transparent;
     touch-action: none;
-    transition: box-shadow 100ms ease-in-out;
-    // backdrop-filter: var(--backdrop-filter);
+    transition: box-shadow 100ms ease-in;
 
     &:focus {
-      // box-shadow: inset 0 0 0 2px lime, 0 0 0 2px var(--color-one);
-      box-shadow: inset 0 0 0 2px lime;
-      transition: box-shadow 100ms ease-in-out;
+      box-shadow: inset 0 0 0 2px var(--color-accent-one);
+      transition: box-shadow 100ms ease-in;
     }
 
     // &::before {
@@ -156,7 +153,8 @@
       z-index: -1;
       opacity: 0;
       background: radial-gradient(circle at center, var(--color-two-hover), transparent 50%);
-      transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%));
+      // transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%));
+      transform: translate(calc(calc(var(--pointer-x-pos) - var(--bounds-left)) - 50%), calc(calc(var(--pointer-y-pos) - var(--bounds-top)) - 50%));
       // transition: none;
       transition: opacity 100ms ease-out;
     }
@@ -177,11 +175,11 @@
     opacity: 0;
 
     &:focus+svg {
-      box-shadow: inset 0 0 0 2px lime;
+      box-shadow: inset 0 0 0 2px var(--color-accent-one);
     }
 
     &:checked+svg .tab__svg-checkbox-box {
-      fill: var(--color-four);
+      fill: var(--color-three);
     }
 
     &:checked+svg .tab__svg-checkbox-checkmark {
@@ -253,7 +251,7 @@
       box-shadow: none;
 
       &::before {
-        box-shadow: inset 0 0 0 2px lime;
+        box-shadow: inset 0 0 0 2px var(--color-accent-one);
         transition: box-shadow 120ms ease-in-out;
       }
 
@@ -351,7 +349,7 @@
       backdrop-filter: blur(6px);
 
       &:focus {
-        box-shadow: inset 0 0 0 2px lime;
+        box-shadow: inset 0 0 0 2px var(--color-accent-one);
         transition: box-shadow 100ms ease-in-out;
       }
 

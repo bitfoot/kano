@@ -9,6 +9,8 @@
   background: var(--color-two);
   --x-pos: 0;
   --y-pos: 0;
+  --bounds-left: 6px;
+  --bounds-top: 6px;
   overflow: hidden;
   z-index: 0;
   font-family: 'Open Sans', sans-serif;
@@ -23,7 +25,8 @@
     height: var(--block-height);
     width: 5px;
     opacity: 0;
-    background: #9932CC;
+    // background: #9932CC;
+    background: var(--color-accent-two);
     transition: opacity 100ms ease-out;
   }
 
@@ -36,14 +39,10 @@
     width: 68rem;
     height: 68rem;
     z-index: -1;
-    // z-index: 1;
     opacity: 0;
-    // background: red;
-    // background: radial-gradient(circle at center, red, green 50%);
     background: radial-gradient(circle at center, var(--color-two-hover), transparent 50%);
-    transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%));
-    // transform: translate(calc(var(--x-pos) - 34rem), calc(var(--y-pos) - 34rem));
-    // transition: none;
+    // transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%));
+    transform: translate(calc(calc(var(--pointer-x-pos) - var(--bounds-left)) - 50%), calc(calc(var(--pointer-y-pos) - var(--bounds-top)) - 50%));
     transition: opacity 100ms ease-out;
   }
 
@@ -96,10 +95,11 @@
     width: 100%;
     border: 0;
     z-index: 1;
-    transition: box-shadow 100ms ease-in-out;
+    transition: box-shadow 100ms ease-in;
 
     &:focus {
-      box-shadow: inset 0 0 0 2px lime, 0 0 0 2px var(--color-one);
+      box-shadow: inset 0 0 0 2px var(--color-accent-one), 0 0 0 2px var(--color-one);
+      // outline-color: var(--color-accent-one);
       transition: box-shadow 100ms ease-in;
     }
 
@@ -109,7 +109,8 @@
     // }
 
     &::selection {
-      background: #9932CC;
+      // background: #9932CC;
+      background: var(--color-one);
     }
   }
 
@@ -120,7 +121,7 @@
     pointer-events: none;
 
     // & path {
-    //   stroke: lime;
+    //   stroke: var(--color-accent-one);
     // }
   }
 
@@ -144,7 +145,7 @@
     background: transparent;
 
     &:focus {
-      box-shadow: inset 0 0 0 2px lime;
+      // box-shadow: inset 0 0 0 2px var(--color-accent-one);
       transition: background-color 100ms ease-in-out, box-shadow 100ms ease-out;
     }
 

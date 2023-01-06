@@ -6,12 +6,6 @@
   padding: 0;
 }
 
-*:focus {
-  outline: none;
-  // outline: 3px solid transparent;
-  box-shadow: inset 0 0 0 2px lime;
-}
-
 :root {
   // --scroll-drag-speed: 5000ms;
   --block-height: 2rem;
@@ -24,6 +18,8 @@
   // --color-two: #2F4165;
   // --color-two: #314368;
   --color-two: #34486F;
+  --color-accent-one: #00FF00;
+  --color-accent-two: #FF00FF;
   // --color-two: #5C76B2;
   // --color-two-hover: #5E747D;
   // --color-two-hover: #395179;
@@ -37,8 +33,8 @@
   --animation-delay: 0;
   // --below-deleted-animation-duration: 200ms;
   --color-three: #eee;
-  --color-three-hover: #fff;
-  --color-four: #ccc;
+  // --color-three-hover: #fff;
+  // --color-four: #ccc;
   --golden-ratio: 1.61803398875;
   --greater-padding: 0.5rem;
   --lesser-padding: 0.3rem;
@@ -85,6 +81,13 @@
   //   }
   // }
 
+}
+
+*:focus {
+  outline: none;
+  // outline: 2px solid transparent;
+  // outline-offset: -2px;
+  box-shadow: inset 0 0 0 2px var(--color-accent-one);
 }
 
 html,
@@ -142,14 +145,11 @@ button {
   --scrolltop: 0;
   transform: translateY(var(--scrolltop));
   position: absolute;
-  // z-index: -1;
-  // position: fixed;
   top: 0;
   left: calc(34rem - var(--lesser-padding) * 3);
   width: calc(var(--lesser-padding) * 3);
   height: 100%;
   padding: 0 var(--lesser-padding);
-  // background: chocolate;
 
   &__thumb {
     z-index: 1;
@@ -158,7 +158,9 @@ button {
     --ratio: 1;
     --thumb-height: 0;
     --thumb-offset: 0;
-    position: relative;
+    // position: relative;
+    position: absolute;
+    top: 0;
     height: var(--thumb-height);
     transform: translateY(var(--thumb-offset));
     width: var(--lesser-padding);
@@ -193,7 +195,7 @@ button {
       transform-origin: top;
       transform: translateY(var(--thumb-offset)) scaleY(var(--ratio));
       // transition: transform var(--below-deleted-animation-duration) var(--animation-delay) ease-out;
-      background-color: #9932CC;
+      background-color: var(--color-accent-two);
       // transition: transform var(--animation-duration) var(--animation-delay) ease-out, background-color var(--animation-duration) var(--animation-delay) ease-out;
       transition: transform var(--animation-duration) ease-out, background-color var(--animation-duration) ease-out;
 

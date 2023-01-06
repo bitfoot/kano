@@ -90,8 +90,8 @@ function getContainerToContentRatio() {
 
 function getScrollbarTrackSpace() {
   const margin = 6;
-  const scrollbarTrackSpace =
-    this.scrollState.scrollbarTrack.offsetHeight - margin;
+  const scrollbarTrackHeight = this.scrollState.maxContainerHeight;
+  const scrollbarTrackSpace = scrollbarTrackHeight - margin;
   return scrollbarTrackSpace;
 }
 
@@ -261,7 +261,7 @@ function createCheckboxSvg() {
     "M0.75,3.412C0.75,1.941 1.942,0.749 3.413,0.749L20.587,0.749C22.058,0.749 23.25,1.941 23.25,3.412L23.25,20.586C23.25,22.057 22.058,23.249 20.587,23.249L3.413,23.249C1.942,23.249 0.75,22.057 0.75,20.586L0.75,3.412Z"
   );
   // paths[0].setAttribute("stroke", "var(--color-three)");
-  paths[0].setAttribute("stroke", "var(--color-four)");
+  paths[0].setAttribute("stroke", "var(--color-three)");
   paths[0].classList.add(`tab__svg-checkbox-box`);
 
   paths[1].setAttribute(

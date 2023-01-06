@@ -25,6 +25,8 @@ const state = {
   dragState: null,
   moveState: null,
   dragTimer: null,
+  clientX: null,
+  clientY: null,
   menu: {
     checkedVisibleTabs: [],
     buttons: {
@@ -63,10 +65,12 @@ const state = {
     firstNewlyFilteredInTabIndex: null
   },
   scrollState: {
+    margin: 6,
     maxScrollbarThumbOffset: null,
     containerToContentRatio: null,
     headerHeight: 52,
     maxContainerHeight: 506,
+    scrollbarHeight: null,
     container: document.getElementById("tab-list-container"),
     scrollbarTrack: document.getElementById("scrollbar-track"),
     scrollbarThumb: document.getElementById("scrollbar-thumb"),
@@ -76,18 +80,6 @@ const state = {
     tabListOffset: 0
   }
 };
-
-// render tabs
-// chrome.tabs.query({ windowId: chrome.windows.WINDOW_ID_CURRENT }, function (
-//   tabs
-// ) {
-//   tabs.forEach(tab => {
-//     state.addTab(tab);
-//   });
-//   renderTabComponents.call(state);
-//   util.adjustScrollbar.call(state);
-//   adjustMenu.call(state);
-// });
 
 async function getTabs() {
   let queryOptions = { windowId: chrome.windows.WINDOW_ID_CURRENT };
@@ -359,23 +351,53 @@ document.addEventListener(`keyup`, e => {
 
 document.addEventListener("pointermove", e => {
   // insead of getBoundingClientRect(), use intersection observer to avoid reflow
+  requestAnimationFrame(() => {
+    document.documentElement.style.setProperty(
+      "--pointer-x-pos",
+      e.clientX + "px"
+    );
+    document.documentElement.style.setProperty(
+      "--pointer-y-pos",
+      e.clientY + "px"
+    );
+  });
   if (state.dragState) return;
   if (e.target.classList.contains("tab__tab-button")) {
     const tabButton = e.target;
     const parent = tabButton.parentElement;
-    const bounds = parent.getBoundingClientRect();
+    const id = parent.id;
+    // const bounds = parent.getBoundingClientRect();
+    const bounds = {};
+    bounds.left = state.scrollState.margin;
+    // bounds.top = state.scrollState.headerHeight - state.scrollState.scrollTop;
+    // const numVisibleTabs = state.visibleTabIds.length;
+    const visibleIndex = state.tabIndices[id][1];
+    const posInList = visibleIndex * 46;
+    bounds.top =
+      state.scrollState.headerHeight + posInList - state.scrollState.scrollTop;
+
+    // console.log(bounds);y
     requestAnimationFrame(() => {
-      parent.style.setProperty("--x-pos", e.clientX - bounds.left + "px");
-      parent.style.setProperty("--y-pos", e.clientY - bounds.top + "px");
+      parent.style.setProperty("--bounds-top", bounds.top + "px");
+      // parent.style.setProperty("--x-pos", e.clientX - bounds.left + "px");
+      // parent.style.setProperty("--y-pos", e.clientY - bounds.top + "px");
     });
   } else if (e.target.id === "filter-input") {
     const filter = e.target.parentElement;
     // const filter = e.target;
-    const bounds = filter.getBoundingClientRect();
-    requestAnimationFrame(() => {
-      filter.style.setProperty("--x-pos", e.clientX - bounds.left + "px");
-      filter.style.setProperty("--y-pos", e.clientY - bounds.top + "px");
-    });
+    // const bounds = filter.getBoundingClientRect();
+    const bounds = {
+      left: 6,
+      top: 6
+    };
+    // requestAnimationFrame(() => {
+    //   filter.style.setProperty("--x-pos", e.clientX - bounds.left + "px");
+    //   filter.style.setProperty("--y-pos", e.clientY - bounds.top + "px");
+    // });
+    // requestAnimationFrame(() => {
+    //   filter.style.setProperty("--x-pos", e.clientX - bounds.left + "px");
+    //   filter.style.setProperty("--y-pos", e.clientY - bounds.top + "px");
+    // });
   } else if (e.target.classList.contains("menu-item-btn")) {
     const bounds = e.target.getBoundingClientRect();
     requestAnimationFrame(() => {
