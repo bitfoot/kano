@@ -259,9 +259,9 @@ function filter() {
   // adjustMenu.call(state);
   // util.adjustScrollbar.call(state);
 
-  const event = new Event("changenumtabs", { bubbles: true });
+  const event = new Event("numberoftabschange", { bubbles: true });
   this.tabList.dispatchEvent(event);
   styleTabs(state.tabs);
 }
 
-module.exports = filter;
+export { filter };

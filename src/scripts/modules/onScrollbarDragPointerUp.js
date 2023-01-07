@@ -11,4 +11,4 @@ function onScrollbarDragPointerUp() {
   this.scrollState.thumbDragState = null;
 }
 
-module.exports = onScrollbarDragPointerUp;
+export { onScrollbarDragPointerUp };

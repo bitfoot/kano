@@ -1,6 +1,6 @@
 "use strict";
 
-const createTabComponent = require("./createTabComponent");
+import { createTabComponent } from "./createTabComponent";
 
 function renderTabComponents() {
   const fragment = document.createDocumentFragment();
@@ -13,8 +13,8 @@ function renderTabComponents() {
   });
 
   this.tabList.appendChild(fragment);
-  const event = new Event("changenumtabs", { bubbles: true });
+  const event = new Event("numberoftabschange", { bubbles: true });
   this.tabList.dispatchEvent(event);
 }
 
-module.exports = renderTabComponents;
+export { renderTabComponents };

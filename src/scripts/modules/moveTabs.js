@@ -1,11 +1,7 @@
 "use strict";
 
-const easeInOutQuad = require("./util").easeInOutQuad;
-const easeInQuad = require("./util").easeInQuad;
-const disableHeaderControls = require("./util").disableHeaderControls;
-const enableHeaderControls = require("./util").enableHeaderControls;
-const resetTabCSSVariables = require("./util").resetTabCSSVariables;
-const adjustMenu = require("./adjustMenu");
+import { disableHeaderControls } from "./util";
+import { resetTabCSSVariables } from "./util";
 
 function moveTabs(destinaton) {
   const tabHeight = 40;
@@ -65,8 +61,10 @@ function moveTabs(destinaton) {
 
       // enable menu buttons and filter
       window.requestAnimationFrame(() => {
-        adjustMenu.call(this);
-        enableHeaderControls.call(this);
+        // adjustMenu.call(this);
+        const event = new Event("orderoftabschange", { bubbles: true });
+        this.tabList.dispatchEvent(event);
+        // enableHeaderControls.call(this);
       });
     }.bind(this),
     moveTabsInTheDOM: function (tabsToMove) {
@@ -278,7 +276,7 @@ function moveTabs(destinaton) {
     reorderedTabObjects[this.tabIndices[id][0]] = obj;
   });
 
-  const animationDuration = Math.min(maxDistanceToMove * 2.174, 200);
+  const animationDuration = Math.min(maxDistanceToMove * 2.174, 220);
   document.documentElement.style.setProperty(
     "--animation-duration",
     animationDuration + "ms"
@@ -315,4 +313,4 @@ function moveTabs(destinaton) {
   // adjustMenu.call(this);
 }
 
-module.exports = moveTabs;
+export { moveTabs };

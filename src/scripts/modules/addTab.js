@@ -1,6 +1,7 @@
 "use strict";
 
-const getFaviconUrl = require("./util").getFaviconUrl;
+// const getFaviconUrl = require("./util").getFaviconUrl;
+import { getFaviconUrl } from "./util";
 
 function addTab(browserTab) {
   const id = `tab-${browserTab.id}`;
@@ -47,4 +48,5 @@ function addTab(browserTab) {
   this.tabIndices[id] = [index, index];
 }
 
-module.exports = addTab;
+// module.exports = addTab;
+export { addTab };

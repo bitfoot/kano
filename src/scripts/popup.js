@@ -1,15 +1,17 @@
 "use strict";
 
-import util from "./modules/util";
-import renderTabComponents from "./modules/renderTabComponents";
-import addTab from "./modules/addTab";
-import deleteTabs from "./modules/deleteTabs";
-import initializeTabDrag from "./modules/initializeTabDrag";
-import moveTabs from "./modules/moveTabs";
-import initializeScrollbarDrag from "./modules/initializeScrollbarDrag";
-import filter from "./modules/filter";
-import onScroll from "./modules/onScroll";
-import adjustMenu from "./modules/adjustMenu";
+// import util from "./modules/util";
+import { enableHeaderControls } from "./modules/util";
+import { adjustScrollbar } from "./modules/util";
+import { renderTabComponents } from "./modules/renderTabComponents";
+import { addTab } from "./modules/addTab";
+import { deleteTabs } from "./modules/deleteTabs";
+import { initializeTabDrag } from "./modules/initializeTabDrag";
+import { moveTabs } from "./modules/moveTabs";
+import { initializeScrollbarDrag } from "./modules/initializeScrollbarDrag";
+import { filter } from "./modules/filter";
+import { onScroll } from "./modules/onScroll";
+import { adjustMenu } from "./modules/adjustMenu";
 
 const state = {
   tabList: document.getElementById("tab-list"),
@@ -17,9 +19,7 @@ const state = {
   tabs: [],
   visibleTabIds: [],
   tabIndices: {},
-  tabIdsByURL: {
-    // "https://www.google.com" : ["tab-1", "tab-2", "tab-3"]
-  },
+  tabIdsByURL: {},
   addTab,
   deleteTabs,
   shiftKeyIsDown: null,
@@ -68,10 +68,11 @@ const state = {
   },
   scrollState: {
     margin: 6,
-    maxScrollbarThumbOffset: null,
-    containerToContentRatio: null,
+    tabRowHeight: 46,
     headerHeight: 52,
     maxContainerHeight: 506,
+    maxScrollbarThumbOffset: null,
+    containerToContentRatio: null,
     scrollbarHeight: null,
     container: document.getElementById("tab-list-container"),
     scrollbarTrack: document.getElementById("scrollbar-track"),
@@ -99,9 +100,15 @@ getTabs().then(tabs => {
   // adjustMenu.call(state);
 });
 
-document.addEventListener("changenumtabs", e => {
+document.addEventListener("numberoftabschange", e => {
   adjustMenu.call(state);
-  util.adjustScrollbar.call(state);
+  enableHeaderControls.call(state);
+  adjustScrollbar.call(state);
+});
+
+document.addEventListener("orderoftabschange", e => {
+  adjustMenu.call(state);
+  enableHeaderControls.call(state);
 });
 
 document.addEventListener("click", e => {
@@ -309,8 +316,8 @@ document.addEventListener("pointerdown", e => {
   } else if (e.target.id === "scrollbar-thumb") {
     initializeScrollbarDrag.call(state, e);
   } else if (e.target.id === "scrollbar-track") {
-    const pointerPos = e.pageY;
-    const posOnTrack = pointerPos - state.scrollState.headerHeight;
+    const pointerYPos = e.pageY;
+    const posOnTrack = pointerYPos - state.scrollState.headerHeight;
     const trackRatio = posOnTrack / state.scrollState.scrollbarTrackSpace;
     const scrollDistance = state.scrollState.maxScrollTop * trackRatio;
     state.scrollState.container.scroll({
@@ -322,7 +329,6 @@ document.addEventListener("pointerdown", e => {
 });
 
 document.addEventListener(`keydown`, e => {
-  console.log(e.code);
   if (e.code === "ShiftLeft" || e.code === "ShiftRight") {
     state.shiftKeyIsDown = true;
   }
@@ -356,7 +362,6 @@ document.addEventListener(`keyup`, e => {
 });
 
 document.addEventListener("pointermove", e => {
-  // insead of getBoundingClientRect(), use intersection observer to avoid reflow
   if (state.dragState) return;
   requestAnimationFrame(() => {
     document.documentElement.style.setProperty(
@@ -368,16 +373,14 @@ document.addEventListener("pointermove", e => {
       e.clientY + "px"
     );
   });
-  // if (state.dragState) return;
   if (e.target.classList.contains("tab__tab-button")) {
     const tabButton = e.target;
     const parent = tabButton.parentElement;
-    // const id = parent.id;
     if (parent.classList.contains("tab--deleted")) {
       return;
     }
     const visibleIndex = state.tabIndices[parent.id][1];
-    const posInList = visibleIndex * 46;
+    const posInList = visibleIndex * state.scrollState.tabRowHeight;
     const top =
       state.scrollState.headerHeight + posInList - state.scrollState.scrollTop;
 
@@ -389,26 +392,14 @@ document.addEventListener("pointermove", e => {
     requestAnimationFrame(() => {
       e.target.style.setProperty("--bounds-left", bounds.left + "px");
     });
-  } else if (e.target.id === "scrollbar-thumb") {
-    // const bounds = e.target.getBoundingClientRect();
-    // requestAnimationFrame(() => {
-    //   e.target.style.setProperty("--x-pos", e.clientX - bounds.left + "px");
-    //   e.target.style.setProperty("--y-pos", e.clientY - bounds.top + "px");
-    // });
   }
 });
 
 document.addEventListener("contextmenu", e => {
   if (e.target.classList.contains("tab__tab-button")) {
     e.target.parentElement.classList.remove("tab--held-down");
+    if (state.dragState !== null) {
+      state.dragState.onTabDragEnd.call(state);
+    }
   }
 });
-
-// document.addEventListener("keyup", e => {
-//   if (e.target.id == "filter-input") {
-//     if (e.key !== "Tab") {
-//       filter.call(state);
-//     }
-//   }
-//   // console.log(e.key);
-// });

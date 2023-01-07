@@ -1,29 +1,5 @@
 "use strict";
 
-// const gulp = require("gulp");
-// const sass = require("gulp-sass");
-// const browserSync = require("browser-sync").create();
-// const del = require("del");
-// const postcss = require("gulp-postcss");
-// const autoprefixer = require("autoprefixer");
-// const cssnano = require("cssnano");
-// const imagemin = require("gulp-imagemin");
-// const webpack = require("webpack");
-// const webpackStream = require("webpack-stream");
-// const webpackConfig = require("./webpack.config.js");
-
-// const gulp = require("gulp");
-// const sass = require("gulp-sass");
-// const browserSync = require("browser-sync").create();
-// const del = require("del");
-// const postcss = require("gulp-postcss");
-// const autoprefixer = require("autoprefixer");
-// const cssnano = require("cssnano");
-// import imagemin from "gulp-imagemin";
-// const webpack = require("webpack");
-// const webpackStream = require("webpack-stream");
-// const webpackConfig = require("./webpack.config.js");
-
 import gulp from "gulp";
 import dartSass from "sass";
 import gulpSass from "gulp-sass";
@@ -133,6 +109,4 @@ const build = gulp.series(
   gulp.parallel(html, style, scripts, workers, manifest, images)
 );
 
-// exports.watch = watch;
-// exports.build = build;
 export { watch, build };

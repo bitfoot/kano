@@ -2,7 +2,7 @@
 
 // const adjustMenu = require("./adjustMenu");
 // const adjustScrollbar = require("./util").adjustScrollbar;
-const resetTabCSSVariables = require("./util").resetTabCSSVariables;
+import { resetTabCSSVariables } from "./util";
 
 function deleteTabs(idsOfTabsToDelete) {
   if (idsOfTabsToDelete.length === 0) return;
@@ -24,9 +24,11 @@ function deleteTabs(idsOfTabsToDelete) {
   let firstHiddenTabIndex = null;
   let firstDeletedTab = null;
   let firstVisibleTabBelowDeletedTab = null;
+  const browserTabIds = [];
+  const remainingVisibleTabIds = [];
+  const remainingTabs = [];
 
   const finishTabDeletion = () => {
-    const browserTabIds = [];
     Object.entries(tabsToDelete).forEach(entry => {
       const id = entry[0];
       const tab = entry[1];
@@ -40,7 +42,6 @@ function deleteTabs(idsOfTabsToDelete) {
           delete this.filterState.tabs[id];
         }
       }
-      browserTabIds.push(parseInt(id.split("-")[1]));
     });
   };
 
@@ -54,6 +55,7 @@ function deleteTabs(idsOfTabsToDelete) {
         });
       }
 
+      remainingTabs.push(tab);
       // update tab's browser index and calculate offset
       this.tabIndices[obj.id][0] = reorderedTabObjects.length;
 
@@ -68,6 +70,7 @@ function deleteTabs(idsOfTabsToDelete) {
         });
         maxChangeInPosition = deletedOffset;
         this.tabIndices[obj.id][1] -= numDeleted;
+        remainingVisibleTabIds.push(obj.id);
       } else {
         // update lastHiddenTabIndex in filterState, in case it changed
         this.filterState.lastHiddenTabIndex = this.tabIndices[obj.id][0];
@@ -82,6 +85,7 @@ function deleteTabs(idsOfTabsToDelete) {
         firstDeletedTab = tab;
       }
       numDeleted += 1;
+      browserTabIds.push(parseInt(tab.id.split("-")[1]));
       window.requestAnimationFrame(() => {
         tab.classList.add("tab--deleted");
         delete this.tabIndices[obj.id];
@@ -89,11 +93,20 @@ function deleteTabs(idsOfTabsToDelete) {
     }
   });
 
+  // remove browser tabs
+  const removeBrowserTabs = async function (browserTabIds) {
+    try {
+      await chrome.tabs.remove(browserTabIds);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  removeBrowserTabs(browserTabIds);
+
   // update firstHiddenTabIndex, in case it changed
   this.filterState.firstHiddenTabIndex = firstHiddenTabIndex;
-  // let animationDuration = 100;
   this.orderedTabObjects = reorderedTabObjects;
-  this.visibleTabIds = this.visibleTabIds.filter(id => !tabsToDelete[id]);
+  this.visibleTabIds = remainingVisibleTabIds;
 
   const animationDuration = Math.min(
     Math.max(Math.abs(maxChangeInPosition) * 2.174, 100),
@@ -103,51 +116,27 @@ function deleteTabs(idsOfTabsToDelete) {
   if (firstVisibleTabBelowDeletedTab !== null) {
     firstVisibleTabBelowDeletedTab.onanimationend = e => {
       if (e.animationName === "belowDeleted") {
-        console.log("bigpoop");
         finishTabDeletion.call(this);
       }
     };
   } else {
     firstDeletedTab.ontransitionend = e => {
       if (e.propertyName === "opacity") {
-        console.log("smallpoop");
         finishTabDeletion.call(this);
       }
     };
   }
 
-  // const timeoutDuration = 100 + animationDuration;
   window.requestAnimationFrame(() => {
     document.documentElement.style.setProperty(
       "--animation-duration",
       animationDuration + "ms"
     );
   });
-  this.tabs = this.tabs.filter(tab => !tabsToDelete[tab.id]);
+  this.tabs = remainingTabs;
 
-  const event = new Event("changenumtabs", { bubbles: true });
+  const event = new Event("numberoftabschange", { bubbles: true });
   this.tabList.dispatchEvent(event);
-  // adjustMenu.call(this);
-  // adjustScrollbar.call(this);
-
-  // setTimeout(() => {
-  //   const browserTabIds = [];
-  //   Object.entries(tabsToDelete).forEach(entry => {
-  //     const id = entry[0];
-  //     const tab = entry[1];
-  //     requestAnimationFrame(() => {
-  //       tab.remove();
-  //     });
-  //     const filterWasUsed = this.filterState.numOfFilteredTabs !== null;
-  //     if (filterWasUsed) {
-  //       if (this.filterState.tabs[id] !== undefined) {
-  //         this.filterState.numOfFilteredTabs -= 1;
-  //         delete this.filterState.tabs[id];
-  //       }
-  //     }
-  //     browserTabIds.push(parseInt(id.split("-")[1]));
-  //   });
-  // }, timeoutDuration);
 }
 
-module.exports = deleteTabs;
+export { deleteTabs };

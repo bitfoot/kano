@@ -1,11 +1,12 @@
 "use strict";
-const onTabDragPointerMove = require("./onTabDragPointerMove");
-const onTabDragEnd = require("./onTabDragEnd");
-const resetTabCSSVariables = require("./util").resetTabCSSVariables;
-const disableHeaderControls = require("./util").disableHeaderControls;
-const easeInOutQuad = require("./util").easeInOutQuad;
-const dragTab = require("./dragTab");
-const scroll = require("./scroll");
+
+import { onTabDragPointerMove } from "./onTabDragPointerMove";
+import { onTabDragEnd } from "./onTabDragEnd";
+import { resetTabCSSVariables } from "./util";
+import { disableHeaderControls } from "./util";
+import { easeInOutQuad } from "./util";
+import { dragTab } from "./dragTab";
+import { scroll } from "./scroll";
 
 function initializeTabDrag(event) {
   disableHeaderControls.call(this);
@@ -93,6 +94,7 @@ function initializeTabDrag(event) {
     });
 
   this.dragState = {
+    onTabDragEnd,
     tabRowHeight,
     defaultAnimationDuration: 220,
     sign: null,
@@ -371,4 +373,4 @@ function initializeTabDrag(event) {
   }
 }
 
-module.exports = initializeTabDrag;
+export { initializeTabDrag };

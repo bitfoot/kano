@@ -82,7 +82,12 @@ function getContentHeight() {
 }
 
 function getContainerToContentRatio() {
-  const containerHeight = this.scrollState.container.offsetHeight;
+  // const containerHeight = this.scrollState.container.offsetHeight;
+  const maxContainerHeight = this.scrollState.maxContainerHeight;
+  const containerHeight = Math.min(
+    maxContainerHeight,
+    this.visibleTabIds.length * this.scrollState.tabRowHeight
+  );
   const contentHeight = getContentHeight.call(this);
   const containerToContentRatio = containerHeight / contentHeight;
   return containerToContentRatio;
@@ -319,7 +324,23 @@ function createDuplicateIndicatorSvg() {
   return svg;
 }
 
-module.exports = {
+// module.exports = {
+//   adjustScrollbar,
+//   getContainerToContentRatio,
+//   getContentHeight,
+//   createCheckboxSvg,
+//   getMaxScrollTop,
+//   createDuplicateIndicatorSvg,
+//   getScrollbarHeight,
+//   resetTabCSSVariables,
+//   easeInOutQuad,
+//   easeInQuad,
+//   getFaviconUrl,
+//   disableHeaderControls,
+//   enableHeaderControls
+// };
+
+export {
   adjustScrollbar,
   getContainerToContentRatio,
   getContentHeight,

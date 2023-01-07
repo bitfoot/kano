@@ -82,4 +82,4 @@ function dragTab(options = {}) {
   });
 }
 
-module.exports = dragTab;
+export { dragTab };

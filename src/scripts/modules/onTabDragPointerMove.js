@@ -1,7 +1,7 @@
 "use strict";
 
 // const scroll = require("./scroll");
-const dragTab = require("./dragTab");
+import { dragTab } from "./dragTab";
 
 function onTabDragPointerMove(event) {
   const dragState = this.dragState;
@@ -29,4 +29,4 @@ function onTabDragPointerMove(event) {
   }
 }
 
-module.exports = onTabDragPointerMove;
+export { onTabDragPointerMove };

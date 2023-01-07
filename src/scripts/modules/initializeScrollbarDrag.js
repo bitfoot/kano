@@ -1,6 +1,7 @@
 "use strict";
-const onScrollbarDragPointerMove = require("./onScrollbarDragPointerMove");
-const onScrollbarDragPointerUp = require("./onScrollbarDragPointerUp");
+
+import { onScrollbarDragPointerMove } from "./onScrollbarDragPointerMove";
+import { onScrollbarDragPointerUp } from "./onScrollbarDragPointerUp";
 
 function initializeScrollbarDrag(e) {
   const scrollBar = e.target;
@@ -30,4 +31,4 @@ function initializeScrollbarDrag(e) {
   scrollBar.onpointerup = onScrollbarDragPointerUp.bind(this);
 }
 
-module.exports = initializeScrollbarDrag;
+export { initializeScrollbarDrag };

@@ -1,6 +1,6 @@
 "use strict";
 
-const scroll = require("./scroll");
+import { scroll } from "./scroll";
 
 function onScrollbarDragPointerMove(e) {
   this.scrollState.thumbDragState.pointerPos = e.pageY;
@@ -20,4 +20,4 @@ function onScrollbarDragPointerMove(e) {
   });
 }
 
-module.exports = onScrollbarDragPointerMove;
+export { onScrollbarDragPointerMove };

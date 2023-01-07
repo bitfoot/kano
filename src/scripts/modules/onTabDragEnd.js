@@ -1,9 +1,9 @@
 "use strict";
 
-const adjustMenu = require("./adjustMenu");
-const enableHeaderControls = require("./util").enableHeaderControls;
+// const adjustMenu = require("./adjustMenu");
+// const enableHeaderControls = require("./util").enableHeaderControls;
 
-function onTabDragPointerUp(event) {
+function onTabDragEnd() {
   const state = this;
   const dragState = state.dragState;
   if (dragState.animation) {
@@ -238,11 +238,12 @@ function onTabDragPointerUp(event) {
     }
     state.visibleTabIds[replacedTabVisibleIndex] = draggedTabId;
     state.tabIndices[draggedTabId][1] = replacedTabVisibleIndex;
-    adjustMenu.call(state);
+    // adjustMenu.call(state);
   }
 
-  enableHeaderControls.call(this);
+  const event = new Event("orderoftabschange", { bubbles: true });
+  this.tabList.dispatchEvent(event);
   this.dragState = null;
 }
 
-module.exports = onTabDragPointerUp;
+export { onTabDragEnd };

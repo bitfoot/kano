@@ -1,8 +1,7 @@
 "use strict";
 
-const createCheckboxSvg = require("./util").createCheckboxSvg;
-const createDuplicateIndicatorSvg = require("./util")
-  .createDuplicateIndicatorSvg;
+import { createCheckboxSvg } from "./util";
+import { createDuplicateIndicatorSvg } from "./util";
 
 function createTabComponent(tab) {
   const tabComponent = document.createElement("li");
@@ -34,7 +33,7 @@ function createTabComponent(tab) {
   // create tab Title
   const p = document.createElement("p");
   p.classList.add("tab__title");
-  p.textContent = tab.title + " " + tab.id;
+  p.textContent = tab.title;
 
   // create delete button
   const closeTabBtn = document.createElement("button");
@@ -71,4 +70,4 @@ function createTabComponent(tab) {
   return tabComponent;
 }
 
-module.exports = createTabComponent;
+export { createTabComponent };

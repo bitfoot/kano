@@ -128,4 +128,4 @@ function adjustMenu() {
   });
 }
 
-module.exports = adjustMenu;
+export { adjustMenu };

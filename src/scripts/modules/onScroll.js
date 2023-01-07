@@ -1,7 +1,7 @@
 "use strict";
 
-const scroll = require("./scroll");
-const onScrollbarDragPointerUp = require("./onScrollbarDragPointerUp");
+import { scroll } from "./scroll";
+import { onScrollbarDragPointerUp } from "./onScrollbarDragPointerUp";
 
 function onScroll(e) {
   const scrollState = this.scrollState;
@@ -49,4 +49,4 @@ function onScroll(e) {
   scroll.call(this, scrollOptions);
 }
 
-module.exports = onScroll;
+export { onScroll };

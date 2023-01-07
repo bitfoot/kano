@@ -61,4 +61,4 @@ function scroll(options = {}) {
   }
 }
 
-module.exports = scroll;
+export { scroll };
