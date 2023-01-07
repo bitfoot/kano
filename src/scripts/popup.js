@@ -1,13 +1,15 @@
-const util = require("./modules/util");
-const renderTabComponents = require("./modules/renderTabComponents");
-const addTab = require("./modules/addTab");
-const deleteTabs = require("./modules/deleteTabs");
-const initializeTabDrag = require("./modules/initializeTabDrag");
-const moveTabs = require("./modules/moveTabs");
-const initializeScrollbarDrag = require("./modules/initializeScrollbarDrag");
-const filter = require("./modules/filter");
-const onScroll = require("./modules/onScroll");
-const adjustMenu = require("./modules/adjustMenu");
+"use strict";
+
+import util from "./modules/util";
+import renderTabComponents from "./modules/renderTabComponents";
+import addTab from "./modules/addTab";
+import deleteTabs from "./modules/deleteTabs";
+import initializeTabDrag from "./modules/initializeTabDrag";
+import moveTabs from "./modules/moveTabs";
+import initializeScrollbarDrag from "./modules/initializeScrollbarDrag";
+import filter from "./modules/filter";
+import onScroll from "./modules/onScroll";
+import adjustMenu from "./modules/adjustMenu";
 
 const state = {
   tabList: document.getElementById("tab-list"),
@@ -94,8 +96,12 @@ getTabs().then(tabs => {
   });
 
   renderTabComponents.call(state);
-  util.adjustScrollbar.call(state);
+  // adjustMenu.call(state);
+});
+
+document.addEventListener("changenumtabs", e => {
   adjustMenu.call(state);
+  util.adjustScrollbar.call(state);
 });
 
 document.addEventListener("click", e => {
@@ -351,6 +357,7 @@ document.addEventListener(`keyup`, e => {
 
 document.addEventListener("pointermove", e => {
   // insead of getBoundingClientRect(), use intersection observer to avoid reflow
+  if (state.dragState) return;
   requestAnimationFrame(() => {
     document.documentElement.style.setProperty(
       "--pointer-x-pos",
@@ -361,55 +368,33 @@ document.addEventListener("pointermove", e => {
       e.clientY + "px"
     );
   });
-  if (state.dragState) return;
+  // if (state.dragState) return;
   if (e.target.classList.contains("tab__tab-button")) {
     const tabButton = e.target;
     const parent = tabButton.parentElement;
-    const id = parent.id;
-    // const bounds = parent.getBoundingClientRect();
-    const bounds = {};
-    bounds.left = state.scrollState.margin;
-    // bounds.top = state.scrollState.headerHeight - state.scrollState.scrollTop;
-    // const numVisibleTabs = state.visibleTabIds.length;
-    const visibleIndex = state.tabIndices[id][1];
+    // const id = parent.id;
+    if (parent.classList.contains("tab--deleted")) {
+      return;
+    }
+    const visibleIndex = state.tabIndices[parent.id][1];
     const posInList = visibleIndex * 46;
-    bounds.top =
+    const top =
       state.scrollState.headerHeight + posInList - state.scrollState.scrollTop;
 
-    // console.log(bounds);y
     requestAnimationFrame(() => {
-      parent.style.setProperty("--bounds-top", bounds.top + "px");
-      // parent.style.setProperty("--x-pos", e.clientX - bounds.left + "px");
-      // parent.style.setProperty("--y-pos", e.clientY - bounds.top + "px");
+      parent.style.setProperty("--bounds-top", top + "px");
     });
-  } else if (e.target.id === "filter-input") {
-    const filter = e.target.parentElement;
-    // const filter = e.target;
-    // const bounds = filter.getBoundingClientRect();
-    const bounds = {
-      left: 6,
-      top: 6
-    };
-    // requestAnimationFrame(() => {
-    //   filter.style.setProperty("--x-pos", e.clientX - bounds.left + "px");
-    //   filter.style.setProperty("--y-pos", e.clientY - bounds.top + "px");
-    // });
-    // requestAnimationFrame(() => {
-    //   filter.style.setProperty("--x-pos", e.clientX - bounds.left + "px");
-    //   filter.style.setProperty("--y-pos", e.clientY - bounds.top + "px");
-    // });
   } else if (e.target.classList.contains("menu-item-btn")) {
     const bounds = e.target.getBoundingClientRect();
     requestAnimationFrame(() => {
-      e.target.style.setProperty("--x-pos", e.clientX - bounds.left + "px");
-      e.target.style.setProperty("--y-pos", e.clientY - bounds.top + "px");
+      e.target.style.setProperty("--bounds-left", bounds.left + "px");
     });
   } else if (e.target.id === "scrollbar-thumb") {
-    const bounds = e.target.getBoundingClientRect();
-    requestAnimationFrame(() => {
-      e.target.style.setProperty("--x-pos", e.clientX - bounds.left + "px");
-      e.target.style.setProperty("--y-pos", e.clientY - bounds.top + "px");
-    });
+    // const bounds = e.target.getBoundingClientRect();
+    // requestAnimationFrame(() => {
+    //   e.target.style.setProperty("--x-pos", e.clientX - bounds.left + "px");
+    //   e.target.style.setProperty("--y-pos", e.clientY - bounds.top + "px");
+    // });
   }
 });
 

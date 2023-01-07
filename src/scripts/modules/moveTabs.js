@@ -52,7 +52,7 @@ function moveTabs(destinaton) {
         }
 
         window.requestAnimationFrame(() => {
-          tab.classList.remove("tab--banana");
+          tab.classList.remove("tab--moving");
           tab.classList.remove("tab--peach");
           tab.style.setProperty("--filter-offset", newOffset + "px");
           tab.style.setProperty("--moved-offset", 0 + "px");
@@ -168,7 +168,7 @@ function moveTabs(destinaton) {
               //   "--animation-duration",
               //   animationDuration + "ms"
               // );
-              tab.classList.add("tab--banana");
+              tab.classList.add("tab--moving");
             });
           }
 
@@ -257,7 +257,7 @@ function moveTabs(destinaton) {
               //   "--animation-duration",
               //   animationDuration + "ms"
               // );
-              tab.classList.add("tab--banana");
+              tab.classList.add("tab--moving");
             });
           }
 
@@ -278,7 +278,7 @@ function moveTabs(destinaton) {
     reorderedTabObjects[this.tabIndices[id][0]] = obj;
   });
 
-  const animationDuration = Math.min(maxDistanceToMove * 2.174, 240);
+  const animationDuration = Math.min(maxDistanceToMove * 2.174, 200);
   document.documentElement.style.setProperty(
     "--animation-duration",
     animationDuration + "ms"

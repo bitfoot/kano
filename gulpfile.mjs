@@ -1,16 +1,42 @@
 "use strict";
 
-const gulp = require("gulp");
-const sass = require("gulp-sass");
-const browserSync = require("browser-sync").create();
-const del = require("del");
-const postcss = require("gulp-postcss");
-const autoprefixer = require("autoprefixer");
-const cssnano = require("cssnano");
-const imagemin = require("gulp-imagemin");
-const webpack = require("webpack");
-const webpackStream = require("webpack-stream");
-const webpackConfig = require("./webpack.config.js");
+// const gulp = require("gulp");
+// const sass = require("gulp-sass");
+// const browserSync = require("browser-sync").create();
+// const del = require("del");
+// const postcss = require("gulp-postcss");
+// const autoprefixer = require("autoprefixer");
+// const cssnano = require("cssnano");
+// const imagemin = require("gulp-imagemin");
+// const webpack = require("webpack");
+// const webpackStream = require("webpack-stream");
+// const webpackConfig = require("./webpack.config.js");
+
+// const gulp = require("gulp");
+// const sass = require("gulp-sass");
+// const browserSync = require("browser-sync").create();
+// const del = require("del");
+// const postcss = require("gulp-postcss");
+// const autoprefixer = require("autoprefixer");
+// const cssnano = require("cssnano");
+// import imagemin from "gulp-imagemin";
+// const webpack = require("webpack");
+// const webpackStream = require("webpack-stream");
+// const webpackConfig = require("./webpack.config.js");
+
+import gulp from "gulp";
+import dartSass from "sass";
+import gulpSass from "gulp-sass";
+const sass = gulpSass(dartSass);
+import browserSync from "browser-sync";
+import del from "del";
+import postcss from "gulp-postcss";
+import autoprefixer from "autoprefixer";
+import cssnano from "cssnano";
+import imagemin from "gulp-imagemin";
+import webpack from "webpack";
+import webpackStream from "webpack-stream";
+import webpackConfig from "./webpack.config.js";
 
 // initialize browsersync
 function browserSyncInit() {
@@ -107,5 +133,6 @@ const build = gulp.series(
   gulp.parallel(html, style, scripts, workers, manifest, images)
 );
 
-exports.watch = watch;
-exports.build = build;
+// exports.watch = watch;
+// exports.build = build;
+export { watch, build };

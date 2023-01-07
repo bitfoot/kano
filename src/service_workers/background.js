@@ -1,4 +1,4 @@
-console.log("Background is running");
+// console.log("Background is running");
 
 // chrome.runtime.onMessage.addListener(receiver);
 

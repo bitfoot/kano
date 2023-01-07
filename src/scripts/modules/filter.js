@@ -1,7 +1,7 @@
 "use strict";
 
-const util = require("./util");
-const adjustMenu = require("./adjustMenu");
+// const util = require("./util");
+// const adjustMenu = require("./adjustMenu");
 // const resetTabCSSVariables = require("./util").resetTabCSSVariables;
 
 function filter() {
@@ -256,8 +256,11 @@ function filter() {
     }
   });
 
-  adjustMenu.call(state);
-  util.adjustScrollbar.call(state);
+  // adjustMenu.call(state);
+  // util.adjustScrollbar.call(state);
+
+  const event = new Event("changenumtabs", { bubbles: true });
+  this.tabList.dispatchEvent(event);
   styleTabs(state.tabs);
 }
 

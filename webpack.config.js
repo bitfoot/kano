@@ -10,6 +10,6 @@ module.exports = {
     filename: "[name].js"
   },
   optimization: {
-    minimize: false
+    minimize: true
   }
 };

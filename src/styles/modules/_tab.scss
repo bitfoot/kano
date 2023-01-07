@@ -129,20 +129,6 @@
       transition: box-shadow 100ms ease-in;
     }
 
-    // &::before {
-    //   content: "";
-    //   pointer-events: none;
-    //   position: absolute;
-    //   top: 0;
-    //   left: 0;
-    //   width: 100%;
-    //   height: 100%;
-    //   z-index: -2;
-    //   background: transparent;
-    //   backdrop-filter: var(--backdrop-filter);
-    //   // backdrop-filter: blur(6px);
-    // }
-
     &::after {
       content: "";
       position: absolute;
@@ -303,7 +289,8 @@
         top: 0;
         left: 0;
         z-index: -1;
-        transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%)) scale(0.1);
+        // transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%)) scale(0.1);
+        transform: translate(calc(calc(var(--pointer-x-pos) - var(--bounds-left)) - 50%), calc(calc(var(--pointer-y-pos) - var(--bounds-top)) - 50%)) scale(0.1);
         transition: none;
         background: radial-gradient(circle at center, transparent 0.5%, var(--color-two) 1% 100%);
         animation: 320ms ease-in forwards heldDown;
@@ -364,7 +351,7 @@
 
   }
 
-  &--banana {
+  &--moving {
     pointer-events: none;
     opacity: var(--opacity);
     transform: translateY(var(--filter-offset)) scale(var(--scale));
@@ -405,6 +392,7 @@
   }
 
   &--deleted {
+    pointer-events: none;
     opacity: 0;
     transition: opacity 100ms ease-out;
 
@@ -414,7 +402,7 @@
     }
 
     &~li {
-      animation: var(--below-deleted-animation-duration) 100ms ease-in-out forwards belowDeleted;
+      animation: var(--animation-duration) 100ms ease-in-out forwards belowDeleted;
     }
   }
 }
@@ -425,36 +413,22 @@
   }
 
   to {
-    // transform: translateY(calc(var(--y-offset) - var(--block-height) - var(--lesser-padding)));
     transform: translateY(calc(var(--filter-offset) + var(--deleted-offset)));
   }
 }
 
 @keyframes draggable {
   from {
-    // transform: translateY(var(--y-offset)) scale(0.99)
     transform: translateY(calc(var(--filter-offset) + var(--drag-offset))) scale(0.99)
   }
 
   to {
-    // transform: translateY(var(--y-offset)) scale(1.01)
     transform: translateY(calc(var(--filter-offset) + var(--drag-offset))) scale(var(--scale))
   }
 }
 
-// @keyframes moving {
-
-//   from {
-//     transform: translateY(var(--y-offset)) scale(var(--scale));
-//   }
-
-//   to {
-//     transform: translateY(calc(var(--y-offset) + var(--moved-offset))) scale(var(--scale));
-//   }
-// }
 @keyframes moving {
-
-  0% {
+  from {
     transform: translateY(var(--filter-offset)) scale(var(--scale));
   }
 
@@ -465,18 +439,12 @@
 
 
 @keyframes returnToNormal {
-
   from {
-    // backdrop-filter: blur(6px);
-    // z-index: 1;
     opacity: var(--opacity);
-    // transform: translateY(calc(var(--y-offset) + var(--filter-offset))) scale(var(--scale));
     transform: translateY(calc(var(--misc-offset) + var(--filter-offset))) scale(var(--scale));
   }
 
   to {
-    // z-index: 0;
-    // backdrop-filter: none;
     opacity: 1;
     transform: translateY(var(--filter-offset)) scale(1);
   }
@@ -491,15 +459,3 @@
     transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%)) scale(15);
   }
 }
-
-// @keyframes filteredIn {
-
-//   0% {
-//     transform: translateY(var(--y-offset));
-//   }
-
-//   100% {
-//     transform: translateY(0);
-//   }
-
-// }

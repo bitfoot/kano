@@ -13,6 +13,8 @@ function renderTabComponents() {
   });
 
   this.tabList.appendChild(fragment);
+  const event = new Event("changenumtabs", { bubbles: true });
+  this.tabList.dispatchEvent(event);
 }
 
 module.exports = renderTabComponents;

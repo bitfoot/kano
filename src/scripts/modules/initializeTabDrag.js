@@ -3,7 +3,6 @@ const onTabDragPointerMove = require("./onTabDragPointerMove");
 const onTabDragEnd = require("./onTabDragEnd");
 const resetTabCSSVariables = require("./util").resetTabCSSVariables;
 const disableHeaderControls = require("./util").disableHeaderControls;
-const easeInQuad = require("./util").easeInQuad;
 const easeInOutQuad = require("./util").easeInOutQuad;
 const dragTab = require("./dragTab");
 const scroll = require("./scroll");
@@ -29,28 +28,20 @@ function initializeTabDrag(event) {
   const margin = 6;
   const tabRowHeight = tabHeight + margin;
 
-  const wholeContentHeight = this.visibleTabIds.length * (tabHeight + margin);
+  const wholeContentHeight = this.visibleTabIds.length * tabRowHeight;
 
-  // const listedTabs = this.tabs;
   const listedTabs = this.visibleTabIds.map(id => {
     const index = this.tabIndices[id][0];
     return this.tabs[index];
   });
 
   const tabsPosInfo = listedTabs.reduce((a, tab, index) => {
-    // const offsetTop = tab.offsetTop;
     const dragOffset = 0;
-    // let filterOffset = 0;
-    // if (this.filterState.tabs[tab.id]) {
-    //   filterOffset = this.filterState.tabs[tab.id].filterOffset;
-    // }
     const initialPos = index * tabRowHeight;
 
     a[tab.id] = {
-      // filterOffset,
       initialPos,
       dragOffset
-      // newPos: initialPos
     };
 
     return a;
@@ -70,8 +61,7 @@ function initializeTabDrag(event) {
   const initialBottomPosInViewport = initialTopPosInViewport + tabHeight;
 
   const shiftY = pointerPosition - initialTabPos - headerHeight + scrollTop;
-  // const maxTabPosInList = tabListHeight - margin - tabHeight;
-  const maxTabPosInList = wholeContentHeight - margin - tabHeight;
+  const maxTabPosInList = wholeContentHeight - tabRowHeight;
   const minTabPosInList = 0;
   const minTabOffsetInList = initialTabPos * -1;
   const maxTabOffsetInList = maxTabPosInList - initialTabPos;
@@ -172,17 +162,13 @@ function initializeTabDrag(event) {
     tabHeight,
     shiftY,
     listedTabs,
-
     tabsAbove,
     tabsBelow,
     tabMinPosInViewport: headerHeight,
-    // tabMaxPosInViewport: bodyHeight - margin - tabHeight,
-    tabPositionInTheList: 0,
     minTabPosInList,
     maxTabPosInList,
     minTabOffsetInList,
     maxTabOffsetInList,
-    lastTabPos: initialTabPos,
     get currentMaxOffset() {
       const maxOffset =
         this.maxTabOffsetInList -
@@ -314,10 +300,10 @@ function initializeTabDrag(event) {
         this.dragState.animationStart = timestamp;
       }
 
-      this.dragState.animationElapsed =
-        timestamp - this.dragState.animationStart;
-
       if (this.dragState.previousTimeStamp !== timestamp) {
+        this.dragState.animationElapsed =
+          timestamp - this.dragState.animationStart;
+
         this.dragState.previousTimeStamp = timestamp;
         const dragDistance = this.dragState.getDragDistance();
         const scrollDistance = this.dragState.getScrollDistance();
@@ -376,7 +362,6 @@ function initializeTabDrag(event) {
       }
     };
     draggedTab.onkeyup = e => {
-      // console.log(e.code);
       if (e.code === "Space" || e.code === "Enter") {
         onTabDragEnd.call(this);
       } else if (e.code === "ArrowDown" || e.code === "ArrowUp") {
