@@ -13,112 +13,39 @@
 
     <div id="filter" class="filter">
       <input type="text" id="filter-input" class="filter__input">
-      <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink"
-        xmlns:svgjs="http://svgjs.com/svgjs" viewBox="0 0 20 20" width="20" height="20" class="filter__icon">
-        <g transform="matrix(0.8333333333333334,0,0,0.8333333333333334,0,0)">
-          <path
-            d="M23.2,2.054a.751.751,0,0,0-.748-.8H1.5a.75.75,0,0,0-.748.8,11.254,11.254,0,0,0,8.972,10.22v9.875a.75.75,0,0,0,1.23.576l3-2.5a.748.748,0,0,0,.27-.576V12.274A11.253,11.253,0,0,0,23.2,2.054Z"
-            fill="none" stroke="var(--color-three)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
-          </path>
-        </g>
-      </svg>
+      <img src="images/filter-icon@20x20.svg" class="filter__icon">
       <button id="remove-filter-text-btn" title="Remove filter text"
         class="filter__remove-text-btn filter__remove-text-btn--disabled" disabled>
-        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink"
-          xmlns:svgjs="http://svgjs.com/svgjs" viewBox="0 0 20 20" width="20" height="20"
-          class="filter__remove-text-icon">
-          <g transform="matrix(0.8333333333333334,0,0,0.8333333333333334,0,0)">
-            <path d="M4.5 19.5L19.5 4.5" fill="none" stroke="var(--color-three)" stroke-linecap="round"
-              stroke-linejoin="round" stroke-width="1.5"></path>
-            <path d="M4.5 4.5L19.5 19.5" fill="none" stroke="var(--color-three)" stroke-linecap="round"
-              stroke-linejoin="round" stroke-width="1.5"></path>
-          </g>
-        </svg>
+        <img src="images/close-icon@20x20.svg" class="filter__remove-text-icon">
       </button>
     </div>
 
     <button type="button" id="close-selected-btn" title="Close selected" class="menu-item-btn menu-item-btn--disabled"
       disabled>
-      <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink"
-        xmlns:svgjs="http://svgjs.com/svgjs" viewBox="0 0 20 20" width="20" height="20" class="menu-item-btn__icon">
-        <g transform="matrix(0.8333333333333334,0,0,0.8333333333333334,0,0)">
-          <path d="M0.748 12.000 A11.250 11.250 0 1 0 23.248 12.000 A11.250 11.250 0 1 0 0.748 12.000 Z" fill="none"
-            stroke="var(--color-three)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path>
-          <path d="M7.498 16.5L16.497 7.5" fill="none" stroke="var(--color-three)" stroke-linecap="round"
-            stroke-linejoin="round" stroke-width="1.5"></path>
-          <path d="M16.498 16.5L7.497 7.5" fill="none" stroke="var(--color-three)" stroke-linecap="round"
-            stroke-linejoin="round" stroke-width="1.5"></path>
-        </g>
-      </svg>
+      <img src="images/close-selected-icon@20x20.svg" class="menu-item-btn__icon">
       Close
     </button>
 
     <button type="button" id="move-to-bottom-btn" title="Move to the bottom"
       class="menu-item-btn menu-item-btn--disabled" disabled>
-      <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink"
-        xmlns:svgjs="http://svgjs.com/svgjs" viewBox="0 0 20 20" width="20" height="20" class="menu-item-btn__icon">
-        <g transform="matrix(0.8333333333333334,0,0,0.8333333333333334,0,0)">
-          <path d="M12 23.248L12 12.748" fill="none" stroke="var(--color-three)" stroke-linecap="round"
-            stroke-linejoin="round" stroke-width="1.5"></path>
-          <path d="M8.25 19.498L12 23.248 15.75 19.498" fill="none" stroke="var(--color-three)" stroke-linecap="round"
-            stroke-linejoin="round" stroke-width="1.5"></path>
-          <path d="M0.750 0.748 L23.250 0.748 L23.250 8.248 L0.750 8.248 Z" fill="none" stroke="var(--color-three)"
-            stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path>
-        </g>
-      </svg>
+      <img src="images/move-down-icon@20x20.svg" class="menu-item-btn__icon">
       Move to the bottom
     </button>
 
     <button type="button" id="move-to-top-btn" title="Move to the top" class="menu-item-btn menu-item-btn--disabled"
       disabled>
-      <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink"
-        xmlns:svgjs="http://svgjs.com/svgjs" viewBox="0 0 20 20" width="20" height="20" class="menu-item-btn__icon">
-        <g transform="matrix(0.8333333333333334,0,0,0.8333333333333334,0,0)">
-          <path d="M12 0.748L12 11.248" fill="none" stroke="var(--color-three)" stroke-linecap="round"
-            stroke-linejoin="round" stroke-width="1.5"></path>
-          <path d="M8.25 4.498L12 0.748 15.75 4.498" fill="none" stroke="var(--color-three)" stroke-linecap="round"
-            stroke-linejoin="round" stroke-width="1.5"></path>
-          <path d="M0.750 15.748 L23.250 15.748 L23.250 23.248 L0.750 23.248 Z" fill="none" stroke="var(--color-three)"
-            stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path>
-        </g>
-      </svg>
+      <img src="images/move-up-icon@20x20.svg" class="menu-item-btn__icon">
       Move to the top
     </button>
 
     <button type="button" id="close-duplicates-btn" title="Close duplicates"
       class="menu-item-btn menu-item-btn--disabled" disabled>
-      <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink"
-        xmlns:svgjs="http://svgjs.com/svgjs" viewBox="0 0 20 20" width="20" height="20" class="menu-item-btn__icon">
-        <g transform="matrix(0.8333333333333334,0,0,0.8333333333333334,0,0)">
-          <path
-            d="M3.75,2.507C3.75,1.534 4.538,0.746 5.511,0.746L21.489,0.746C22.462,0.746 23.25,1.534 23.25,2.507L23.25,18.485C23.25,19.458 22.462,20.246 21.489,20.246L5.034,20.246C4.325,20.246 3.75,19.671 3.75,18.962L3.75,2.507Z"
-            fill="none" stroke="var(--color-three)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
-          </path>
-          <g transform="matrix(1.09754,0,0,1.09754,0.920238,1.12502)">
-            <path
-              d="M11.462,8.538L15.5,4.5C15.5,4.5 13.493,6.522 11.479,8.542L11.473,8.549L15.5,12.576C15.477,12.582 13.469,10.574 11.462,8.56C9.454,10.574 7.447,12.582 7.424,12.576L11.451,8.549L11.445,8.542C9.431,6.522 7.424,4.5 7.424,4.5L11.462,8.538Z"
-              fill="none" stroke="var(--color-three)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
-            </path>
-          </g>
-          <path
-            d="M20.25,23.246C20.25,23.246 10.416,23.238 4.71,23.233C2.515,23.231 0.737,21.45 0.739,19.255C0.743,13.558 0.75,3.746 0.75,3.746"
-            fill="none" stroke="var(--color-three)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
-          </path>
-        </g>
-      </svg>
+      <img src="images/close-duplicates-icon@20x20.svg" class="menu-item-btn__icon">
       Close duplicates
     </button>
 
     <button type="button" id="select-deselect-all-btn" title="Select / deselect all" class="menu-item-btn">
-      <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink"
-        xmlns:svgjs="http://svgjs.com/svgjs" viewBox="0 0 20 20" width="20" height="20" class="menu-item-btn__icon">
-        <g transform="matrix(0.8333333333333334,0,0,0.8333333333333334,0,0)">
-          <path d="M6.75,9l3.294,4.611a1.526,1.526,0,0,0,2.414.09L23.25.749" fill="none" stroke="var(--color-three)"
-            stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path>
-          <path d="M21.75,10.5v9.75a3,3,0,0,1-3,3h-15a3,3,0,0,1-3-3v-15a3,3,0,0,1,3-3H16.5" fill="none"
-            stroke="var(--color-three)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path>
-        </g>
-      </svg>
+      <img src="images/checkbox-icon@20x20.svg" class="menu-item-btn__icon">
       Select / deselect all
     </button>
 

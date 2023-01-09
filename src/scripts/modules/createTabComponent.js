@@ -1,7 +1,6 @@
 "use strict";
 
 import { createCheckboxSvg } from "./util";
-import { createDuplicateIndicatorSvg } from "./util";
 
 function createTabComponent(tab) {
   const tabComponent = document.createElement("li");
@@ -40,7 +39,7 @@ function createTabComponent(tab) {
   closeTabBtn.title = "Close tab";
   closeTabBtn.classList.add("tab__close-tab-button");
   const closeTabIcon = document.createElement("img");
-  closeTabIcon.src = "images/delete-icon@20x20.svg";
+  closeTabIcon.src = "images/close-icon@20x20.svg";
   closeTabIcon.alt = "Close tab";
   closeTabBtn.appendChild(closeTabIcon);
 
@@ -50,9 +49,6 @@ function createTabComponent(tab) {
 
   if (tab.isActive === true) {
     tabComponent.classList.add("tab--active");
-    // const activeIndicator = document.createElement("div");
-    // activeIndicator.classList.add("tab__active-indicator");
-    // tabComponent.appendChild(activeIndicator);
   }
   tabComponent.appendChild(tabButton);
   tabComponent.appendChild(label);
@@ -60,12 +56,13 @@ function createTabComponent(tab) {
   tabComponent.appendChild(p);
   if (tab.isDuplicate === true) {
     tabComponent.classList.add("tab--duplicate");
-    const duplicateIndicator = createDuplicateIndicatorSvg();
+    const duplicateIndicator = document.createElement("img");
+    duplicateIndicator.classList.add("tab__duplicate-indicator");
+    duplicateIndicator.src = "images/duplicate-indicator-icon@20x20.svg";
     duplicateIndicator.alt = "Duplicate tab indicator";
     tabComponent.appendChild(duplicateIndicator);
   }
   tabComponent.appendChild(closeTabBtn);
-  // tabComponent.appendChild(tabButton);
 
   return tabComponent;
 }

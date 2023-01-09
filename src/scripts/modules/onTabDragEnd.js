@@ -1,8 +1,5 @@
 "use strict";
 
-// const adjustMenu = require("./adjustMenu");
-// const enableHeaderControls = require("./util").enableHeaderControls;
-
 function onTabDragEnd() {
   const state = this;
   const dragState = state.dragState;
@@ -22,14 +19,9 @@ function onTabDragEnd() {
   const draggedTabTopPos = dragState.tabPosInList;
   const draggedTabIdInBrowser = +draggedTabId.split("-")[1];
   const initialDraggedTabIndex = state.tabIndices[draggedTabId][0];
-  // const halfTabHeight = dragState.tabHeight / 2;
   const draggedTabInitialVisibleIndex = state.tabIndices[draggedTabId][1];
-  // let movedDirection = null;
   let replacedTabVisibleIndex = null;
   let draggedTabNewOffset = 0;
-  // let remainingDistance = 0;
-  // let draggedTabPosDifference =
-  //   draggedTabTopPos - dragState.tabsPosInfo[draggedTabId].initialPos;
   let dragDirection = null;
   if (draggedTabTopPos > dragState.initialTabPos) {
     dragDirection = "down";
@@ -87,12 +79,10 @@ function onTabDragEnd() {
   } else if (dragDirection === "down") {
     // if tab was dragged below where it was originally.
     const currentPos = dragState.tabPosInList;
-    // console.log(currentPos);
     let newVisibleIndex;
     let positionBelow;
     let visibleIndexBelow;
     let distanceToPositionBelow;
-    // let offset = 0;
 
     visibleIndexBelow = Math.ceil(currentPos / dragState.tabRowHeight);
     positionBelow = visibleIndexBelow * dragState.tabRowHeight;
@@ -110,10 +100,6 @@ function onTabDragEnd() {
     const replacedTabId = state.visibleTabIds[newVisibleIndex];
     const replacedTabIndex = state.tabIndices[replacedTabId][0];
     const replacedTab = state.tabs[replacedTabIndex];
-
-    // console.log(
-    //   `replacedTabId: ${replacedTabId}, replacedTabIndex: ${replacedTabIndex}, remainingDistance: ${remainingDistance}`
-    // );
 
     // update tab indices
     state.tabIndices[draggedTabId][0] = replacedTabIndex;
@@ -175,7 +161,6 @@ function onTabDragEnd() {
 
   // reset style values of all the tabs to their defaults
   dragState.listedTabs.forEach(tab => {
-    // let filterOffset = dragState.tabsPosInfo[tab.id].filterOffset;
     let filterOffset = 0;
     if (state.filterState.tabs[tab.id]) {
       filterOffset = state.filterState.tabs[tab.id].filterOffset;
@@ -211,9 +196,6 @@ function onTabDragEnd() {
     dragState.tabListContainer.scrollBy(0, this.scrollState.tabListOffset);
   }
 
-  // const tabButton = dragState.draggedTab.firstChild;
-  // tabButton.focus();
-
   // tab order has changed, so it should be changed in the "tabs" and "orderedTabObjects" lists in state
   if (dragDirection !== null) {
     state.tabs = [...document.getElementsByClassName(`tab`)];
@@ -238,7 +220,6 @@ function onTabDragEnd() {
     }
     state.visibleTabIds[replacedTabVisibleIndex] = draggedTabId;
     state.tabIndices[draggedTabId][1] = replacedTabVisibleIndex;
-    // adjustMenu.call(state);
   }
 
   const event = new Event("orderoftabschange", { bubbles: true });

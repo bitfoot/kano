@@ -10,7 +10,7 @@
   font-size: 20px;
   // --scroll-drag-speed: 5000ms;
   --block-height: 2rem;
-  --border-radius: calc(var(--block-height) / 4);
+  // --border-radius: calc(var(--block-height) / 4);
   --scrolltop: 0;
   // --color-one: #363d49;
   --color-one: #212e45;
@@ -34,8 +34,6 @@
   --animation-delay: 0;
   // --below-deleted-animation-duration: 200ms;
   --color-three: #eee;
-  // --color-three-hover: #fff;
-  // --color-four: #ccc;
   --golden-ratio: 1.61803398875;
   --greater-padding: 0.5rem;
   --lesser-padding: 0.3rem;
@@ -46,13 +44,6 @@
   --thumb-height: 0;
   font-family: 'Open Sans', sans-serif;
   color: var(--color-one);
-  // background-image: radial-gradient(circle at 0% 100%, #261212 0%, transparent 70%),
-  //   radial-gradient(circle at 100% 0%, #122428 0%, transparent 100%);
-  // background-image: linear-gradient(45deg, #343a42 0%, transparent 100%), 
-  // linear-gradient(-45deg, #122428 0%, transparent 100%);
-  // background-image: linear-gradient(45deg, #343a42 0%, transparent 100%), 
-  // linear-gradient(45deg, #122428 0%, transparent 100%);
-  // background-image: linear-gradient(45deg, #343a42 0%, transparent 100%);
   background-color: var(--color-one);
   height: 100%;
   // width: 36rem;
@@ -85,8 +76,6 @@
 
 *:focus {
   outline: none;
-  // outline: 2px solid transparent;
-  // outline-offset: -2px;
   box-shadow: inset 0 0 0 2px var(--color-accent-one);
 }
 

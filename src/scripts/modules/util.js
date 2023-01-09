@@ -235,47 +235,34 @@ function adjustScrollbar() {
 
 function createCheckboxSvg() {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
   let paths = null;
 
   // set standard svg attributes
   svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-  svg.setAttribute("version", "1.1");
-  svg.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
-  svg.setAttribute("xmlns:svgjs", "http://svgjs.com/svgjs");
-  svg.setAttribute("viewbox", "0 0 28 28");
-  svg.setAttribute("width", "28");
-  svg.setAttribute("height", "28");
-  g.setAttribute("transform", "matrix(0.833333,0,0,0.833333,4,4)");
+  svg.setAttribute("fill", "none");
+  svg.setAttribute("viewbox", "0 0 24 24");
+  svg.setAttribute("stroke-width", "1.5");
+  svg.setAttribute("height", "100%");
+  svg.setAttribute("width", "100%");
 
   const createPaths = num => {
     const paths = [];
     for (let i = 0; i < num; i++) {
       paths[i] = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      paths[i].setAttribute("fill", "none");
-      paths[i].setAttribute("stroke-linecap", "round");
-      paths[i].setAttribute("stroke-linejoin", "round");
-      paths[i].setAttribute("stroke-width", "1.5");
+      paths[i].setAttribute("stroke", "var(--color-three)");
     }
     return paths;
   };
 
   paths = createPaths(2);
-  paths[0].setAttribute(
-    "d",
-    "M0.75,3.412C0.75,1.941 1.942,0.749 3.413,0.749L20.587,0.749C22.058,0.749 23.25,1.941 23.25,3.412L23.25,20.586C23.25,22.057 22.058,23.249 20.587,23.249L3.413,23.249C1.942,23.249 0.75,22.057 0.75,20.586L0.75,3.412Z"
-  );
-  // paths[0].setAttribute("stroke", "var(--color-three)");
-  paths[0].setAttribute("stroke", "var(--color-three)");
-  paths[0].classList.add(`tab__svg-checkbox-box`);
+  paths[0].setAttribute("d", "M1.667 1.667h16.667v16.667H1.667z");
+  paths[0].classList.add("tab__svg-checkbox-box");
+  paths[1].setAttribute("d", "m6.042 10.625 2.916 2.5 5-6.25");
+  paths[1].classList.add("tab__svg-checkbox-checkmark");
 
-  paths[1].setAttribute(
-    "d",
-    "M6,13.223L8.45,16.7C8.645,16.991 8.972,17.165 9.322,17.165C9.649,17.165 9.959,17.012 10.157,16.751L18,6.828"
-  );
-  paths[1].classList.add(`tab__svg-checkbox-checkmark`);
-  paths.forEach(path => g.appendChild(path));
-  svg.appendChild(g);
+  const fragment = document.createDocumentFragment();
+  paths.forEach(path => fragment.appendChild(path));
+  svg.appendChild(fragment);
   svg.classList.add("tab__svg-checkbox");
   return svg;
 }

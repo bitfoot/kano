@@ -132,9 +132,10 @@
     height: 1.4rem;
     // border-radius: var(--lesser-padding);
     background: transparent;
+    transition: background-color 100ms ease-in-out, box-shadow 100ms ease-in;
 
     &:focus {
-      transition: background-color 100ms ease-in-out, box-shadow 100ms ease-out;
+      transition: background-color 100ms ease-in-out, box-shadow 100ms ease-in;
     }
 
     &:hover {
