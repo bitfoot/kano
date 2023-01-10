@@ -15,12 +15,14 @@
   --deleted-offset: 0px;
   --drag-offset: 0px;
   // --y-offset: 0px;
-  --delay: 0;
+  --animation-delay: 0ms;
   --trans-delay: 0ms;
   --opacity-delay: 0ms;
   --trans-duration: 0ms;
   --opacity-duration: 0ms;
   --misc-offset: 0;
+  --sign: 0;
+  --transition-duration: 0ms;
   // --backdrop-filter: none;
   --backdrop-filter: none;
   // --animation-duration: 0ms;
@@ -358,9 +360,14 @@
     transform: translateY(var(--filter-offset)) scale(var(--scale));
     animation: var(--animation-duration) 80ms ease-in forwards moving;
     transition: transform 80ms ease-in, opacity 80ms ease-in;
-    // transition: transform 200ms ease-in, opacity 200ms ease-in;
     z-index: -1;
   }
+
+  // &--moving-horizontally {
+  //   pointer-events: none;
+  //   transform: translateX(-34rem);
+  //   transition: transform 200ms ease-in;
+  // }
 
   &--peach {
     animation: calc(var(--animation-duration) + 80ms) ease-in forwards moving;
@@ -395,7 +402,7 @@
   &--deleted {
     pointer-events: none;
     opacity: 0;
-    transition: opacity 100ms ease-out;
+    transition: opacity 100ms;
 
     &:hover {
       opacity: 0;
@@ -403,7 +410,7 @@
     }
 
     &~li {
-      animation: var(--animation-duration) 100ms ease-in-out forwards belowDeleted;
+      animation: var(--animation-duration) 100ms ease-out forwards belowDeleted;
     }
   }
 }

@@ -3,10 +3,21 @@
 // const adjustMenu = require("./adjustMenu");
 // const adjustScrollbar = require("./util").adjustScrollbar;
 import { resetTabCSSVariables } from "./util";
+import { disableHeaderControls } from "./util";
 
-function deleteTabs(idsOfTabsToDelete) {
-  if (idsOfTabsToDelete.length === 0) return;
-  const tabsToDelete = idsOfTabsToDelete.reduce((a, id) => {
+function deleteTabs(options = {}) {
+  const {
+    tabComponentIds = [],
+    browserTabIds = [],
+    movingToNewWindow = false,
+    createData
+  } = options;
+
+  if (tabComponentIds.length === 0) return;
+  disableHeaderControls.call(this);
+  resetTabCSSVariables(this.tabs);
+
+  const tabsToDelete = tabComponentIds.reduce((a, id) => {
     const index = this.tabIndices[id][0];
     const URL = this.orderedTabObjects[index].url;
     this.tabIdsByURL[URL] = this.tabIdsByURL[URL].filter(tabId => tabId !== id);
@@ -17,14 +28,12 @@ function deleteTabs(idsOfTabsToDelete) {
     return a;
   }, {});
 
-  resetTabCSSVariables(this.tabs);
   const reorderedTabObjects = [];
   let numDeleted = 0;
   let maxChangeInPosition = 0;
   let firstHiddenTabIndex = null;
   let firstDeletedTab = null;
   let firstVisibleTabBelowDeletedTab = null;
-  const browserTabIds = [];
   const remainingVisibleTabIds = [];
   const remainingTabs = [];
 
@@ -43,6 +52,23 @@ function deleteTabs(idsOfTabsToDelete) {
         }
       }
     });
+
+    // move tabs to a new window if needed
+    if (movingToNewWindow === true && createData !== undefined) {
+      chrome.windows.create(createData).then(windowData => {
+        const windowId = windowData.id;
+        const remainingTabIds = browserTabIds.slice(1);
+        if (remainingTabIds.length > 0) {
+          chrome.tabs.move(remainingTabIds, {
+            windowId,
+            index: 1
+          });
+        }
+      });
+    }
+
+    const event = new Event("numberoftabschangeend", { bubbles: true });
+    this.tabList.dispatchEvent(event);
   };
 
   this.orderedTabObjects.forEach((obj, i) => {
@@ -84,6 +110,9 @@ function deleteTabs(idsOfTabsToDelete) {
       if (numDeleted === 0) {
         firstDeletedTab = tab;
       }
+      if (this.lastCheckedOrUncheckedTabId === tab.id) {
+        this.lastCheckedOrUncheckedTabId = null;
+      }
       numDeleted += 1;
       browserTabIds.push(parseInt(tab.id.split("-")[1]));
       window.requestAnimationFrame(() => {
@@ -93,15 +122,17 @@ function deleteTabs(idsOfTabsToDelete) {
     }
   });
 
-  // remove browser tabs
-  const removeBrowserTabs = async function (browserTabIds) {
-    try {
-      await chrome.tabs.remove(browserTabIds);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  removeBrowserTabs(browserTabIds);
+  if (movingToNewWindow === false) {
+    // remove browser tabs
+    const removeBrowserTabs = async function (browserTabIds) {
+      try {
+        await chrome.tabs.remove(browserTabIds);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    removeBrowserTabs(browserTabIds);
+  }
 
   // update firstHiddenTabIndex, in case it changed
   this.filterState.firstHiddenTabIndex = firstHiddenTabIndex;
@@ -133,10 +164,10 @@ function deleteTabs(idsOfTabsToDelete) {
       animationDuration + "ms"
     );
   });
-  this.tabs = remainingTabs;
 
-  const event = new Event("numberoftabschange", { bubbles: true });
+  const event = new Event("numberoftabschangestart", { bubbles: true });
   this.tabList.dispatchEvent(event);
+  this.tabs = remainingTabs;
 }
 
 export { deleteTabs };

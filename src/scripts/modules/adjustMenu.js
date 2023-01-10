@@ -15,7 +15,10 @@ function adjustMenu() {
     });
   };
 
-  if (this.menu.buttons.closeSelected.element === null) {
+  if (this.menu.buttons.moveToNewWindow.element === null) {
+    this.menu.buttons.moveToNewWindow.element = document.getElementById(
+      "move-to-new-window-btn"
+    );
     this.menu.buttons.closeSelected.element = document.getElementById(
       "close-selected-btn"
     );
@@ -69,6 +72,7 @@ function adjustMenu() {
   const checkedVisibleTabsExist = lastCheckedVisibleIndex !== null;
 
   if (checkedVisibleTabsExist) {
+    buttonsToEnable.push(this.menu.buttons.moveToNewWindow);
     const uncheckedVisibleTabsAboveExist =
       firstUncheckedVisibleIndex !== null &&
       firstUncheckedVisibleIndex < lastCheckedVisibleIndex;
@@ -99,6 +103,7 @@ function adjustMenu() {
 
     buttonsToEnable.push(this.menu.buttons.closeSelected);
   } else {
+    buttonsToDisable.push(this.menu.buttons.moveToNewWindow);
     buttonsToDisable.push(this.menu.buttons.closeSelected);
     buttonsToDisable.push(this.menu.buttons.moveToTheBottom);
     buttonsToDisable.push(this.menu.buttons.moveToTheTop);

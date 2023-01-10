@@ -8,6 +8,7 @@ import { addTab } from "./modules/addTab";
 import { deleteTabs } from "./modules/deleteTabs";
 import { initializeTabDrag } from "./modules/initializeTabDrag";
 import { moveTabs } from "./modules/moveTabs";
+import { moveToNewWindow } from "./modules/moveToNewWindow";
 import { initializeScrollbarDrag } from "./modules/initializeScrollbarDrag";
 import { filter } from "./modules/filter";
 import { onScroll } from "./modules/onScroll";
@@ -32,6 +33,10 @@ const state = {
   menu: {
     checkedVisibleTabs: [],
     buttons: {
+      moveToNewWindow: {
+        shouldBeEnabled: false,
+        element: null
+      },
       closeSelected: {
         shouldBeEnabled: false,
         element: null
@@ -95,74 +100,82 @@ getTabs().then(tabs => {
   tabs.forEach(tab => {
     state.addTab(tab);
   });
-
   renderTabComponents.call(state);
-  // adjustMenu.call(state);
 });
 
-document.addEventListener("numberoftabschange", e => {
+document.addEventListener("numberoftabschange", () => {
   adjustMenu.call(state);
+  adjustScrollbar.call(state);
   enableHeaderControls.call(state);
+});
+
+document.addEventListener("numberoftabschangestart", () => {
   adjustScrollbar.call(state);
 });
 
-document.addEventListener("orderoftabschange", e => {
+document.addEventListener("numberoftabschangeend", () => {
+  adjustMenu.call(state);
+  enableHeaderControls.call(state);
+});
+
+document.addEventListener("orderoftabschange", () => {
   adjustMenu.call(state);
   enableHeaderControls.call(state);
 });
 
 document.addEventListener("click", e => {
   if (e.target.id === "close-duplicates-btn") {
-    // const tabIdsToDelete = [];
-    const idsByURL = state.visibleTabIds.reduce((a, id) => {
-      const browserIndex = state.tabIndices[id][0];
-      const URL = state.orderedTabObjects[browserIndex].url;
-      if (!a[URL]) {
-        a[URL] = [id];
-      } else {
-        a[URL].push(id);
-      }
-      return a;
-    }, {});
+    // const idsByURL = state.visibleTabIds.reduce((a, id) => {
+    //   const browserIndex = state.tabIndices[id][0];
+    //   const URL = state.orderedTabObjects[browserIndex].url;
+    //   if (!a[URL]) {
+    //     a[URL] = [id];
+    //   } else {
+    //     a[URL].push(id);
+    //   }
+    //   return a;
+    // }, {});
 
-    const unluckyTabIds = Object.values(idsByURL).reduce((a, idsArr) => {
-      if (idsArr.length > 1) {
-        let luckyTabInfo = null;
-        idsArr.forEach(id => {
-          const index = state.tabIndices[id][0];
-          const tabObj = {
-            id,
-            isActive: state.orderedTabObjects[index].isActive,
-            isPinned: state.orderedTabObjects[index].isPinned
-          };
-          if (luckyTabInfo === null) {
-            luckyTabInfo = tabObj;
-          } else {
-            if (luckyTabInfo.isActive) {
-              a[id] = true;
-            } else if (tabObj.isActive) {
-              a[luckyTabInfo.id] = true;
+    const unluckyTabIds = Object.values(state.tabIdsByURL).reduce(
+      (a, idsArr) => {
+        if (idsArr.length > 1) {
+          let luckyTabInfo = null;
+          idsArr.forEach(id => {
+            const index = state.tabIndices[id][0];
+            const tabObj = {
+              id,
+              isActive: state.orderedTabObjects[index].isActive,
+              isPinned: state.orderedTabObjects[index].isPinned
+            };
+            if (luckyTabInfo === null) {
               luckyTabInfo = tabObj;
-            } else if (
-              Number(luckyTabInfo.isPinned) >= Number(tabObj.isPinned)
-            ) {
-              a[id] = true;
             } else {
-              a[luckyTabInfo.id] = true;
-              luckyTabInfo = tabObj;
+              if (luckyTabInfo.isActive) {
+                a[id] = true;
+              } else if (tabObj.isActive) {
+                a[luckyTabInfo.id] = true;
+                luckyTabInfo = tabObj;
+              } else if (
+                Number(luckyTabInfo.isPinned) >= Number(tabObj.isPinned)
+              ) {
+                a[id] = true;
+              } else {
+                a[luckyTabInfo.id] = true;
+                luckyTabInfo = tabObj;
+              }
             }
-          }
-        });
-      }
-      return a;
-    }, {});
+          });
+        }
+        return a;
+      },
+      {}
+    );
     const tabIdsToDelete = state.visibleTabIds.filter(id => unluckyTabIds[id]);
-    // console.log(tabIdsToDelete);
-    deleteTabs.call(state, tabIdsToDelete);
+    deleteTabs.call(state, { tabComponentIds: tabIdsToDelete });
   } else if (e.target.classList.contains("tab__close-tab-button")) {
     const tab = e.target.parentElement;
     if (!tab.classList.contains("tab--deleted")) {
-      deleteTabs.call(state, [tab.id]);
+      deleteTabs.call(state, { tabComponentIds: [tab.id] });
     }
   } else if (e.target.id === "select-deselect-all-btn") {
     const allVisibleTabsAreChecked = state.visibleTabIds.every(id => {
@@ -183,18 +196,16 @@ document.addEventListener("click", e => {
     state.lastCheckedOrUncheckedTabId = null;
     adjustMenu.call(state);
   } else if (e.target.id === "close-selected-btn") {
-    const tabIds = state.visibleTabIds.filter(id => {
-      const obj = state.orderedTabObjects[state.tabIndices[id][0]];
-      if (obj.isChecked) {
-        return true;
-      }
-    });
-    deleteTabs.call(state, tabIds);
+    const tabIds = state.menu.checkedVisibleTabs.map(tab => tab.id);
+    deleteTabs.call(state, { tabComponentIds: tabIds });
   } else if (e.target.id === "move-to-top-btn") {
     moveTabs.call(state, "top");
     // adjustMenu.call(state);
   } else if (e.target.id === "move-to-bottom-btn") {
     moveTabs.call(state, "bottom");
+    // adjustMenu.call(state);
+  } else if (e.target.id === "move-to-new-window-btn") {
+    moveToNewWindow.call(state);
     // adjustMenu.call(state);
   } else if (e.target.id === "remove-filter-text-btn") {
     const filterInput = state.filterState.input;
