@@ -58,7 +58,8 @@ function moveToNewWindow() {
       tabComponentIds,
       movingToNewWindow: true,
       browserTabIds,
-      createData
+      createData,
+      newWindowIsToTheRight: posInfo.isToTheRightOfCurrentWindow
     };
 
     deleteTabs.call(this, options);

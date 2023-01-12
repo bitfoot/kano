@@ -2,14 +2,14 @@
   --y-offset: 0px;
   position: relative;
   margin: 0;
-  width: 34rem;
+  width: 36rem;
   list-style: none;
   padding: 0 var(--lesser-padding);
   overflow: hidden;
 
   &--scrollable {
     overflow: auto;
-    width: calc(34rem - var(--lesser-padding) * 2);
+    width: calc(36rem - var(--lesser-padding) * 2);
   }
 
   // &--filtered {

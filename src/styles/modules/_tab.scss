@@ -22,6 +22,7 @@
   --opacity-duration: 0ms;
   --misc-offset: 0;
   --sign: 0;
+  --opacity: 1;
   --transition-duration: 0ms;
   // --backdrop-filter: none;
   --backdrop-filter: none;
@@ -106,7 +107,6 @@
       content: "";
       width: 2rem;
       position: absolute;
-      // right: calc(100% + 3px);
       right: calc(100% + 1px);
       top: 0;
       height: 100%;
@@ -136,14 +136,12 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 68rem;
-      height: 68rem;
+      width: 72rem;
+      height: 72rem;
       z-index: -1;
       opacity: 0;
       background: radial-gradient(circle at center, var(--color-two-hover), transparent 50%);
-      // transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%));
       transform: translate(calc(calc(var(--pointer-x-pos) - var(--bounds-left)) - 50%), calc(calc(var(--pointer-y-pos) - var(--bounds-top)) - 50%));
-      // transition: none;
       transition: opacity 100ms ease-out;
     }
   }
@@ -287,15 +285,15 @@
       &::before {
         content: "";
         position: absolute;
-        width: 680rem;
-        height: 680rem;
+        width: 720rem;
+        height: 720rem;
         top: 0;
         left: 0;
         z-index: -1;
-        // transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%)) scale(0.1);
         transform: translate(calc(calc(var(--pointer-x-pos) - var(--bounds-left)) - 50%), calc(calc(var(--pointer-y-pos) - var(--bounds-top)) - 50%)) scale(0.1);
         transition: none;
         background: radial-gradient(circle at center, transparent 0.5%, var(--color-two) 1% 100%);
+        // background: radial-gradient(circle at center, transparent 0.5%, red 1% 100%);
         animation: 320ms ease-in forwards heldDown;
       }
 
@@ -321,17 +319,17 @@
     box-shadow: none;
     // z-index: 9000;
 
-    &:hover {
-      // transition: none;
-      // background: transparent;
+    // &:hover {
+    //   // transition: none;
+    //   // background: transparent;
 
-      & .tab__tab-button {
-        &::after {
-          content: "";
-          background: transparent;
-        }
-      }
-    }
+    //   & .tab__tab-button {
+    //     &::after {
+    //       content: "";
+    //       background: transparent;
+    //     }
+    //   }
+    // }
 
     & .tab__tab-button {
       cursor: grabbing;
@@ -362,12 +360,6 @@
     transition: transform 80ms ease-in, opacity 80ms ease-in;
     z-index: -1;
   }
-
-  // &--moving-horizontally {
-  //   pointer-events: none;
-  //   transform: translateX(-34rem);
-  //   transition: transform 200ms ease-in;
-  // }
 
   &--peach {
     animation: calc(var(--animation-duration) + 80ms) ease-in forwards moving;
@@ -402,15 +394,21 @@
   &--deleted {
     pointer-events: none;
     opacity: 0;
-    transition: opacity 100ms;
-
-    &:hover {
-      opacity: 0;
-      transition: opacity 100ms ease-out;
-    }
+    transition: opacity 100ms ease-out;
 
     &~li {
       animation: var(--animation-duration) 100ms ease-out forwards belowDeleted;
+    }
+  }
+
+  &--moved-out {
+    pointer-events: none;
+    opacity: 0;
+    transform: translateX(calc(calc(100% + var(--lesser-padding)) * var(--sign))) translateY(var(--filter-offset));
+    transition: transform 200ms ease-out, opacity 0ms 200ms;
+
+    &~li {
+      animation: var(--animation-duration) 200ms ease-out forwards belowDeleted;
     }
   }
 }
@@ -445,6 +443,13 @@
   }
 }
 
+@keyframes movingHorizontally {
+
+  to {
+    transform: translateX(calc(calc(100% + var(--lesser-padding)) * var(--sign)));
+  }
+}
+
 
 @keyframes returnToNormal {
   from {
@@ -464,6 +469,6 @@
   }
 
   to {
-    transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%)) scale(15);
+    transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%)) scale(14);
   }
 }

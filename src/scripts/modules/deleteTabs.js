@@ -10,7 +10,8 @@ function deleteTabs(options = {}) {
     tabComponentIds = [],
     browserTabIds = [],
     movingToNewWindow = false,
-    createData
+    createData,
+    newWindowIsToTheRight = false
   } = options;
 
   if (tabComponentIds.length === 0) return;
@@ -36,6 +37,10 @@ function deleteTabs(options = {}) {
   let firstVisibleTabBelowDeletedTab = null;
   const remainingVisibleTabIds = [];
   const remainingTabs = [];
+  let sign = 0;
+  if (movingToNewWindow) {
+    sign = newWindowIsToTheRight === true ? 1 : -1;
+  }
 
   const finishTabDeletion = () => {
     Object.entries(tabsToDelete).forEach(entry => {
@@ -116,7 +121,14 @@ function deleteTabs(options = {}) {
       numDeleted += 1;
       browserTabIds.push(parseInt(tab.id.split("-")[1]));
       window.requestAnimationFrame(() => {
-        tab.classList.add("tab--deleted");
+        if (movingToNewWindow === true) {
+          tab.style.setProperty("--sign", sign);
+          tab.classList.add("tab--moved-out");
+        } else {
+          tab.classList.add("tab--deleted");
+          // tab.style.setProperty("--opacity", 0);
+        }
+        // tab.classList.add("tab--deleted");
         delete this.tabIndices[obj.id];
       });
     }
