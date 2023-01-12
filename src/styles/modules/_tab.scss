@@ -5,63 +5,36 @@
   align-items: stretch;
   height: var(--block-height);
   background: var(--color-two);
-  // background: transparent;
   color: var(--color-three);
   margin: 0 0 var(--lesser-padding) 0;
   padding: var(--greater-padding) var(--block-height) var(--greater-padding) 0;
-  // border-radius: var(--lesser-padding);
   --moved-offset: 0px;
   --filter-offset: 0px;
   --deleted-offset: 0px;
   --drag-offset: 0px;
-  // --y-offset: 0px;
-  --animation-delay: 0ms;
+  --misc-offset: 0;
   --trans-delay: 0ms;
   --opacity-delay: 0ms;
   --trans-duration: 0ms;
   --opacity-duration: 0ms;
-  --misc-offset: 0;
   --sign: 0;
   --opacity: 1;
-  --transition-duration: 0ms;
-  // --backdrop-filter: none;
   --backdrop-filter: none;
-  // --animation-duration: 0ms;
-  --opacity: 1;
-  --x-pos: 17rem;
-  --y-pos: 1rem;
+  // --x-pos: 18rem;
+  // --y-pos: 1rem;
   --bounds-left: var(--lesser-padding);
   --bounds-top: 0;
   --animation-iteration-count: 0;
-  // --scale: 0.99;
   --scale: 1;
   visibility: visible;
   touch-action: none;
   stroke: transparent;
-
-  // transform: scale(1);
   backdrop-filter: var(--backdrop-filter);
-  // transform: translateY(--filter-offset);
   transition: background-color 100ms ease-out;
   animation: returnToNormal 80ms ease-out var(--animation-iteration-count);
-  // animation-fill-mode: unset;
   font-family: 'Open Sans', sans-serif;
   --special-z-index: 0;
   z-index: var(--special-z-index);
-
-  // &::after {
-  //   content: "";
-  //   pointer-events: none;
-  //   position: absolute;
-  //   top: 0;
-  //   left: 0;
-  //   width: 100%;
-  //   height: 100%;
-  //   // z-index: -1;
-  //   background: transparent;
-  //   backdrop-filter: var(--backdrop-filter);
-  // }
-
 
   &:hover {
     & .tab__tab-button {
@@ -465,10 +438,12 @@
 
 @keyframes heldDown {
   from {
-    transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%)) scale(0.1);
+    // transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%)) scale(0.1);
+    transform: translate(calc(calc(var(--pointer-x-pos) - var(--bounds-left)) - 50%), calc(calc(var(--pointer-y-pos) - var(--bounds-top)) - 50%)) scale(0.1);
   }
 
   to {
-    transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%)) scale(14);
+    // transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%)) scale(14);
+    transform: translate(calc(calc(var(--pointer-x-pos) - var(--bounds-left)) - 50%), calc(calc(var(--pointer-y-pos) - var(--bounds-top)) - 50%)) scale(14);
   }
 }

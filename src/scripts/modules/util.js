@@ -95,6 +95,14 @@ function getContainerToContentRatio() {
   return containerToContentRatio;
 }
 
+function getTabTopBound(tab) {
+  const visibleIndex = this.tabIndices[tab.id][1];
+  const posInList = visibleIndex * this.scrollState.tabRowHeight;
+  const top =
+    this.scrollState.headerHeight + posInList - this.scrollState.scrollTop;
+  return top;
+}
+
 function getScrollbarTrackSpace() {
   const margin = 6;
   const scrollbarTrackHeight = this.scrollState.maxContainerHeight;
@@ -235,6 +243,16 @@ function adjustScrollbar() {
   }
 }
 
+const highlightBrowserTab = async function (tabId) {
+  const browserTabId = parseInt(tabId.split("-")[1]);
+  try {
+    const tab = await chrome.tabs.get(browserTabId);
+    chrome.tabs.highlight({ tabs: tab.index });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 function createCheckboxSvg() {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   let paths = null;
@@ -281,5 +299,7 @@ export {
   easeInQuad,
   getFaviconUrl,
   disableHeaderControls,
-  enableHeaderControls
+  enableHeaderControls,
+  getTabTopBound,
+  highlightBrowserTab
 };

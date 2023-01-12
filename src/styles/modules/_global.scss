@@ -8,36 +8,22 @@
 
 :root {
   font-size: 20px;
-  // --scroll-drag-speed: 5000ms;
   --block-height: 2rem;
-  // --border-radius: calc(var(--block-height) / 4);
   --scrolltop: 0;
-  // --color-one: #363d49;
   --color-one: #212e45;
-  // --color-two: #586B74;
-  // --color-two: #2A3A5A;
-  // --color-two: #2F4165;
-  // --color-two: #314368;
   --color-two: #34486F;
   --color-accent-one: #00FF00;
   --color-accent-two: #FF00FF;
-  // --color-two: #5C76B2;
-  // --color-two-hover: #5E747D;
-  // --color-two-hover: #395179;
   --color-two-hover: #3C5580;
-  // --color-two-hover: purple;
   --color-two-pressed: #2a3b5a;
-  --pointer-x-pos: 0;
+  --pointer-x-pos: 18rem;
   --pointer-y-pos: 0;
-
   --animation-duration: 0;
   --animation-delay: 0;
-  // --below-deleted-animation-duration: 200ms;
   --color-three: #eee;
   --golden-ratio: 1.61803398875;
   --greater-padding: 0.5rem;
   --lesser-padding: 0.3rem;
-  // --icon-color: white;
   --icon-color: #eee;
   --num-of-deleted: 0;
   --header-height: calc(var(--block-height) + var(--lesser-padding) * 2);

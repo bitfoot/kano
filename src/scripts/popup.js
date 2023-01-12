@@ -1,6 +1,5 @@
 "use strict";
 
-// import util from "./modules/util";
 import { enableHeaderControls } from "./modules/util";
 import { adjustScrollbar } from "./modules/util";
 import { renderTabComponents } from "./modules/renderTabComponents";
@@ -13,6 +12,8 @@ import { initializeScrollbarDrag } from "./modules/initializeScrollbarDrag";
 import { filter } from "./modules/filter";
 import { onScroll } from "./modules/onScroll";
 import { adjustMenu } from "./modules/adjustMenu";
+import { getTabTopBound } from "./modules/util";
+import { highlightBrowserTab } from "./modules/util";
 
 const state = {
   tabList: document.getElementById("tab-list"),
@@ -27,9 +28,6 @@ const state = {
   lastCheckedOrUncheckedTabId: null,
   dragState: null,
   moveState: null,
-  dragTimer: null,
-  clientX: null,
-  clientY: null,
   menu: {
     checkedVisibleTabs: [],
     buttons: {
@@ -59,7 +57,6 @@ const state = {
       }
     }
   },
-  selectedTabs: [],
   filterState: {
     filterIsActive: false,
     clearFilterBtn: document.getElementById("remove-filter-text-btn"),
@@ -178,18 +175,18 @@ document.addEventListener("click", e => {
       deleteTabs.call(state, { tabComponentIds: [tab.id] });
     }
   } else if (e.target.id === "select-deselect-all-btn") {
-    const allVisibleTabsAreChecked = state.visibleTabIds.every(id => {
+    if (state.visibleTabIds.length === 0) return;
+    const uncheckedVisibleTabsExist = state.visibleTabIds.some(id => {
       const tabIndex = state.tabIndices[id][0];
-      if (state.orderedTabObjects[tabIndex].isChecked) {
+      if (state.orderedTabObjects[tabIndex].isChecked === false) {
         return true;
       }
     });
 
-    const shouldBeChecked = allVisibleTabsAreChecked ? false : true;
+    const shouldBeChecked = uncheckedVisibleTabsExist ? true : false;
     state.visibleTabIds.forEach(id => {
       const tabIndex = state.tabIndices[id][0];
-      // const checkbox = state.tabs[tabIndex].children[1].firstChild;
-      const checkbox = state.tabs[tabIndex].querySelector(".tab__checkbox");
+      const checkbox = state.tabs[tabIndex].children[1].firstChild;
       state.orderedTabObjects[tabIndex].isChecked = shouldBeChecked;
       checkbox.checked = shouldBeChecked;
     });
@@ -200,13 +197,10 @@ document.addEventListener("click", e => {
     deleteTabs.call(state, { tabComponentIds: tabIds });
   } else if (e.target.id === "move-to-top-btn") {
     moveTabs.call(state, "top");
-    // adjustMenu.call(state);
   } else if (e.target.id === "move-to-bottom-btn") {
     moveTabs.call(state, "bottom");
-    // adjustMenu.call(state);
   } else if (e.target.id === "move-to-new-window-btn") {
     moveToNewWindow.call(state);
-    // adjustMenu.call(state);
   } else if (e.target.id === "remove-filter-text-btn") {
     const filterInput = state.filterState.input;
     filterInput.value = "";
@@ -216,21 +210,16 @@ document.addEventListener("click", e => {
 
 document.addEventListener(`input`, e => {
   if (e.target.classList.contains("tab__checkbox")) {
-    // console.log(state.shiftKeyIsDown);
     const label = e.target.parentElement;
     const tabId = label.parentElement.id;
     const tabIndex = state.tabIndices[tabId][0];
     if (state.shiftKeyIsDown) {
-      // check/uncheck all visible tabs between shiftCheckedTabIndex and tabIndex
-      // find out if lastCheckedTabId belongs to a visible tab
       if (state.lastCheckedOrUncheckedTabId === null) {
         state.lastCheckedOrUncheckedTabId = tabId;
       }
       const lastCheckedOrUncheckedTabVisibleIndex =
         state.tabIndices[state.lastCheckedOrUncheckedTabId][1];
       if (lastCheckedOrUncheckedTabVisibleIndex !== null) {
-        // const lastCheckedOrUncheckedTabIndex =
-        //   state.tabIndices[state.lastCheckedOrUncheckedTabId][0];
         const tabVisibleIndex = state.tabIndices[tabId][1];
         let idsOfTabsToAffect;
         let newlyCheckedOrUncheckedTabs;
@@ -249,14 +238,11 @@ document.addEventListener(`input`, e => {
             lastCheckedOrUncheckedTabVisibleIndex,
             tabVisibleIndex + 1
           );
-
           newlyCheckedOrUncheckedTabs = idsOfTabsToAffect.slice(1);
         } else {
           idsOfTabsToAffect = [tabId];
           newlyCheckedOrUncheckedTabs = [tabId];
         }
-        // const lastCheckedOrUncheckedTabIsChecked =
-        //   state.orderedTabObjects[lastCheckedOrUncheckedTabIndex].isChecked;
         const someTabsAreUnchecked = newlyCheckedOrUncheckedTabs.some(id => {
           const index = state.tabIndices[id][0];
           if (state.orderedTabObjects[index].isChecked === false) {
@@ -290,39 +276,32 @@ document.addEventListener(`input`, e => {
   }
 });
 
-state.scrollState.container.addEventListener("scroll", onScroll.bind(state));
-
 document.addEventListener("pointerdown", e => {
   // if the left mouse button was clicked, we don't need to do anything
-  if (e.pointerType === "mouse" && e.buttons !== 1) {
-    return;
-  }
+  if (e.pointerType === "mouse" && e.buttons !== 1) return;
   if (e.target.classList.contains("tab__tab-button")) {
     const tabButton = e.target;
-    const parent = tabButton.parentElement;
+    const tab = tabButton.parentElement;
     const pointerId = e.pointerId;
     tabButton.setPointerCapture(pointerId);
-    const bounds = parent.getBoundingClientRect();
-    parent.classList.add("tab--held-down");
-
     requestAnimationFrame(() => {
-      parent.style.setProperty("--x-pos", e.clientX - bounds.left + "px");
-      parent.style.setProperty("--y-pos", e.clientY - bounds.top + "px");
+      tab.classList.add("tab--held-down");
     });
 
-    state.dragTimer = setTimeout(initializeTabDrag.bind(state, e), 320);
+    tabButton.onanimationend = event => {
+      if (event.animationName === "heldDown") {
+        initializeTabDrag.call(state, e);
+      }
+    };
     tabButton.onpointerup = () => {
-      clearTimeout(state.dragTimer);
       tabButton.onpointerup = null;
       tabButton.releasePointerCapture(pointerId);
-      if (state.dragState === null) {
-        parent.classList.remove("tab--held-down");
-        const tabId = parent.id;
-        const browserTabId = parseInt(tabId.split("-")[1]);
-        chrome.tabs.get(browserTabId, function (tab) {
-          chrome.tabs.highlight({ tabs: tab.index }, function () { });
-        });
-      }
+      if (state.dragState !== null) return;
+
+      requestAnimationFrame(() => {
+        tab.classList.remove("tab--held-down");
+      });
+      highlightBrowserTab(tab.id);
     };
   } else if (e.target.id === "scrollbar-thumb") {
     initializeScrollbarDrag.call(state, e);
@@ -348,19 +327,36 @@ document.addEventListener(`keydown`, e => {
     e.target.classList.contains("tab__tab-button") &&
     state.dragState === null
   ) {
+    const eventCode = e.code;
     const tabButton = e.target;
-    tabButton.parentElement.classList.add("tab--held-down");
-    state.dragTimer = setTimeout(initializeTabDrag.bind(state, e), 320);
-    tabButton.onkeyup = () => {
-      clearTimeout(state.dragTimer);
-      tabButton.onkeyup = "";
-      if (state.dragState === null) {
-        tabButton.parentElement.classList.remove("tab--held-down");
-        const tabId = e.target.parentElement.id;
-        const browserTabId = parseInt(tabId.split("-")[1]);
-        chrome.tabs.get(browserTabId, function (tab) {
-          chrome.tabs.highlight({ tabs: tab.index }, function () { });
+    const tab = tabButton.parentElement;
+    const halfTabHeight = 20;
+    const boundsTop = getTabTopBound.call(state, tab);
+
+    requestAnimationFrame(() => {
+      tab.style.setProperty("--bounds-top", boundsTop + "px");
+      document.documentElement.style.setProperty(
+        "--pointer-y-pos",
+        boundsTop + halfTabHeight + "px"
+      );
+      tab.classList.add("tab--held-down");
+    });
+
+    tabButton.onanimationend = event => {
+      if (event.animationName === "heldDown") {
+        initializeTabDrag.call(state, e);
+      }
+    };
+    tabButton.onkeyup = event => {
+      if (event.code === eventCode) {
+        tabButton.onkeyup = "";
+        if (state.dragState !== null) {
+          return;
+        }
+        requestAnimationFrame(() => {
+          tab.classList.remove("tab--held-down");
         });
+        highlightBrowserTab(tab.id);
       }
     };
   }
@@ -386,17 +382,19 @@ document.addEventListener("pointermove", e => {
   });
   if (e.target.classList.contains("tab__tab-button")) {
     const tabButton = e.target;
-    const parent = tabButton.parentElement;
-    if (parent.classList.contains("tab--deleted")) {
+    const tab = tabButton.parentElement;
+    if (
+      tab.classList.contains("tab--deleted") ||
+      tab.classList.contains("tab--moved-out")
+    ) {
       return;
     }
-    const visibleIndex = state.tabIndices[parent.id][1];
-    const posInList = visibleIndex * state.scrollState.tabRowHeight;
-    const top =
-      state.scrollState.headerHeight + posInList - state.scrollState.scrollTop;
 
     requestAnimationFrame(() => {
-      parent.style.setProperty("--bounds-top", top + "px");
+      tab.style.setProperty(
+        "--bounds-top",
+        getTabTopBound.call(state, tab) + "px"
+      );
     });
   } else if (e.target.classList.contains("menu-item-btn")) {
     const bounds = e.target.getBoundingClientRect();
@@ -414,3 +412,5 @@ document.addEventListener("contextmenu", e => {
     }
   }
 });
+
+state.scrollState.container.addEventListener("scroll", onScroll.bind(state));

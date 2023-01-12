@@ -12,10 +12,6 @@
     width: calc(36rem - var(--lesser-padding) * 2);
   }
 
-  // &--filtered {
-  //   min-height: 506px;
-  // }
-
   &--scroll {
     transform: translateY(var(--y-offset));
     transition: none;
