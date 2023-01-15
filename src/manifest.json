@@ -1,6 +1,6 @@
 {
-  "name": "ninja",
-  "version": "1.0",
+  "name": "kano",
+  "version": "0.0.1",
   "description": "Manage tabs with ease",
   "background": {
     "service_worker": "background.js"
@@ -10,9 +10,11 @@
     "favicon"
   ],
   "action": {
-    "default_icon": "images/tabble16.png",
+    "default_icon": {
+      "32": "images/ninja32.png"
+    },
     "default_popup": "index.html",
-    "default_title": "ninja"
+    "default_title": "kano"
   },
   "icons": {
     "16": "/images/ninja16.png",

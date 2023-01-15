@@ -287,11 +287,46 @@ function createCheckboxSvg() {
   return svg;
 }
 
+function createPinSvg() {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  let paths = null;
+
+  // set standard svg attributes
+  svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  svg.setAttribute("fill", "none");
+  svg.setAttribute("viewbox", "0 0 20 20");
+  svg.setAttribute("stroke-width", "1.5");
+  svg.setAttribute("height", "20");
+  svg.setAttribute("width", "20");
+
+  const createPaths = num => {
+    const paths = [];
+    for (let i = 0; i < num; i++) {
+      paths[i] = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      paths[i].setAttribute("stroke", "var(--color-three)");
+    }
+    return paths;
+  };
+
+  paths = createPaths(2);
+  paths[0].setAttribute(
+    "d",
+    "M14.167,10L17.917,7.917L12.083,2.083L10,5.833L2.917,8.75L11.25,17.083L14.167,10Z"
+  );
+  paths[1].setAttribute("d", "M1.25,18.75L7.083,12.917");
+
+  const fragment = document.createDocumentFragment();
+  paths.forEach(path => fragment.appendChild(path));
+  svg.appendChild(fragment);
+  return svg;
+}
+
 export {
   adjustScrollbar,
   getContainerToContentRatio,
   getContentHeight,
   createCheckboxSvg,
+  createPinSvg,
   getMaxScrollTop,
   getScrollbarHeight,
   resetTabCSSVariables,

@@ -188,6 +188,7 @@ function onTabDragEnd() {
       tab.style.setProperty("--drag-offset", 0 + "px");
       // tab.style.setProperty("--opacity", 1);
       tab.style.setProperty("--misc-offset", posDifference + "px");
+      tab.classList.remove("tab--tethered");
       tab.classList.remove("tab--floating");
     });
   });

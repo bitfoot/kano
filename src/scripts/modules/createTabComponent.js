@@ -1,6 +1,7 @@
 "use strict";
 
 import { createCheckboxSvg } from "./util";
+import { createPinSvg } from "./util";
 
 function createTabComponent(tab) {
   const tabComponent = document.createElement("li");
@@ -54,12 +55,21 @@ function createTabComponent(tab) {
   tabComponent.appendChild(label);
   tabComponent.appendChild(favIcon);
   tabComponent.appendChild(p);
+  if (tab.isPinned === true) {
+    tabComponent.classList.add("tab--pinned");
+    // const pinnedIndicator = document.createElement("img");
+    const pinnedIndicator = createPinSvg();
+    pinnedIndicator.classList.add("tab__pinned-indicator");
+    // pinnedIndicator.src = "images/pinned-indicator-icon@20x20.svg";
+    pinnedIndicator.alt = "Pinned tab";
+    tabComponent.appendChild(pinnedIndicator);
+  }
   if (tab.isDuplicate === true) {
     tabComponent.classList.add("tab--duplicate");
     const duplicateIndicator = document.createElement("img");
     duplicateIndicator.classList.add("tab__duplicate-indicator");
     duplicateIndicator.src = "images/duplicate-indicator-icon@20x20.svg";
-    duplicateIndicator.alt = "Duplicate tab indicator";
+    duplicateIndicator.alt = "Duplicate tab";
     tabComponent.appendChild(duplicateIndicator);
   }
   tabComponent.appendChild(closeTabBtn);

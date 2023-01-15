@@ -30,7 +30,7 @@
   touch-action: none;
   stroke: transparent;
   backdrop-filter: var(--backdrop-filter);
-  transition: background-color 100ms ease-out;
+  transition: background-color 100ms ease-out, padding 0ms 400ms;
   animation: returnToNormal 80ms ease-out var(--animation-iteration-count);
   font-family: 'Open Sans', sans-serif;
   --special-z-index: 0;
@@ -189,11 +189,10 @@
   }
 
   &__title {
+    position: relative;
     pointer-events: none;
     user-select: none;
-    // z-index: 2;
-    position: relative;
-    margin: 0 var(--greater-padding) 0 0;
+    margin: 0;
     flex: 1 0 0;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -284,25 +283,10 @@
     animation: 80ms ease-out forwards draggable;
     cursor: grabbing;
     background: transparent;
-    // z-index: -1;
-    // backdrop-filter: blur(8px);
-    // transform: translateY(var(--y-offset));
     transform: translateY(calc(var(--filter-offset) + var(--drag-offset)));
     transition: none;
     box-shadow: none;
-    // z-index: 9000;
 
-    // &:hover {
-    //   // transition: none;
-    //   // background: transparent;
-
-    //   & .tab__tab-button {
-    //     &::after {
-    //       content: "";
-    //       background: transparent;
-    //     }
-    //   }
-    // }
 
     & .tab__tab-button {
       cursor: grabbing;
@@ -342,25 +326,87 @@
     pointer-events: none;
     opacity: var(--opacity);
     background: var(--color-two-hover);
-    // background: purple;
     transform: translateY(calc(var(--filter-offset) + var(--drag-offset))) scale(var(--scale));
-    // transform: translateY(calc(var(--drag-offset) + var(--misc-offset))) scale(var(--scale));
     animation: none;
     transition: transform 60ms ease-in-out, opacity 60ms ease-in-out;
     z-index: -1000;
   }
 
+  &--pinned.tab--tethered {
+    pointer-events: none;
+
+    & .tab__pinned-indicator {
+
+      & path {
+        stroke: var(--color-accent-two);
+        transition: stroke 100ms ease-out;
+      }
+    }
+  }
+
+  &--pinned.tab--draggable {
+    // transform: translateY(calc(var(--filter-offset) + var(--drag-offset)));
+
+    & .tab__pinned-indicator {
+      & path {
+        stroke: var(--color-accent-two);
+        transition: stroke 100ms ease-out;
+      }
+    }
+  }
+
   &__duplicate-indicator {
-    // margin-right: var(--greater-padding);
-    stroke: var(--color-three);
+    pointer-events: none;
+    position: absolute;
+    right: var(--block-height);
     opacity: 0;
-    transition: opacity 200ms ease-out;
+    visibility: hidden;
+    transition: opacity 200ms ease-out, visibility 0ms 200ms;
+  }
+
+  &__pinned-indicator {
+    pointer-events: none;
+    position: absolute;
+    right: var(--block-height);
+    transition: transform 200ms 200ms ease-out;
+
+    & path {
+      transition: stroke 100ms ease-out;
+    }
   }
 
   &--duplicate {
+
+    padding-right: calc(calc(var(--block-height) * 2) - var(--greater-padding));
+
     & .tab__duplicate-indicator {
+      margin-left: var(--greater-padding);
+      visibility: visible;
       opacity: 1;
-      transition: opacity 200ms ease-out;
+      transition: none;
+    }
+
+  }
+
+  &--pinned {
+    padding-right: calc(calc(var(--block-height) * 2) - var(--greater-padding));
+  }
+
+  &--pinned.tab--duplicate {
+
+    padding-right: calc(calc(var(--block-height) * 3) - var(--greater-padding) - var(--greater-padding));
+
+    & .tab__pinned-indicator {
+      position: absolute;
+      right: var(--block-height);
+      transform: translateX(calc(calc(var(--block-height) - var(--greater-padding)) * -1));
+      margin-left: var(--greater-padding);
+      transition: none;
+    }
+
+    & .tab__duplicate-indicator {
+      position: absolute;
+      right: var(--block-height);
     }
   }
 

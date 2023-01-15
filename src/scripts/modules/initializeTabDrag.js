@@ -20,6 +20,7 @@ function initializeTabDrag(event) {
     container.classList.add("tab-list-container--no-scroll");
   });
 
+  const tabIndex = this.tabIndices[draggedTab.id][0];
   const tabList = this.tabList;
   const scrollState = this.scrollState;
   const scrollTop = scrollState.scrollTop;
@@ -28,8 +29,22 @@ function initializeTabDrag(event) {
   const tabHeight = draggedTab.offsetHeight;
   const margin = 6;
   const tabRowHeight = tabHeight + margin;
+  let wholeContentHeight;
+  const tabIsPinned = this.orderedTabObjects[tabIndex].isPinned;
+  const firstUnpinnedVisibleIndex = this.visibleTabIds.findIndex(id => {
+    const browserIndex = this.tabIndices[id][0];
+    return this.orderedTabObjects[browserIndex].isPinned === false;
+  });
+  const heightOfPinnedTabs = Math.max(
+    firstUnpinnedVisibleIndex * tabRowHeight,
+    0
+  );
 
-  const wholeContentHeight = this.visibleTabIds.length * tabRowHeight;
+  if (tabIsPinned === false) {
+    wholeContentHeight = this.visibleTabIds.length * tabRowHeight;
+  } else {
+    wholeContentHeight = heightOfPinnedTabs;
+  }
 
   const listedTabs = this.visibleTabIds.map(id => {
     const index = this.tabIndices[id][0];
@@ -39,6 +54,7 @@ function initializeTabDrag(event) {
   const tabsPosInfo = listedTabs.reduce((a, tab, index) => {
     const dragOffset = 0;
     const initialPos = index * tabRowHeight;
+    // const initialPos = index * tabRowHeight + heightOfPinnedTabs;
 
     a[tab.id] = {
       initialPos,
@@ -48,10 +64,10 @@ function initializeTabDrag(event) {
     return a;
   }, {});
 
-  // const tabIndex = this.tabIndices[draggedTab.id][0];
-  const tabIndex = this.tabIndices[draggedTab.id][1];
-  const tabsAbove = listedTabs.slice(0, tabIndex);
-  const tabsBelow = listedTabs.slice(tabIndex + 1);
+  // const tabVisibleIndex = this.tabIndices[draggedTab.id][0];
+  const tabVisibleIndex = this.tabIndices[draggedTab.id][1];
+  const tabsAbove = listedTabs.slice(0, tabVisibleIndex);
+  const tabsBelow = listedTabs.slice(tabVisibleIndex + 1);
   const initialTabPos = tabsPosInfo[draggedTab.id].initialPos;
 
   const initialTopPosInViewport =
@@ -60,11 +76,16 @@ function initializeTabDrag(event) {
     scrollState.scrollTop -
     scrollState.tabListOffset;
   const initialBottomPosInViewport = initialTopPosInViewport + tabHeight;
-
   const shiftY = pointerPosition - initialTabPos - headerHeight + scrollTop;
   const maxTabPosInList = wholeContentHeight - tabRowHeight;
   const minTabPosInList = 0;
-  const minTabOffsetInList = initialTabPos * -1;
+  // const minTabOffsetInList = initialTabPos * -1;
+  let minTabOffsetInList;
+  if (tabIsPinned) {
+    minTabOffsetInList = initialTabPos * -1;
+  } else {
+    minTabOffsetInList = initialTabPos * -1 + heightOfPinnedTabs;
+  }
   const maxTabOffsetInList = maxTabPosInList - initialTabPos;
   const midPoint = (tabHeight + margin) / 2;
 
@@ -81,16 +102,36 @@ function initializeTabDrag(event) {
   window.requestAnimationFrame(() => {
     draggedTab.style.setProperty("--scale", 1.01);
     draggedTab.classList.add("tab--draggable");
+    if (tabIsPinned) {
+      draggedTab.classList.add("tab--tethered");
+    }
     draggedTab.classList.remove("tab--held-down");
   });
 
+  // listedTabs
+  //   .filter(
+  //     (tab, index) =>
+  //       tab.id !== draggedTab.id && index >= firstUnpinnedVisibleIndex
+  //   )
+  //   .forEach(tab => {
+  //     window.requestAnimationFrame(() => {
+  //       tab.style.setProperty("--scale", 0.99);
+  //       tab.classList.add("tab--floating");
+  //     });
+  //   });
   listedTabs
-    .filter(t => t.id !== draggedTab.id)
-    .forEach(t => {
-      window.requestAnimationFrame(() => {
-        t.style.setProperty("--scale", 0.99);
-        t.classList.add("tab--floating");
-      });
+    .filter(tab => tab.id !== draggedTab.id)
+    .forEach((tab, index) => {
+      if (index < firstUnpinnedVisibleIndex) {
+        window.requestAnimationFrame(() => {
+          tab.classList.add("tab--tethered");
+        });
+      } else {
+        window.requestAnimationFrame(() => {
+          tab.style.setProperty("--scale", 0.99);
+          tab.classList.add("tab--floating");
+        });
+      }
     });
 
   this.dragState = {
@@ -180,11 +221,20 @@ function initializeTabDrag(event) {
 
       return maxOffset;
     },
+    // get currentMinOffset() {
+    //   const minOffset =
+    //     this.minTabOffsetInList +
+    //     this.scrollState.tabListOffset +
+    //     this.scrollState.scrollTop;
+    //   return minOffset;
+    // },
     get currentMinOffset() {
+      const scrollOffset =
+        this.scrollState.tabListOffset + this.scrollState.scrollTop;
       const minOffset =
         this.minTabOffsetInList +
-        this.scrollState.tabListOffset +
-        this.scrollState.scrollTop;
+        Math.max(scrollOffset - heightOfPinnedTabs, 0);
+      // const minOffset = this.minTabOffsetInList + scrollOffset;
       return minOffset;
     },
     getScrollDistance() {
