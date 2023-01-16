@@ -30,8 +30,10 @@ function filter() {
 
   const prepareFilteredTabObjects = tabObjects => {
     // filterState.numOfFilteredTabs = 0;
-    filterState.firstHiddenTabIndex = null;
-    filterState.lastHiddenTabIndex = null;
+    filterState.firstHiddenUnpinnedTabIndex = null;
+    filterState.lastHiddenUnpinnedTabIndex = null;
+    filterState.firstHiddenPinnedTabIndex = null;
+    filterState.lastHiddenPinnedTabIndex = null;
     filterState.lastVisibleTabIndex = null;
     filterState.lastNewlyFilteredOutTabIndex = null;
     filterState.firstNewlyFilteredInTabIndex = null;
@@ -92,10 +94,18 @@ function filter() {
         state.tabIndices[obj.id][1] = null;
         newFilteredTabObj.isFilteredOut = true;
         filteredOutAbove += 1;
-        filterState.lastHiddenTabIndex = index;
-        if (filterState.firstHiddenTabIndex === null) {
-          filterState.firstHiddenTabIndex = index;
+        if (obj.isPinned === false) {
+          filterState.lastHiddenUnpinnedTabIndex = index;
+          if (filterState.firstHiddenUnpinnedTabIndex === null) {
+            filterState.firstHiddenUnpinnedTabIndex = index;
+          }
+        } else {
+          filterState.lastHiddenPinnedTabIndex = index;
+          if (filterState.firstHiddenPinnedTabIndex === null) {
+            filterState.firstHiddenPinnedTabIndex = index;
+          }
         }
+
         if (!wasFilteredOut) {
           newFilteredTabObj.isNewlyFilteredOut = true;
           filterState.newlyFilteredOut += 1;

@@ -62,8 +62,10 @@ const state = {
     clearFilterBtn: document.getElementById("remove-filter-text-btn"),
     input: document.getElementById("filter-input"),
     tabs: {},
-    firstHiddenTabIndex: null,
-    lastHiddenTabIndex: null,
+    firstHiddenUnpinnedTabIndex: null,
+    lastHiddenUnpinnedTabIndex: null,
+    firstHiddenPinnedTabIndex: null,
+    lastHiddenPinnedTabIndex: null,
     lastVisibleTabIndex: null,
     lastNewlyFilteredOutTabIndex: null,
     firstNewlyFilteredInTabIndex: null

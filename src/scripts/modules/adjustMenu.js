@@ -37,12 +37,23 @@ function adjustMenu() {
   }
 
   this.menu.checkedVisibleTabs = [];
-  let firstUncheckedVisibleIndex = null;
-  let lastCheckedVisibleIndex = null;
-  const firstHiddenTabIndex = this.filterState.firstHiddenTabIndex;
-  let lastUncheckedVisibleIndex = null;
-  let firstCheckedVisibleIndex = null;
-  const lastHiddenTabIndex = this.filterState.lastHiddenTabIndex;
+
+  let firstUncheckedPinnedIndex = null;
+  let lastCheckedPinnedIndex = null;
+  let lastUncheckedPinnedIndex = null;
+  let firstCheckedPinnedIndex = null;
+
+  let firstUncheckedUnpinnedIndex = null;
+  let lastCheckedUnpinnedIndex = null;
+  let lastUncheckedUnpinnedIndex = null;
+  let firstCheckedUnpinnedIndex = null;
+
+  const firstHiddenPinnedTabIndex = this.filterState.firstHiddenPinnedTabIndex;
+  const lastHiddenPinnedTabIndex = this.filterState.lastHiddenPinnedTabIndex;
+  const firstHiddenUnpinnedTabIndex = this.filterState
+    .firstHiddenUnpinnedTabIndex;
+  const lastHiddenUnpinnedTabIndex = this.filterState
+    .lastHiddenUnpinnedTabIndex;
   let visibleDuplicatesExist = false;
 
   this.visibleTabIds.forEach(id => {
@@ -53,49 +64,100 @@ function adjustMenu() {
     }
 
     if (tabObject.isChecked) {
-      if (firstCheckedVisibleIndex === null) {
-        firstCheckedVisibleIndex = indexInBrowser;
-      }
-      lastCheckedVisibleIndex = indexInBrowser;
       this.menu.checkedVisibleTabs.push(this.tabs[indexInBrowser]);
-    } else {
-      if (firstUncheckedVisibleIndex === null) {
-        firstUncheckedVisibleIndex = indexInBrowser;
+      if (tabObject.isPinned) {
+        if (firstCheckedPinnedIndex === null) {
+          firstCheckedPinnedIndex = indexInBrowser;
+        }
+        lastCheckedPinnedIndex = indexInBrowser;
+      } else {
+        if (firstCheckedUnpinnedIndex === null) {
+          firstCheckedUnpinnedIndex = indexInBrowser;
+        }
+        lastCheckedUnpinnedIndex = indexInBrowser;
       }
-      lastUncheckedVisibleIndex = indexInBrowser;
+    } else {
+      if (tabObject.isPinned) {
+        if (firstUncheckedPinnedIndex === null) {
+          firstUncheckedPinnedIndex = indexInBrowser;
+        }
+        lastUncheckedPinnedIndex = indexInBrowser;
+      } else {
+        if (firstUncheckedUnpinnedIndex === null) {
+          firstUncheckedUnpinnedIndex = indexInBrowser;
+        }
+        lastUncheckedUnpinnedIndex = indexInBrowser;
+      }
     }
   });
 
   // console.log(this.menu.checkedVisibleTabs);
   const buttonsToDisable = [];
   const buttonsToEnable = [];
-  const checkedVisibleTabsExist = lastCheckedVisibleIndex !== null;
+  const checkedVisibleTabsExist =
+    lastCheckedUnpinnedIndex !== null || lastCheckedPinnedIndex !== null;
 
   if (checkedVisibleTabsExist) {
     buttonsToEnable.push(this.menu.buttons.moveToNewWindow);
-    const uncheckedVisibleTabsAboveExist =
-      firstUncheckedVisibleIndex !== null &&
-      firstUncheckedVisibleIndex < lastCheckedVisibleIndex;
+    const uncheckedUnpinnedTabsAboveExist =
+      firstUncheckedUnpinnedIndex !== null &&
+      lastCheckedUnpinnedIndex !== null &&
+      firstUncheckedUnpinnedIndex < lastCheckedUnpinnedIndex;
+
+    const uncheckedPinnedTabsAboveExist =
+      firstUncheckedPinnedIndex !== null &&
+      lastCheckedPinnedIndex !== null &&
+      firstUncheckedPinnedIndex < lastCheckedPinnedIndex;
+
+    const uncheckedTabsAboveExist =
+      uncheckedUnpinnedTabsAboveExist || uncheckedPinnedTabsAboveExist;
+
+    const hiddenPinnedTabsAboveExist =
+      firstHiddenPinnedTabIndex !== null &&
+      lastCheckedPinnedIndex !== null &&
+      firstHiddenPinnedTabIndex < lastCheckedPinnedIndex;
+
+    const hiddenUnpinnedTabsAboveExist =
+      firstHiddenUnpinnedTabIndex !== null &&
+      lastCheckedUnpinnedIndex !== null &&
+      firstHiddenUnpinnedTabIndex < lastCheckedUnpinnedIndex;
 
     const hiddenTabsAboveExist =
-      firstHiddenTabIndex !== null &&
-      firstHiddenTabIndex < lastCheckedVisibleIndex;
+      hiddenPinnedTabsAboveExist || hiddenUnpinnedTabsAboveExist;
 
-    const uncheckedVisibleTabsBelowExist =
-      lastUncheckedVisibleIndex !== null &&
-      lastUncheckedVisibleIndex > firstCheckedVisibleIndex;
+    const uncheckedUnpinnedTabsBelowExist =
+      lastUncheckedUnpinnedIndex !== null &&
+      firstCheckedUnpinnedIndex !== null &&
+      lastUncheckedUnpinnedIndex > firstCheckedUnpinnedIndex;
+
+    const uncheckedPinnedTabsBelowExist =
+      lastUncheckedPinnedIndex !== null &&
+      firstCheckedPinnedIndex !== null &&
+      lastUncheckedPinnedIndex > firstCheckedPinnedIndex;
+
+    const uncheckedTabsBelowExist =
+      uncheckedUnpinnedTabsBelowExist || uncheckedPinnedTabsBelowExist;
+
+    const hiddenPinnedTabsBelowExist =
+      lastHiddenPinnedTabIndex !== null &&
+      firstCheckedPinnedIndex !== null &&
+      lastHiddenPinnedTabIndex > firstCheckedPinnedIndex;
+
+    const hiddenUnpinnedTabsBelowExist =
+      lastHiddenUnpinnedTabIndex !== null &&
+      firstCheckedUnpinnedIndex !== null &&
+      lastHiddenUnpinnedTabIndex > firstCheckedUnpinnedIndex;
 
     const hiddenTabsBelowExist =
-      lastHiddenTabIndex !== null &&
-      lastHiddenTabIndex > firstCheckedVisibleIndex;
+      hiddenPinnedTabsBelowExist || hiddenUnpinnedTabsBelowExist;
 
-    if (uncheckedVisibleTabsAboveExist || hiddenTabsAboveExist) {
+    if (uncheckedTabsAboveExist || hiddenTabsAboveExist) {
       buttonsToEnable.push(this.menu.buttons.moveToTheTop);
     } else {
       buttonsToDisable.push(this.menu.buttons.moveToTheTop);
     }
 
-    if (uncheckedVisibleTabsBelowExist || hiddenTabsBelowExist) {
+    if (uncheckedTabsBelowExist || hiddenTabsBelowExist) {
       buttonsToEnable.push(this.menu.buttons.moveToTheBottom);
     } else {
       buttonsToDisable.push(this.menu.buttons.moveToTheBottom);
