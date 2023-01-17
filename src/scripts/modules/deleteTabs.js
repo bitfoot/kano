@@ -30,13 +30,14 @@ function deleteTabs(options = {}) {
   }, {});
 
   const reorderedTabObjects = [];
+  const remainingVisibleTabIds = [];
+  const remainingTabs = [];
   let numDeleted = 0;
   let maxChangeInPosition = 0;
   let firstHiddenTabIndex = null;
   let firstDeletedTab = null;
   let firstVisibleTabBelowDeletedTab = null;
-  const remainingVisibleTabIds = [];
-  const remainingTabs = [];
+  this.menu.lastPinnedTabIndex = null;
   let sign = 0;
   if (movingToNewWindow) {
     sign = newWindowIsToTheRight === true ? 1 : -1;
@@ -89,6 +90,10 @@ function deleteTabs(options = {}) {
       remainingTabs.push(tab);
       // update tab's browser index and calculate offset
       this.tabIndices[obj.id][0] = reorderedTabObjects.length;
+
+      if (obj.isPinned) {
+        this.menu.lastPinnedTabIndex = this.tabIndices[obj.id][0];
+      }
 
       // if tab is not hidden, update its visible index
       if (this.tabIndices[obj.id][1] !== null) {

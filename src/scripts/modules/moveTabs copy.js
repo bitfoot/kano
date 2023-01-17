@@ -9,21 +9,6 @@ function moveTabs(destinaton) {
   const tabRowHeight = tabHeight + margin;
   const checkedVisibleTabs = this.menu.checkedVisibleTabs;
   const lastTabIndex = this.orderedTabObjects.length - 1;
-
-  const lastPinnedTabIndex = this.menu.lastPinnedTabIndex;
-  let lastUnpinnedTabIndex = null;
-  if (lastPinnedTabIndex !== lastTabIndex) {
-    lastUnpinnedTabIndex = lastTabIndex;
-  }
-
-  let numPinnedTabs = 0;
-  if (this.menu.lastCheckedPinnedIndex !== null) {
-    numPinnedTabs = this.menu.lastCheckedPinnedIndex + 1;
-  }
-
-  const checkedVisiblePinnedTabs = [];
-  const checkedVisibleUnpinnedTabs = [];
-
   const numHiddenTabs =
     this.orderedTabObjects.length - this.visibleTabIds.length;
   const movedTabFilterOffset =
@@ -137,9 +122,6 @@ function moveTabs(destinaton) {
           const numUncheckedBelow = numUnchecked - numUncheckedAbove;
           const distanceToMove = numUncheckedBelow * tabRowHeight;
           const tab = this.tabs[index];
-          if (obj.isPinned === true) {
-            checkedVisiblePinnedTabs.push(tab);
-          }
           if (numCheckedAbove === 0) {
             if (numUncheckedBelow > 0) {
               maxDistanceToMove =
