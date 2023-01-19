@@ -38,6 +38,7 @@ function deleteTabs(options = {}) {
   let firstDeletedTab = null;
   let firstVisibleTabBelowDeletedTab = null;
   this.menu.lastPinnedTabIndex = null;
+  this.menu.firstUnpinnedTabIndex = null;
   let sign = 0;
   if (movingToNewWindow) {
     sign = newWindowIsToTheRight === true ? 1 : -1;
@@ -93,6 +94,8 @@ function deleteTabs(options = {}) {
 
       if (obj.isPinned) {
         this.menu.lastPinnedTabIndex = this.tabIndices[obj.id][0];
+      } else if (this.menu.firstUnpinnedTabIndex === null) {
+        this.menu.firstUnpinnedTabIndex = this.tabIndices[obj.id][0];
       }
 
       // if tab is not hidden, update its visible index

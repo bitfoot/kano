@@ -31,6 +31,7 @@ const state = {
   menu: {
     checkedVisibleTabs: [],
     lastPinnedTabIndex: null,
+    firstUnpinnedTabIndex: null,
     buttons: {
       moveToNewWindow: {
         shouldBeEnabled: false,

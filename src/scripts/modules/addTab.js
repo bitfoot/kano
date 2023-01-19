@@ -8,9 +8,10 @@ function addTab(browserTab) {
   this.orderedTabObjects[index] = createTabObj.call(this, browserTab);
   if (this.orderedTabObjects[index].isPinned) {
     this.menu.lastPinnedTabIndex = index;
+  } else if (this.menu.firstUnpinnedTabIndex === null) {
+    this.menu.firstUnpinnedTabIndex = index;
   }
   this.tabIndices[id] = [index, index];
 }
 
-// module.exports = addTab;
 export { addTab };
