@@ -311,19 +311,18 @@ function initializeTabDrag(event) {
         } else if (
           imaginaryBottomPos > this.scrollBoundary.down &&
           this.scrollState.scrollTop + this.scrollState.tabListOffset <
-          maxScrollTop
+          this.scrollState.maxScrollTop
         ) {
           distance = (imaginaryBottomPos - this.scrollBoundary.down) / damper;
           if (
             this.scrollState.scrollTop +
             this.scrollState.tabListOffset +
             distance >
-            // this.scrollState.maxScrollTop
-            maxScrollTop
+            this.scrollState.maxScrollTop
           ) {
             distance =
               // this.scrollState.maxScrollTop - this.scrollState.tabListOffset;
-              maxScrollTop -
+              this.scrollState.maxScrollTop -
               this.scrollState.tabListOffset -
               this.scrollState.scrollTop;
           }
