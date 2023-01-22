@@ -33,7 +33,7 @@ function createTabComponent(tab) {
   // create tab Title
   const p = document.createElement("p");
   p.classList.add("tab__title");
-  p.textContent = tab.title;
+  p.textContent = tab.title + " " + tab.id;
 
   // create delete button
   const closeTabBtn = document.createElement("button");

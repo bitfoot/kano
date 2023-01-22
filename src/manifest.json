@@ -11,16 +11,16 @@
   ],
   "action": {
     "default_icon": {
-      "32": "images/ninja32.png"
+      "32": "images/kano32.png"
     },
     "default_popup": "index.html",
     "default_title": "kano"
   },
   "icons": {
-    "16": "/images/ninja16.png",
-    "32": "/images/ninja32.png",
-    "48": "/images/ninja48.png",
-    "128": "/images/ninja128.png"
+    "16": "/images/kano16.png",
+    "32": "/images/kano32.png",
+    "48": "/images/kano48.png",
+    "128": "/images/kano128.png"
   },
   "manifest_version": 3
 }

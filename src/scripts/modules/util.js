@@ -55,7 +55,6 @@ function disableHeaderControls() {
 
   const filter = document.getElementById("filter");
   const removeFilterTextBtn = document.getElementById("remove-filter-text-btn");
-  console.log(Object.entries(this.menu.buttons));
   Object.entries(this.menu.buttons).forEach(entry => {
     const btn = entry[1].element;
     disableButton(btn);
