@@ -69,18 +69,24 @@ function moveTabs(destinaton) {
   const numUncheckedPinned = numPinned - numCheckedPinned;
   const numUncheckedUnpinned = numUnpinned - numCheckedUnpinned;
   let lastVisiblePinnedTabFilterOffset = 0;
-  let lastVisibleUnpinnedTabFilterOffset = 0;
+  // let lastVisibleUnpinnedTabFilterOffset = 0;
   if (this.filterState.tabs[lastVisiblePinnedTabId]) {
     lastVisiblePinnedTabFilterOffset = this.filterState.tabs[
       lastVisiblePinnedTabId
     ].filterOffset;
   }
-  if (this.filterState.tabs[lastVisibleUnpinnedTabId]) {
-    lastVisibleUnpinnedTabFilterOffset = this.filterState.tabs[
-      lastVisibleUnpinnedTabId
-    ].filterOffset;
-  }
+  // console.log(lastVisibleUnpinnedTabId);
+  // if (this.filterState.tabs[lastVisibleUnpinnedTabId]) {
+  //   lastVisibleUnpinnedTabFilterOffset = this.filterState.tabs[
+  //     lastVisibleUnpinnedTabId
+  //   ].filterOffset;
+  // }
 
+  const numHiddenTabs =
+    this.orderedTabObjects.length - this.visibleTabIds.length;
+  const movedUnpinnedTabFilterOffset = numHiddenTabs * tabRowHeight * -1;
+  console.log(numHiddenTabs);
+  // console.log(lastVisibleUnpinnedTabFilterOffset);
   let lastPinnedTab = null;
   let lastUnpinnedTab = null;
   // let firstUnpinnedTabIndex = null;
@@ -280,7 +286,7 @@ function moveTabs(destinaton) {
             numUnchecked = numUncheckedUnpinned;
             numCheckedAbove = numCheckedUnpinnedAbove;
             numUncheckedAbove = numUncheckedUnpinnedAbove;
-            movedTabFilterOffset = lastVisibleUnpinnedTabFilterOffset;
+            movedTabFilterOffset = movedUnpinnedTabFilterOffset;
             numCheckedUnpinnedAbove += 1;
             lastTabIndex = lastUnpinnedTabIndex;
           }

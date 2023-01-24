@@ -298,33 +298,26 @@ function initializeTabDrag(event) {
       const getDistance = () => {
         let distance = 0;
         const damper = eventType === "pointerdown" ? 12 : 1;
-        if (imaginaryTopPos < this.scrollBoundary.up) {
+        const scrollOffset =
+          this.scrollState.scrollTop + this.scrollState.tabListOffset;
+        if (
+          imaginaryTopPos < this.scrollBoundary.up &&
+          scrollOffset > minTabPosInList
+        ) {
           distance = (imaginaryTopPos - this.scrollBoundary.up) / damper;
-          if (
-            this.scrollState.tabListOffset + distance <
-            this.scrollState.scrollTop * -1
-          ) {
-            distance =
-              (this.scrollState.scrollTop + this.scrollState.tabListOffset) *
-              -1;
+
+          if (scrollOffset + distance < minTabPosInList) {
+            distance = (scrollOffset - minTabPosInList) * -1;
           }
         } else if (
           imaginaryBottomPos > this.scrollBoundary.down &&
-          this.scrollState.scrollTop + this.scrollState.tabListOffset <
-          this.scrollState.maxScrollTop
+          scrollOffset < maxScrollTop
         ) {
           distance = (imaginaryBottomPos - this.scrollBoundary.down) / damper;
-          if (
-            this.scrollState.scrollTop +
-            this.scrollState.tabListOffset +
-            distance >
-            this.scrollState.maxScrollTop
-          ) {
+          if (scrollOffset + distance > maxScrollTop) {
             distance =
               // this.scrollState.maxScrollTop - this.scrollState.tabListOffset;
-              this.scrollState.maxScrollTop -
-              this.scrollState.tabListOffset -
-              this.scrollState.scrollTop;
+              maxScrollTop - scrollOffset;
           }
         }
         return distance;
