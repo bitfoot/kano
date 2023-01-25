@@ -12,15 +12,28 @@ function moveTabs(destinaton) {
   let lastPinnedTabIndex = this.menu.lastPinnedTabIndex;
   let firstUnpinnedTabIndex = null;
   let lastUnpinnedTabIndex = null;
+  let movedPinnedTabsFilterOffset = 0;
+  let lastPinnedTabId;
+  let firstUnpinnedTabId;
   if (lastPinnedTabIndex !== lastTabIndex) {
     lastUnpinnedTabIndex = lastTabIndex;
     if (lastPinnedTabIndex === null) {
       firstUnpinnedTabIndex = 0;
     } else {
       firstUnpinnedTabIndex = lastPinnedTabIndex + 1;
+      // lastPinnedTabId = this.orderedTabObjects[lastPinnedTabIndex].id;
+      // firstUnpinnedTabId = this.orderedTabObjects[firstUnpinnedTabIndex].id;
+      // movedPinnedTabsFilterOffset = this.filterState.tabs[firstUnpinnedTabId]
+      //   .filterOffset;
     }
   }
-  // console.log(`last pinned tab index is ${lastPinnedTabIndex}`);
+
+  // if ()
+
+  // const lastPinnedTabId = this.orderedTabObjects[lastPinnedTabIndex].id;
+  // const numHiddenAboveLastPinned = this.filterState.tabs[lastPinnedTabId]
+  //   ? this.filterState.tabs[lastPinnedTabId].filteredOutAbove
+  //   : 0;
 
   // let numPinnedTabs = 0;
   // if (this.menu.lastCheckedPinnedIndex !== null) {
@@ -51,14 +64,14 @@ function moveTabs(destinaton) {
 
     if (isPinned === true) {
       numPinned += 1;
-      lastVisiblePinnedTabId = id;
+      // lastVisiblePinnedTabId = id;
       if (isChecked === true) {
         checkedVisiblePinnedTabs[numCheckedPinned] = tab;
         numCheckedPinned += 1;
       }
     } else {
       numUnpinned += 1;
-      lastVisibleUnpinnedTabId = id;
+      // lastVisibleUnpinnedTabId = id;
       if (isChecked === true) {
         checkedVisibleUnpinnedTabs[numCheckedUnpinned] = tab;
         numCheckedUnpinned += 1;
@@ -68,13 +81,15 @@ function moveTabs(destinaton) {
 
   const numUncheckedPinned = numPinned - numCheckedPinned;
   const numUncheckedUnpinned = numUnpinned - numCheckedUnpinned;
-  let lastVisiblePinnedTabFilterOffset = 0;
+  // let lastVisiblePinnedTabFilterOffset = 0;
   // let lastVisibleUnpinnedTabFilterOffset = 0;
-  if (this.filterState.tabs[lastVisiblePinnedTabId]) {
-    lastVisiblePinnedTabFilterOffset = this.filterState.tabs[
-      lastVisiblePinnedTabId
-    ].filterOffset;
-  }
+  // if (this.filterState.tabs[lastVisiblePinnedTabId]) {
+  //   console.log(lastVisiblePinnedTabId);
+  //   lastVisiblePinnedTabFilterOffset = this.filterState.tabs[
+  //     lastVisiblePinnedTabId
+  //   ].filterOffset;
+  //   console.log(lastVisiblePinnedTabId, lastVisiblePinnedTabFilterOffset);
+  // }
   // console.log(lastVisibleUnpinnedTabId);
   // if (this.filterState.tabs[lastVisibleUnpinnedTabId]) {
   //   lastVisibleUnpinnedTabFilterOffset = this.filterState.tabs[
@@ -85,19 +100,19 @@ function moveTabs(destinaton) {
   const numHiddenTabs =
     this.orderedTabObjects.length - this.visibleTabIds.length;
   const movedUnpinnedTabFilterOffset = numHiddenTabs * tabRowHeight * -1;
-  console.log(numHiddenTabs);
+  // console.log(numHiddenTabs);
   // console.log(lastVisibleUnpinnedTabFilterOffset);
-  let lastPinnedTab = null;
-  let lastUnpinnedTab = null;
+  // let lastPinnedTab = null;
+  // let lastUnpinnedTab = null;
   // let firstUnpinnedTabIndex = null;
 
-  if (lastPinnedTabIndex !== null) {
-    lastPinnedTab = this.tabs[lastPinnedTabIndex];
-    // console.log(lastPinnedTab);
-  }
-  if (lastUnpinnedTabIndex !== null) {
-    lastUnpinnedTab = this.tabs[lastUnpinnedTabIndex];
-  }
+  // if (lastPinnedTabIndex !== null) {
+  //   lastPinnedTab = this.tabs[lastPinnedTabIndex];
+  //   // console.log(lastPinnedTab);
+  // }
+  // if (lastUnpinnedTabIndex !== null) {
+  //   lastUnpinnedTab = this.tabs[lastUnpinnedTabIndex];
+  // }
 
   // const numChecked = this.menu.checkedVisibleTabs.length;
   // let numCheckedAbove = 0;
@@ -121,8 +136,9 @@ function moveTabs(destinaton) {
     destinaton,
     onMoveEnd: function () {
       // reset style variables and move tabs in the DOM
-      this.visibleTabIds.forEach((id, index) => {
-        const tab = visibleTabs[index];
+      visibleTabs.forEach(tab => {
+        // const tab = visibleTabs[index];
+        const id = tab.id;
         let newOffset = 0;
         if (this.filterState.tabs[id]) {
           newOffset = this.filterState.tabs[id].filterOffset;
@@ -268,14 +284,14 @@ function moveTabs(destinaton) {
           let numUncheckedAbove;
           let numChecked;
           let numUnchecked;
-          let movedTabFilterOffset = 0;
+          // let movedTabFilterOffset = 0;
           let lastTabIndex;
           if (obj.isPinned) {
             numChecked = numCheckedPinned;
             numUnchecked = numUncheckedPinned;
             numCheckedAbove = numCheckedPinnedAbove;
             numUncheckedAbove = numUncheckedPinnedAbove;
-            movedTabFilterOffset = lastVisiblePinnedTabFilterOffset;
+            // movedTabFilterOffset = movedPinnedTabsFilterOffset;
             numCheckedPinnedAbove += 1;
             lastTabIndex = lastPinnedTabIndex;
             window.requestAnimationFrame(() => {
@@ -286,7 +302,7 @@ function moveTabs(destinaton) {
             numUnchecked = numUncheckedUnpinned;
             numCheckedAbove = numCheckedUnpinnedAbove;
             numUncheckedAbove = numUncheckedUnpinnedAbove;
-            movedTabFilterOffset = movedUnpinnedTabFilterOffset;
+            // movedTabFilterOffset = movedUnpinnedTabFilterOffset;
             numCheckedUnpinnedAbove += 1;
             lastTabIndex = lastUnpinnedTabIndex;
           }
@@ -314,6 +330,10 @@ function moveTabs(destinaton) {
             lastTabIndex - numCheckedBelow,
             this.tabIndices[id][1] + numUncheckedBelow
           ];
+
+          const hiddenAbove = this.tabIndices[id][0] - this.tabIndices[id][1];
+          const movedTabFilterOffset = hiddenAbove * tabRowHeight * -1;
+
           if (this.filterState.tabs[id]) {
             this.filterState.tabs[id].filterOffset = movedTabFilterOffset;
           }
@@ -406,14 +426,14 @@ function moveTabs(destinaton) {
           let numUncheckedAbove;
           let numChecked;
           // let numUnchecked;
-          let movedTabFilterOffset = 0;
+          // let movedTabFilterOffset = 0;
           let firstTabIndex;
           if (obj.isPinned) {
             numChecked = numCheckedPinned;
             // numUnchecked = numUncheckedPinned;
             numCheckedAbove = numCheckedPinnedAbove;
             numUncheckedAbove = numUncheckedPinnedAbove;
-            movedTabFilterOffset = 0;
+            // movedTabFilterOffset = 0;
             numCheckedPinnedAbove += 1;
             firstTabIndex = 0;
             window.requestAnimationFrame(() => {
@@ -424,7 +444,7 @@ function moveTabs(destinaton) {
             // numUnchecked = numUncheckedUnpinned;
             numCheckedAbove = numCheckedUnpinnedAbove;
             numUncheckedAbove = numUncheckedUnpinnedAbove;
-            movedTabFilterOffset = lastVisiblePinnedTabFilterOffset;
+            // movedTabFilterOffset = lastVisiblePinnedTabFilterOffset;
             numCheckedUnpinnedAbove += 1;
             firstTabIndex = firstUnpinnedTabIndex;
           }
@@ -451,6 +471,10 @@ function moveTabs(destinaton) {
           // this.tabIndices[id] = [numCheckedAbove, numCheckedAbove];
           this.tabIndices[id][0] = firstTabIndex + numCheckedAbove;
           this.tabIndices[id][1] -= numUncheckedAbove;
+
+          const hiddenAbove = this.tabIndices[id][0] - this.tabIndices[id][1];
+          const movedTabFilterOffset = hiddenAbove * tabRowHeight * -1;
+
           if (this.filterState.tabs[id]) {
             this.filterState.tabs[id].filterOffset = movedTabFilterOffset;
           }

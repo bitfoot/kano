@@ -332,6 +332,15 @@
     z-index: -1000;
   }
 
+  &--pinned {
+    & .tab__pinned-indicator {
+
+      & path {
+        transition: stroke 3000ms ease-out;
+      }
+    }
+  }
+
   &--pinned.tab--tethered {
     pointer-events: none;
 
