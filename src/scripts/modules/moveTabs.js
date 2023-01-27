@@ -145,9 +145,9 @@ function moveTabs(destinaton) {
         }
 
         window.requestAnimationFrame(() => {
-          tab.classList.remove("tab--moving");
-          tab.classList.remove("tab--peach");
-          tab.classList.remove("tab--tethered");
+          tab.classList.remove("tab--moving", "tab--peach", "tab--tethered");
+          // tab.classList.remove("tab--peach");
+          // tab.classList.remove("tab--tethered");
           tab.style.setProperty("--filter-offset", newOffset + "px");
           tab.style.setProperty("--moved-offset", 0 + "px");
         });

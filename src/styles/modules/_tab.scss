@@ -334,9 +334,12 @@
 
   &--pinned {
     & .tab__pinned-indicator {
-
       & path {
+        // stroke: var(--color-three);
         transition: stroke 3000ms ease-out;
+        animation: pinCoolDown 3000ms ease-out var(--animation-iteration-count);
+        // animation-direction: reverse;
+        // animation: none;
       }
     }
   }
@@ -345,24 +348,34 @@
     pointer-events: none;
 
     & .tab__pinned-indicator {
-
       & path {
-        stroke: var(--color-accent-two);
-        transition: stroke 100ms ease-out;
+        // stroke: var(--color-accent-two);
+        // transition: stroke 3000ms ease-out;
+        animation: pinHeatUp 100ms ease-out forwards;
       }
     }
   }
 
-  &--pinned.tab--draggable {
-    // transform: translateY(calc(var(--filter-offset) + var(--drag-offset)));
+  // &--pinned.tab--draggable {
 
-    & .tab__pinned-indicator {
-      & path {
-        stroke: var(--color-accent-two);
-        transition: stroke 100ms ease-out;
-      }
-    }
-  }
+  //   & .tab__pinned-indicator {
+  //     & path {
+  //       stroke: var(--color-accent-two);
+  //       transition: stroke 100ms ease-out;
+  //       animation: pinHeatUp 100ms ease-out;
+  //     }
+  //   }
+  // }
+
+  // &--pinned.tab--moving {
+
+  //   & .tab__pinned-indicator {
+  //     & path {
+  //       stroke: var(--color-accent-two);
+  //       transition: stroke 100ms ease-out;
+  //     }
+  //   }
+  // }
 
   &__duplicate-indicator {
     pointer-events: none;
@@ -379,13 +392,13 @@
     right: var(--block-height);
     transition: transform 200ms 200ms ease-out;
 
-    & path {
-      transition: stroke 100ms ease-out;
-    }
+    // & path {
+    //   stroke: var(--color-three);
+    //   transition: stroke 3000ms ease-out;
+    // }
   }
 
   &--duplicate {
-
     padding-right: calc(calc(var(--block-height) * 2) - var(--greater-padding));
 
     & .tab__duplicate-indicator {
@@ -399,6 +412,13 @@
 
   &--pinned {
     padding-right: calc(calc(var(--block-height) * 2) - var(--greater-padding));
+
+    // & .tab__pinned-indicator {
+    //   & path {
+    //     // stroke: lime;
+    //     transition: stroke 3000ms ease-out;
+    //   }
+    // }
   }
 
   &--pinned.tab--duplicate {
@@ -488,6 +508,24 @@
   to {
     opacity: 1;
     transform: translateY(var(--filter-offset)) scale(1);
+  }
+}
+
+@keyframes pinCoolDown {
+
+  from {
+    stroke: var(--color-accent-two);
+  }
+
+  to {
+    stroke: var(--color-three);
+  }
+}
+
+@keyframes pinHeatUp {
+
+  to {
+    stroke: var(--color-accent-two);
   }
 }
 

@@ -51,6 +51,8 @@ function initializeTabDrag(event) {
     }
   }
 
+  resetTabCSSVariables(listedTabs);
+
   const heightOfUnpinnedTabs =
     (this.visibleTabIds.length - numPinnedTabs) * tabRowHeight;
   const heightOfPinnedTabs = numPinnedTabs * tabRowHeight;
@@ -108,7 +110,7 @@ function initializeTabDrag(event) {
     draggedTab.firstChild.focus();
   };
   // draggedTab.setPointerCapture(event.pointerId);
-  resetTabCSSVariables(this.tabs);
+  // resetTabCSSVariables(this.tabs);
   window.requestAnimationFrame(() => {
     draggedTab.style.setProperty("--scale", 1.01);
     draggedTab.classList.add("tab--draggable");
