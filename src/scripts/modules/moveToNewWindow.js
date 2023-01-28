@@ -3,12 +3,14 @@
 import { deleteTabs } from "./deleteTabs";
 
 function moveToNewWindow() {
-  // const tabComponentIds = this.menu.checkedVisibleTabs.map(tab => tab.id);
   const tabComponentIds = [];
   const browserTabIds = [];
-  this.menu.checkedVisibleTabs.forEach(tab => {
-    tabComponentIds.push(tab.id);
-    browserTabIds.push(+tab.id.split("-")[1]);
+  this.visibleTabIds.forEach(id => {
+    const browserIndex = this.tabIndices[id][0];
+    if (this.orderedTabObjects[browserIndex].isChecked) {
+      tabComponentIds.push(id);
+      browserTabIds.push(+id.split("-")[1]);
+    }
   });
 
   const getNewWindowPositionInfo = async () => {
@@ -44,9 +46,6 @@ function moveToNewWindow() {
 
   // move browser tabs over to a new window
   getNewWindowPositionInfo().then(posInfo => {
-    // remove tabs from the DOM and update state to reflect these changes
-    // posInfo.isToTheRightOfCurrentWindow;
-
     const firstId = browserTabIds[0];
     const createData = {
       tabId: firstId,
