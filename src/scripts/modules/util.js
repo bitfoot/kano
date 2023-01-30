@@ -117,8 +117,7 @@ function getContentHeight() {
   return this.visibleTabIds.length * this.scrollState.tabRowHeight;
 }
 
-function getContainerToContentRatio() {
-  // const containerHeight = this.scrollState.container.offsetHeight;
+function getContainerHeight() {
   const maxContainerHeight = this.scrollState.maxContainerHeight;
   const containerHeight = Math.max(
     this.scrollState.tabRowHeight,
@@ -127,6 +126,11 @@ function getContainerToContentRatio() {
       this.visibleTabIds.length * this.scrollState.tabRowHeight
     )
   );
+  return containerHeight;
+}
+
+function getContainerToContentRatio() {
+  const containerHeight = getContainerHeight.call(this);
   const contentHeight = getContentHeight.call(this);
   const containerToContentRatio = containerHeight / contentHeight;
   return containerToContentRatio;
@@ -363,6 +367,7 @@ export {
   adjustScrollbar,
   getContainerToContentRatio,
   getContentHeight,
+  getContainerHeight,
   createCheckboxSvg,
   createPinSvg,
   getMaxScrollTop,

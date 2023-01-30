@@ -6,19 +6,41 @@ function dragTab(options = {}) {
   const dragState = this.dragState;
   if (!dragState) throw new Error("dragState is not initialized");
 
-  dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset += distance;
+  dragState.tabsPosInfo[dragState.draggedTab.id].apparentOffset += distance;
+  // dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset += distance;
 
-  // ensure that offset does not exceed current max or min offset
-  dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset = Math.max(
-    dragState.currentMinOffset,
+  dragState.tabsPosInfo[dragState.draggedTab.id].apparentOffset = Math.max(
+    dragState.currentMinOffset.apparent,
     Math.min(
-      dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset,
-      dragState.currentMaxOffset
+      dragState.tabsPosInfo[dragState.draggedTab.id].apparentOffset,
+      dragState.currentMaxOffset.apparent
     )
   );
 
+  // ensure that drag offset does not exceed current max or min offset
+  // const maxOffset = Math.min();
+  // dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset = Math.max(
+  //   dragState.currentMinOffset.actual,
+  //   Math.min(
+  //     dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset,
+  //     dragState.currentMaxOffset.actual
+  //   )
+  // );
+  // const maxOffset = Math.min();
+  dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset = Math.max(
+    dragState.currentMinOffset.actual,
+    Math.min(
+      dragState.tabsPosInfo[dragState.draggedTab.id].apparentOffset,
+      dragState.currentMaxOffset.actual
+    )
+  );
+
+  // console.log(
+  //   `dragOffset: ${dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset}`
+  // );
+  // console.log(dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset);
   const draggedTabOffset =
-    dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset;
+    dragState.tabsPosInfo[dragState.draggedTab.id].apparentOffset;
 
   window.requestAnimationFrame(() => {
     dragState.draggedTab.style.setProperty(
@@ -27,7 +49,10 @@ function dragTab(options = {}) {
     );
   });
 
-  const currentDraggedTabPos = dragState.tabPosInList;
+  // const currentDraggedTabPos = dragState.tabPosInList;
+  const apparentDraggedTabPos =
+    dragState.tabsPosInfo[dragState.draggedTab.id].initialPos +
+    draggedTabOffset;
 
   const setStyleVariables = options => {
     const { tab, offset } = options;
@@ -43,7 +68,7 @@ function dragTab(options = {}) {
 
   dragState.tabsAbove.forEach(tab => {
     const totalDifference =
-      dragState.tabsPosInfo[tab.id].initialPos - currentDraggedTabPos;
+      dragState.tabsPosInfo[tab.id].initialPos - apparentDraggedTabPos;
 
     // get the difference between the bottom of tab and the top of draggable tab.
     const difference = totalDifference + dragState.tabHeight;
@@ -63,7 +88,7 @@ function dragTab(options = {}) {
 
   dragState.tabsBelow.forEach(tab => {
     const totalDifference =
-      dragState.tabsPosInfo[tab.id].initialPos - currentDraggedTabPos;
+      dragState.tabsPosInfo[tab.id].initialPos - apparentDraggedTabPos;
 
     // get the difference between the top of tab and the bottom of draggable tab.
     const difference = totalDifference - dragState.tabHeight;

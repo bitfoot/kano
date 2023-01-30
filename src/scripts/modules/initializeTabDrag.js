@@ -3,6 +3,7 @@
 import { onTabDragPointerMove } from "./onTabDragPointerMove";
 import { onTabDragEnd } from "./onTabDragEnd";
 import { resetTabCSSVariables } from "./util";
+import { getContainerHeight } from "./util";
 import { disableHeaderControls } from "./util";
 import { easeInOutQuad } from "./util";
 import { dragTab } from "./dragTab";
@@ -41,6 +42,7 @@ function initializeTabDrag(event) {
     listedTabs[index] = this.tabs[browserIndex];
     tabsPosInfo[id] = {
       initialPos: index * tabRowHeight,
+      apparentOffset: 0,
       dragOffset: 0
     };
     const isPinned = this.orderedTabObjects[browserIndex].isPinned === true;
@@ -78,15 +80,13 @@ function initializeTabDrag(event) {
   const tabsAbove = listedTabs.slice(0, tabVisibleIndex);
   const tabsBelow = listedTabs.slice(tabVisibleIndex + 1);
   const initialTabPos = tabsPosInfo[draggedTab.id].initialPos;
-
+  const containerHeight = getContainerHeight.call(this);
   const initialTopPosInViewport =
-    initialTabPos +
-    headerHeight -
-    scrollState.scrollTop -
-    scrollState.tabListOffset;
+    initialTabPos + headerHeight - scrollState.scrollTop;
   const initialBottomPosInViewport = initialTopPosInViewport + tabHeight;
   const shiftY = pointerPosition - initialTabPos - headerHeight + scrollTop;
   // const maxTabPosInList = wholeContentHeight - tabRowHeight;
+
   const maxTabPosInList = tabIsPinned
     ? heightOfPinnedTabs - tabRowHeight
     : wholeContentHeight - tabRowHeight;
@@ -99,8 +99,13 @@ function initializeTabDrag(event) {
     minTabOffsetInList = initialTabPos * -1 + heightOfPinnedTabs;
   }
   const maxTabOffsetInList = maxTabPosInList - initialTabPos;
-  const midPoint = (tabHeight + margin) / 2;
 
+  const apparentMaxTabPosInList = wholeContentHeight - tabRowHeight;
+  const apparentMinTabPosInList = 0;
+  const apparentMinTabOffsetInList = initialTabPos * -1;
+  const apparentMaxTabOffsetInList = apparentMaxTabPosInList - initialTabPos;
+
+  const midPoint = (tabHeight + margin) / 2;
   const defaultScrollBoundary = {
     up: 184,
     down: 420
@@ -184,6 +189,10 @@ function initializeTabDrag(event) {
     tabsPosInfo,
     scrollState,
     scroll: false,
+    apparentMaxTabPosInList,
+    apparentMinTabPosInList,
+    apparentMaxTabOffsetInList,
+    apparentMinTabOffsetInList,
     draggedTab,
     midPoint,
     pointerPosition,
@@ -216,11 +225,17 @@ function initializeTabDrag(event) {
     },
 
     get tabPosInViewport() {
+      // let top =
+      //   this.headerHeight +
+      //   this.tabPosInList -
+      //   this.scrollTop -
+      //   this.scrollState.tabListOffset;
       let top =
-        this.tabPosInList -
+        this.headerHeight +
+        this.initialTabPos +
+        this.tabsPosInfo[draggedTab.id].apparentOffset -
         this.scrollTop -
-        this.scrollState.tabListOffset +
-        this.headerHeight;
+        this.scrollState.tabListOffset;
       const bottom = top + this.tabHeight;
       return {
         top,
@@ -243,26 +258,51 @@ function initializeTabDrag(event) {
     get currentMaxOffset() {
       const scrollOffset =
         this.scrollState.tabListOffset + this.scrollState.scrollTop;
-      // const maxOffset =
-      //   this.maxTabOffsetInList -
+      // const apparentMaxOffset =
+      //   this.apparentMaxTabOffsetInList -
       //   this.scrollState.maxScrollTop +
-      //   heightOfUnpinnedTabs +
       //   scrollOffset;
-      const maxOffset =
+      const apparentMaxOffset =
+        this.apparentMaxTabOffsetInList -
+        this.scrollState.maxScrollTop +
+        scrollOffset;
+      // const apparentMaxOffset =
+      //   this.apparentMaxTabPosInList -
+      //   this.tabsPosInfo[draggedTab.id].initialPos +
+      //   this.tabsPosInfo[draggedTab.id].apparentOffset +
+      //   this.scrollState.maxScrollTop -
+      //   scrollOffset;
+      const actualMaxOffset =
         this.maxTabOffsetInList - Math.max(maxScrollTop - scrollOffset, 0);
+      // const actualMaxOffset =
+      //   this.maxTabOffsetInList - maxScrollTop - scrollOffset;
 
-      // console.log(`currentMaxOffset: ${maxOffset}`);
-      return maxOffset;
+      console.log(
+        `apparentMaxOffset: ${apparentMaxOffset}, actualMaxOffset: ${actualMaxOffset}`
+      );
+      return {
+        actual: actualMaxOffset,
+        apparent: apparentMaxOffset
+      };
     },
     get currentMinOffset() {
       const scrollOffset =
         this.scrollState.tabListOffset + this.scrollState.scrollTop;
-      if (tabIsPinned) {
-        return this.minTabOffsetInList + scrollOffset;
-      }
-      return (
-        this.minTabOffsetInList + Math.max(scrollOffset - heightOfPinnedTabs, 0)
-      );
+      const apparentMinOffset = this.apparentMinTabOffsetInList + scrollOffset;
+      const actualMinOffset =
+        tabIsPinned === true
+          ? this.minTabOffsetInList - Math.max(maxScrollTop - scrollOffset, 0)
+          : this.minTabOffsetInList +
+          Math.max(scrollOffset - heightOfPinnedTabs, 0);
+      // const actualMinOffset =
+      //   this.minTabOffsetInList - Math.max(maxScrollTop - scrollOffset, 0);
+      // console.log(
+      //   `apparentMinOffset: ${apparentMinOffset}, actualMinOffset: ${actualMinOffset}`
+      // );
+      return {
+        actual: actualMinOffset,
+        apparent: apparentMinOffset
+      };
     },
     getScrollDistance() {
       const imaginaryTopPos = this.imaginaryTopPos;
@@ -302,24 +342,20 @@ function initializeTabDrag(event) {
         const damper = eventType === "pointerdown" ? 12 : 1;
         const scrollOffset =
           this.scrollState.scrollTop + this.scrollState.tabListOffset;
-        if (
-          imaginaryTopPos < this.scrollBoundary.up &&
-          scrollOffset > minTabPosInList
-        ) {
+        if (imaginaryTopPos < this.scrollBoundary.up && scrollOffset > 0) {
           distance = (imaginaryTopPos - this.scrollBoundary.up) / damper;
 
-          if (scrollOffset + distance < minTabPosInList) {
-            distance = (scrollOffset - minTabPosInList) * -1;
-          }
+          // if (scrollOffset + distance < minTabPosInList) {
+          //   distance = (scrollOffset - minTabPosInList) * -1;
+          // }
         } else if (
           imaginaryBottomPos > this.scrollBoundary.down &&
-          scrollOffset < maxScrollTop
+          scrollOffset < this.scrollState.maxScrollTop
         ) {
           distance = (imaginaryBottomPos - this.scrollBoundary.down) / damper;
-          if (scrollOffset + distance > maxScrollTop) {
-            distance =
-              // this.scrollState.maxScrollTop - this.scrollState.tabListOffset;
-              maxScrollTop - scrollOffset;
+          if (scrollOffset + distance > this.scrollState.maxScrollTop) {
+            distance = this.scrollState.maxScrollTop - scrollOffset;
+            // maxScrollTop - scrollOffset;
           }
         }
         return distance;

@@ -279,6 +279,7 @@
   }
 
   &--draggable {
+    z-index: 1;
     pointer-events: none;
     animation: 80ms ease-out forwards draggable;
     cursor: grabbing;
