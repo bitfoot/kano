@@ -40,7 +40,7 @@ function dragTab(options = {}) {
   // );
   // console.log(dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset);
   const draggedTabOffset =
-    dragState.tabsPosInfo[dragState.draggedTab.id].apparentOffset;
+    dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset;
 
   window.requestAnimationFrame(() => {
     dragState.draggedTab.style.setProperty(
@@ -49,10 +49,10 @@ function dragTab(options = {}) {
     );
   });
 
-  // const currentDraggedTabPos = dragState.tabPosInList;
-  const apparentDraggedTabPos =
-    dragState.tabsPosInfo[dragState.draggedTab.id].initialPos +
-    draggedTabOffset;
+  const currentDraggedTabPos = dragState.tabPosInList;
+  // const apparentDraggedTabPos =
+  //   dragState.tabsPosInfo[dragState.draggedTab.id].initialPos +
+  //   draggedTabOffset;
 
   const setStyleVariables = options => {
     const { tab, offset } = options;
@@ -68,7 +68,7 @@ function dragTab(options = {}) {
 
   dragState.tabsAbove.forEach(tab => {
     const totalDifference =
-      dragState.tabsPosInfo[tab.id].initialPos - apparentDraggedTabPos;
+      dragState.tabsPosInfo[tab.id].initialPos - currentDraggedTabPos;
 
     // get the difference between the bottom of tab and the top of draggable tab.
     const difference = totalDifference + dragState.tabHeight;
@@ -88,7 +88,7 @@ function dragTab(options = {}) {
 
   dragState.tabsBelow.forEach(tab => {
     const totalDifference =
-      dragState.tabsPosInfo[tab.id].initialPos - apparentDraggedTabPos;
+      dragState.tabsPosInfo[tab.id].initialPos - currentDraggedTabPos;
 
     // get the difference between the top of tab and the bottom of draggable tab.
     const difference = totalDifference - dragState.tabHeight;

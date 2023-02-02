@@ -38,7 +38,6 @@ function scroll(options = {}) {
         this.scrollState.tabListOffset,
         this.scrollState.scrollTop * -1
       );
-      // const newOffset = this.scrollState.tabListOffset * -1;
       window.requestAnimationFrame(() => {
         const newOffset = this.scrollState.tabListOffset * -1;
         tabList.classList.add("tab-list--scroll");

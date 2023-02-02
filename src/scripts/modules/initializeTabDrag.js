@@ -112,7 +112,7 @@ function initializeTabDrag(event) {
   };
 
   draggedTab.firstChild.onblur = () => {
-    draggedTab.firstChild.focus();
+    draggedTab.firstChild.focus({ preventScroll: true });
   };
   // draggedTab.setPointerCapture(event.pointerId);
   // resetTabCSSVariables(this.tabs);
@@ -258,28 +258,13 @@ function initializeTabDrag(event) {
     get currentMaxOffset() {
       const scrollOffset =
         this.scrollState.tabListOffset + this.scrollState.scrollTop;
-      // const apparentMaxOffset =
-      //   this.apparentMaxTabOffsetInList -
-      //   this.scrollState.maxScrollTop +
-      //   scrollOffset;
       const apparentMaxOffset =
         this.apparentMaxTabOffsetInList -
         this.scrollState.maxScrollTop +
         scrollOffset;
-      // const apparentMaxOffset =
-      //   this.apparentMaxTabPosInList -
-      //   this.tabsPosInfo[draggedTab.id].initialPos +
-      //   this.tabsPosInfo[draggedTab.id].apparentOffset +
-      //   this.scrollState.maxScrollTop -
-      //   scrollOffset;
       const actualMaxOffset =
         this.maxTabOffsetInList - Math.max(maxScrollTop - scrollOffset, 0);
-      // const actualMaxOffset =
-      //   this.maxTabOffsetInList - maxScrollTop - scrollOffset;
 
-      console.log(
-        `apparentMaxOffset: ${apparentMaxOffset}, actualMaxOffset: ${actualMaxOffset}`
-      );
       return {
         actual: actualMaxOffset,
         apparent: apparentMaxOffset
@@ -294,11 +279,7 @@ function initializeTabDrag(event) {
           ? this.minTabOffsetInList - Math.max(maxScrollTop - scrollOffset, 0)
           : this.minTabOffsetInList +
           Math.max(scrollOffset - heightOfPinnedTabs, 0);
-      // const actualMinOffset =
-      //   this.minTabOffsetInList - Math.max(maxScrollTop - scrollOffset, 0);
-      // console.log(
-      //   `apparentMinOffset: ${apparentMinOffset}, actualMinOffset: ${actualMinOffset}`
-      // );
+
       return {
         actual: actualMinOffset,
         apparent: apparentMinOffset
@@ -345,7 +326,7 @@ function initializeTabDrag(event) {
         if (imaginaryTopPos < this.scrollBoundary.up && scrollOffset > 0) {
           distance = (imaginaryTopPos - this.scrollBoundary.up) / damper;
 
-          // if (scrollOffset + distance < minTabPosInList) {
+          // if (scrollOffset + distance < 0) {
           //   distance = (scrollOffset - minTabPosInList) * -1;
           // }
         } else if (

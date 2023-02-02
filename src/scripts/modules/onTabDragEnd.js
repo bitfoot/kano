@@ -23,6 +23,9 @@ function onTabDragEnd() {
   let replacedTabVisibleIndex = null;
   let draggedTabNewOffset = 0;
   let dragDirection = null;
+  let replacedTabId = null;
+  let replacedTabIndex = null;
+  let replacedTab = null;
   if (draggedTabTopPos > dragState.initialTabPos) {
     dragDirection = "down";
   } else if (draggedTabTopPos < dragState.initialTabPos) {
@@ -50,32 +53,28 @@ function onTabDragEnd() {
     }
 
     replacedTabVisibleIndex = newVisibleIndex;
-    const replacedTabId = state.visibleTabIds[newVisibleIndex];
-    const replacedTabIndex = state.tabIndices[replacedTabId][0];
-    const replacedTab = state.tabs[replacedTabIndex];
+    replacedTabId = state.visibleTabIds[newVisibleIndex];
+    if (replacedTabId !== draggedTabId) {
+      replacedTabIndex = state.tabIndices[replacedTabId][0];
+      replacedTab = state.tabs[replacedTabIndex];
 
-    // update tab indices
-    state.tabIndices[draggedTabId][0] = replacedTabIndex;
-    state.orderedTabObjects
-      .slice(replacedTabIndex, initialDraggedTabIndex)
-      .forEach(obj => {
-        state.tabIndices[obj.id][0] += 1;
-      });
+      // update tab indices
+      state.tabIndices[draggedTabId][0] = replacedTabIndex;
+      state.orderedTabObjects
+        .slice(replacedTabIndex, initialDraggedTabIndex)
+        .forEach(obj => {
+          state.tabIndices[obj.id][0] += 1;
+        });
 
-    let newFilterOffset = 0;
-    if (state.filterState.tabs[replacedTabId]) {
-      if (state.filterState.tabs[draggedTabId]) {
-        newFilterOffset = state.filterState.tabs[replacedTabId].filterOffset;
-        state.filterState.tabs[draggedTabId].filterOffset = newFilterOffset;
+      let newFilterOffset = 0;
+      if (state.filterState.tabs[replacedTabId]) {
+        if (state.filterState.tabs[draggedTabId]) {
+          newFilterOffset = state.filterState.tabs[replacedTabId].filterOffset;
+          state.filterState.tabs[draggedTabId].filterOffset = newFilterOffset;
+        }
       }
+      dragState.tabList.insertBefore(dragState.draggedTab, replacedTab);
     }
-    dragState.tabList.insertBefore(dragState.draggedTab, replacedTab);
-
-    // move the actual chrome tab
-    const replacedTabIdInBrowser = +replacedTab.id.split("-")[1];
-    chrome.tabs.get(replacedTabIdInBrowser).then(tabDetails => {
-      chrome.tabs.move(draggedTabIdInBrowser, { index: tabDetails.index });
-    });
   } else if (dragDirection === "down") {
     // if tab was dragged below where it was originally.
     const currentPos = dragState.tabPosInList;
@@ -97,31 +96,37 @@ function onTabDragEnd() {
     }
 
     replacedTabVisibleIndex = newVisibleIndex;
-    const replacedTabId = state.visibleTabIds[newVisibleIndex];
-    const replacedTabIndex = state.tabIndices[replacedTabId][0];
-    const replacedTab = state.tabs[replacedTabIndex];
+    replacedTabId = state.visibleTabIds[newVisibleIndex];
 
-    // update tab indices
-    state.tabIndices[draggedTabId][0] = replacedTabIndex;
-    state.orderedTabObjects
-      .slice(initialDraggedTabIndex + 1, replacedTabIndex + 1)
-      .forEach(obj => {
-        state.tabIndices[obj.id][0] -= 1;
-      });
+    if (replacedTabId !== draggedTabId) {
+      replacedTabIndex = state.tabIndices[replacedTabId][0];
+      replacedTab = state.tabs[replacedTabIndex];
 
-    let newFilterOffset = 0;
-    if (state.filterState.tabs[replacedTabId]) {
-      if (state.filterState.tabs[draggedTabId]) {
-        newFilterOffset = state.filterState.tabs[replacedTabId].filterOffset;
-        state.filterState.tabs[draggedTabId].filterOffset = newFilterOffset;
+      // update tab indices
+      state.tabIndices[draggedTabId][0] = replacedTabIndex;
+      state.orderedTabObjects
+        .slice(initialDraggedTabIndex + 1, replacedTabIndex + 1)
+        .forEach(obj => {
+          state.tabIndices[obj.id][0] -= 1;
+        });
+
+      let newFilterOffset = 0;
+      if (state.filterState.tabs[replacedTabId]) {
+        if (state.filterState.tabs[draggedTabId]) {
+          newFilterOffset = state.filterState.tabs[replacedTabId].filterOffset;
+          state.filterState.tabs[draggedTabId].filterOffset = newFilterOffset;
+        }
       }
+      dragState.tabList.insertBefore(
+        dragState.draggedTab,
+        replacedTab.nextSibling
+      );
     }
-    dragState.tabList.insertBefore(
-      dragState.draggedTab,
-      replacedTab.nextSibling
-    );
+  }
 
-    const replacedTabIdInBrowser = +replacedTab.id.split("-")[1];
+  if (replacedTab !== null && replacedTabId !== draggedTabId) {
+    // move chrome tab
+    const replacedTabIdInBrowser = +replacedTabId.split("-")[1];
     chrome.tabs.get(replacedTabIdInBrowser).then(tabDetails => {
       chrome.tabs.move(draggedTabIdInBrowser, { index: tabDetails.index });
     });
@@ -186,16 +191,11 @@ function onTabDragEnd() {
     requestAnimationFrame(() => {
       tab.style.setProperty("--filter-offset", filterOffset + "px");
       tab.style.setProperty("--drag-offset", 0 + "px");
-      // tab.style.setProperty("--opacity", 1);
       tab.style.setProperty("--misc-offset", posDifference + "px");
       tab.classList.remove("tab--tethered");
       tab.classList.remove("tab--floating");
     });
   });
-
-  if (this.scrollState.tabListOffset !== 0) {
-    dragState.tabListContainer.scrollBy(0, this.scrollState.tabListOffset);
-  }
 
   // tab order has changed, so it should be changed in the "tabs" and "orderedTabObjects" lists in state
   if (dragDirection !== null) {
@@ -221,6 +221,10 @@ function onTabDragEnd() {
     }
     state.visibleTabIds[replacedTabVisibleIndex] = draggedTabId;
     state.tabIndices[draggedTabId][1] = replacedTabVisibleIndex;
+  }
+
+  if (this.scrollState.tabListOffset !== 0) {
+    this.scrollState.container.scrollBy(0, this.scrollState.tabListOffset);
   }
 
   const event = new Event("orderoftabschange", { bubbles: true });
