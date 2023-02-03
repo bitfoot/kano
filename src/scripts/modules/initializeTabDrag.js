@@ -55,25 +55,16 @@ function initializeTabDrag(event) {
 
   resetTabCSSVariables(listedTabs);
 
+  const heightOfPinnedTabs = numPinnedTabs * tabRowHeight;
   const heightOfUnpinnedTabs =
     (this.visibleTabIds.length - numPinnedTabs) * tabRowHeight;
-  const heightOfPinnedTabs = numPinnedTabs * tabRowHeight;
   let maxScrollTop = this.scrollState.maxScrollTop;
-  /* If dragged tab is pinned, users can only drag it within the height of pinned tabs,
-      and therefore the height of non-pinned off-screen tabs is irrelevant -- only 
-      the height of pinned tabs matters. We therefore calculate our own "maxScrollTop" strictly 
-      for the purposes of this function. */
-  if (tabIsPinned) {
-    maxScrollTop = heightOfPinnedTabs - this.scrollState.maxContainerHeight;
-    if (maxScrollTop < 0) {
-      maxScrollTop = 0;
-    }
-  }
 
-  // if (tabIsPinned === false) {
-  //   wholeContentHeight = this.visibleTabIds.length * tabRowHeight;
-  // } else {
-  //   wholeContentHeight = heightOfPinnedTabs;
+  // if (tabIsPinned) {
+  //   maxScrollTop = heightOfPinnedTabs - this.scrollState.maxContainerHeight;
+  //   if (maxScrollTop < 0) {
+  //     maxScrollTop = 0;
+  //   }
   // }
 
   const tabVisibleIndex = this.tabIndices[draggedTab.id][1];
@@ -114,14 +105,10 @@ function initializeTabDrag(event) {
   draggedTab.firstChild.onblur = () => {
     draggedTab.firstChild.focus({ preventScroll: true });
   };
-  // draggedTab.setPointerCapture(event.pointerId);
-  // resetTabCSSVariables(this.tabs);
+
   window.requestAnimationFrame(() => {
     draggedTab.style.setProperty("--scale", 1.01);
     draggedTab.classList.add("tab--draggable");
-    // if (tabIsPinned) {
-    //   draggedTab.classList.add("tab--tethered");
-    // }
     draggedTab.classList.remove("tab--held-down");
   });
 
@@ -154,18 +141,30 @@ function initializeTabDrag(event) {
     });
   }
 
-  // listedTabs.forEach((tab, index) => {
-  //   if (index < numPinnedTabs) {
-  //     window.requestAnimationFrame(() => {
-  //       tab.classList.add("tab--tethered");
-  //     });
-  //   } else if (tab.id !== draggedTab.id) {
-  //     window.requestAnimationFrame(() => {
-  //       tab.style.setProperty("--scale", 0.99);
-  //       tab.classList.add("tab--floating");
-  //     });
-  //   }
-  // });
+  // let currentMaxOffset;
+
+  // if (tabIsPinned) {
+  //   currentMaxOffset = () => {
+  //     const scrollOffset =
+  //       this.scrollState.tabListOffset + this.scrollState.scrollTop;
+
+  //     const maxOffset =
+  //       this.maxTabOffsetInList -
+  //       Math.max(maxScrollTop - heightOfPinnedTabs - scrollOffset, 0);
+
+  //     return maxOffset;
+  //   };
+  // } else {
+  //   currentMaxOffset = () => {
+  //     const scrollOffset =
+  //       this.scrollState.tabListOffset + this.scrollState.scrollTop;
+
+  //     const maxOffset =
+  //       this.maxTabOffsetInList - Math.max(maxScrollTop - scrollOffset, 0);
+
+  //     return maxOffset;
+  //   };
+  // }
 
   this.dragState = {
     onTabDragEnd,
@@ -225,11 +224,6 @@ function initializeTabDrag(event) {
     },
 
     get tabPosInViewport() {
-      // let top =
-      //   this.headerHeight +
-      //   this.tabPosInList -
-      //   this.scrollTop -
-      //   this.scrollState.tabListOffset;
       let top =
         this.headerHeight +
         this.tabPosInList -
@@ -257,37 +251,26 @@ function initializeTabDrag(event) {
     get currentMaxOffset() {
       const scrollOffset =
         this.scrollState.tabListOffset + this.scrollState.scrollTop;
-      const apparentMaxOffset =
-        this.apparentMaxTabOffsetInList -
-        this.scrollState.maxScrollTop +
-        scrollOffset;
-      const actualMaxOffset =
-        this.maxTabOffsetInList - Math.max(maxScrollTop - scrollOffset, 0);
 
-      return {
-        actual: actualMaxOffset,
-        apparent: apparentMaxOffset
-      };
+      const maxOffset =
+        tabIsPinned === false
+          ? this.maxTabOffsetInList - Math.max(maxScrollTop - scrollOffset, 0)
+          : this.maxTabOffsetInList -
+          Math.max(maxScrollTop - heightOfUnpinnedTabs - scrollOffset, 0);
+
+      return maxOffset;
     },
     get currentMinOffset() {
       const scrollOffset =
         this.scrollState.tabListOffset + this.scrollState.scrollTop;
-      // const apparentMinOffset = this.apparentMinTabOffsetInList + scrollOffset;
-      // const actualMinOffset =
-      //   tabIsPinned === true
-      //     ? this.minTabOffsetInList - Math.max(maxScrollTop - scrollOffset, 0)
-      //     : this.minTabOffsetInList +
-      //     Math.max(scrollOffset - heightOfPinnedTabs, 0);
-      const actualMinOffset =
-        tabIsPinned === true
-          ? this.minTabOffsetInList + scrollOffset
-          : this.minTabOffsetInList +
-          Math.max(scrollOffset - heightOfPinnedTabs, 0);
 
-      return {
-        actual: actualMinOffset
-        // apparent: apparentMinOffset
-      };
+      const minOffset =
+        tabIsPinned === false
+          ? this.minTabOffsetInList +
+          Math.max(scrollOffset - heightOfPinnedTabs, 0)
+          : this.minTabOffsetInList + scrollOffset;
+
+      return minOffset;
     },
     getScrollDistance() {
       const imaginaryTopPos = this.imaginaryTopPos;

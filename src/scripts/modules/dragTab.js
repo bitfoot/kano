@@ -28,8 +28,8 @@ function dragTab(options = {}) {
   // );
   // const maxOffset = Math.min();
 
-  const minOffset = dragState.currentMinOffset.actual;
-  const maxOffset = dragState.currentMaxOffset.actual;
+  const minOffset = dragState.currentMinOffset;
+  const maxOffset = dragState.currentMaxOffset;
   if (dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset < minOffset) {
     dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset = minOffset;
   } else if (
