@@ -6,16 +6,16 @@ function dragTab(options = {}) {
   const dragState = this.dragState;
   if (!dragState) throw new Error("dragState is not initialized");
 
-  dragState.tabsPosInfo[dragState.draggedTab.id].apparentOffset += distance;
-  // dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset += distance;
+  // dragState.tabsPosInfo[dragState.draggedTab.id].apparentOffset += distance;
+  dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset += distance;
 
-  dragState.tabsPosInfo[dragState.draggedTab.id].apparentOffset = Math.max(
-    dragState.currentMinOffset.apparent,
-    Math.min(
-      dragState.tabsPosInfo[dragState.draggedTab.id].apparentOffset,
-      dragState.currentMaxOffset.apparent
-    )
-  );
+  // dragState.tabsPosInfo[dragState.draggedTab.id].apparentOffset = Math.max(
+  //   dragState.currentMinOffset.apparent,
+  //   Math.min(
+  //     dragState.tabsPosInfo[dragState.draggedTab.id].apparentOffset,
+  //     dragState.currentMaxOffset.apparent
+  //   )
+  // );
 
   // ensure that drag offset does not exceed current max or min offset
   // const maxOffset = Math.min();
@@ -27,17 +27,26 @@ function dragTab(options = {}) {
   //   )
   // );
   // const maxOffset = Math.min();
-  dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset = Math.max(
-    dragState.currentMinOffset.actual,
-    Math.min(
-      dragState.tabsPosInfo[dragState.draggedTab.id].apparentOffset,
-      dragState.currentMaxOffset.actual
-    )
-  );
 
-  // console.log(
-  //   `dragOffset: ${dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset}`
+  const minOffset = dragState.currentMinOffset.actual;
+  const maxOffset = dragState.currentMaxOffset.actual;
+  if (dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset < minOffset) {
+    dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset = minOffset;
+  } else if (
+    dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset > maxOffset
+  ) {
+    dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset = maxOffset;
+  }
+
+  // dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset = Math.max(
+  //   dragState.currentMinOffset.actual,
+  //   Math.min(
+  //     dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset,
+  //     dragState.currentMaxOffset.actual
+  //   )
   // );
+
+  // console.log(`distance: ${distance}`);
   // console.log(dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset);
   const draggedTabOffset =
     dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset;

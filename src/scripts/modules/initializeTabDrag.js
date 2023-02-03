@@ -232,8 +232,7 @@ function initializeTabDrag(event) {
       //   this.scrollState.tabListOffset;
       let top =
         this.headerHeight +
-        this.initialTabPos +
-        this.tabsPosInfo[draggedTab.id].apparentOffset -
+        this.tabPosInList -
         this.scrollTop -
         this.scrollState.tabListOffset;
       const bottom = top + this.tabHeight;
@@ -273,16 +272,21 @@ function initializeTabDrag(event) {
     get currentMinOffset() {
       const scrollOffset =
         this.scrollState.tabListOffset + this.scrollState.scrollTop;
-      const apparentMinOffset = this.apparentMinTabOffsetInList + scrollOffset;
+      // const apparentMinOffset = this.apparentMinTabOffsetInList + scrollOffset;
+      // const actualMinOffset =
+      //   tabIsPinned === true
+      //     ? this.minTabOffsetInList - Math.max(maxScrollTop - scrollOffset, 0)
+      //     : this.minTabOffsetInList +
+      //     Math.max(scrollOffset - heightOfPinnedTabs, 0);
       const actualMinOffset =
         tabIsPinned === true
-          ? this.minTabOffsetInList - Math.max(maxScrollTop - scrollOffset, 0)
+          ? this.minTabOffsetInList + scrollOffset
           : this.minTabOffsetInList +
           Math.max(scrollOffset - heightOfPinnedTabs, 0);
 
       return {
-        actual: actualMinOffset,
-        apparent: apparentMinOffset
+        actual: actualMinOffset
+        // apparent: apparentMinOffset
       };
     },
     getScrollDistance() {

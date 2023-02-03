@@ -337,8 +337,8 @@
     & .tab__pinned-indicator {
       & path {
         // stroke: var(--color-three);
-        transition: stroke 3000ms ease-out;
-        animation: pinCoolDown 3000ms ease-out var(--animation-iteration-count);
+        transition: stroke 100ms ease-out;
+        animation: pinCoolDown 100ms ease-out var(--animation-iteration-count);
       }
     }
   }
