@@ -197,7 +197,10 @@ document.addEventListener("click", e => {
     state.lastCheckedOrUncheckedTabId = null;
     adjustMenu.call(state);
   } else if (e.target.id === "close-selected-btn") {
-    const tabIds = state.menu.checkedVisibleTabs.map(tab => tab.id);
+    const tabIds = state.visibleTabIds.filter(id => {
+      const index = state.tabIndices[id][0];
+      return state.orderedTabObjects[index].isChecked;
+    });
     deleteTabs.call(state, { tabComponentIds: tabIds });
   } else if (e.target.id === "move-to-top-btn") {
     moveTabs.call(state, "top");

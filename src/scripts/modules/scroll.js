@@ -40,6 +40,7 @@ function scroll(options = {}) {
       );
       window.requestAnimationFrame(() => {
         const newOffset = this.scrollState.tabListOffset * -1;
+        console.log(newOffset);
         tabList.classList.add("tab-list--scroll");
         tabList.style.setProperty("--y-offset", newOffset + "px");
       });

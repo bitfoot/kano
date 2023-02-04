@@ -6,27 +6,7 @@ function dragTab(options = {}) {
   const dragState = this.dragState;
   if (!dragState) throw new Error("dragState is not initialized");
 
-  // dragState.tabsPosInfo[dragState.draggedTab.id].apparentOffset += distance;
   dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset += distance;
-
-  // dragState.tabsPosInfo[dragState.draggedTab.id].apparentOffset = Math.max(
-  //   dragState.currentMinOffset.apparent,
-  //   Math.min(
-  //     dragState.tabsPosInfo[dragState.draggedTab.id].apparentOffset,
-  //     dragState.currentMaxOffset.apparent
-  //   )
-  // );
-
-  // ensure that drag offset does not exceed current max or min offset
-  // const maxOffset = Math.min();
-  // dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset = Math.max(
-  //   dragState.currentMinOffset.actual,
-  //   Math.min(
-  //     dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset,
-  //     dragState.currentMaxOffset.actual
-  //   )
-  // );
-  // const maxOffset = Math.min();
 
   const minOffset = dragState.currentMinOffset;
   const maxOffset = dragState.currentMaxOffset;
@@ -38,16 +18,6 @@ function dragTab(options = {}) {
     dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset = maxOffset;
   }
 
-  // dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset = Math.max(
-  //   dragState.currentMinOffset.actual,
-  //   Math.min(
-  //     dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset,
-  //     dragState.currentMaxOffset.actual
-  //   )
-  // );
-
-  // console.log(`distance: ${distance}`);
-  // console.log(dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset);
   const draggedTabOffset =
     dragState.tabsPosInfo[dragState.draggedTab.id].dragOffset;
 
@@ -59,9 +29,6 @@ function dragTab(options = {}) {
   });
 
   const currentDraggedTabPos = dragState.tabPosInList;
-  // const apparentDraggedTabPos =
-  //   dragState.tabsPosInfo[dragState.draggedTab.id].initialPos +
-  //   draggedTabOffset;
 
   const setStyleVariables = options => {
     const { tab, offset } = options;
