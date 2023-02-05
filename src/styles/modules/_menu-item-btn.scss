@@ -13,8 +13,6 @@
   transition: box-shadow 100ms ease-in;
   --bounds-left: 0;
   --bounds-top: var(--lesser-padding);
-  --x-pos: 0;
-  --y-pos: 0;
   z-index: 0;
 
   &::after {

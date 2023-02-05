@@ -36,9 +36,6 @@ function adjustMenu() {
     );
   }
 
-  // this.menu.checkedVisiblePinnedTabs = [];
-  // this.menu.checkedVisibleUnpinnedTabs = [];
-
   this.menu.firstUncheckedPinnedIndex = null;
   this.menu.lastCheckedPinnedIndex = null;
   this.menu.lastUncheckedPinnedIndex = null;
@@ -68,7 +65,6 @@ function adjustMenu() {
     if (tabObject.isPinned === true) {
       this.menu.numPinnedTabs += 1;
       if (tabObject.isChecked) {
-        // this.menu.checkedVisiblePinnedTabs.push(this.tabs[indexInBrowser]);
         if (this.menu.firstCheckedPinnedIndex === null) {
           this.menu.firstCheckedPinnedIndex = indexInBrowser;
         }
@@ -81,7 +77,6 @@ function adjustMenu() {
       }
     } else {
       if (tabObject.isChecked) {
-        // this.menu.checkedVisibleUnpinnedTabs.push(this.tabs[indexInBrowser]);
         if (this.menu.firstCheckedUnpinnedIndex === null) {
           this.menu.firstCheckedUnpinnedIndex = indexInBrowser;
         }

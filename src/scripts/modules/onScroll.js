@@ -32,7 +32,6 @@ function onScroll(e) {
   });
 
   // update scrolltop in state so that other functions get the latest value without having to use elem.scrollTop and forcing reflow
-
   scrollState.scrollTop = newScrollTop;
   let previousTabListOffset = scrollState.tabListOffset;
   let distanceToScrollBy =

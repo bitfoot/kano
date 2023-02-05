@@ -1,12 +1,7 @@
 "use strict";
 
-// const util = require("./util");
-// const adjustMenu = require("./adjustMenu");
-// const resetTabCSSVariables = require("./util").resetTabCSSVariables;
-
 function filter() {
   const state = this;
-  // resetTabCSSVariables(state.tabs);
   const filterState = state.filterState;
   const filterString = filterState.input.value.toLowerCase();
   const filter = document.getElementById("filter");
@@ -29,7 +24,6 @@ function filter() {
   };
 
   const prepareFilteredTabObjects = tabObjects => {
-    // filterState.numOfFilteredTabs = 0;
     filterState.firstHiddenUnpinnedTabIndex = null;
     filterState.lastHiddenUnpinnedTabIndex = null;
     filterState.firstHiddenPinnedTabIndex = null;
@@ -67,8 +61,6 @@ function filter() {
         state.tabIndices[obj.id][1] = filteredIndex;
         newFilteredTabObj.filteredIndex = filteredIndex;
         filteredIndex += 1;
-        // obj.isVisible = true;
-        // filterState.numOfFilteredTabs += 1;
         if (wasFilteredOut) {
           newFilteredTabObj.isNewlyFilteredIn = true;
           if (filterState.firstNewlyFilteredInTabIndex === null) {
@@ -90,7 +82,6 @@ function filter() {
           }
         }
       } else {
-        // obj.isVisible = false;
         state.tabIndices[obj.id][1] = null;
         newFilteredTabObj.isFilteredOut = true;
         filteredOutAbove += 1;
@@ -118,11 +109,6 @@ function filter() {
   };
 
   prepareFilteredTabObjects(state.orderedTabObjects);
-  // if (maxChangeInPosition > 0) {
-  //   transitionDuration = Math.min(maxChangeInPosition * 3, 200);
-  // }
-  // const transitionDuration = Math.min(maxChangeInPosition * 3, 250);
-  // console.log(`maxChangeInPosition: ${maxChangeInPosition}`);
 
   const hideTab = tab => {
     tab.ariaHidden = "true";
@@ -154,7 +140,7 @@ function filter() {
     tab.removeAttribute("disabled");
   };
 
-  const styleTabs = tabs => {
+  const styleTabs = () => {
     const getTransformDelay = tabObj => {
       let transformDelay = 0;
       const alreadyVisible = !tabObj.isFilteredOut && !tabObj.isNewlyFilteredIn;

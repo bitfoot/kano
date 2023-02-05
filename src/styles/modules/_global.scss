@@ -24,7 +24,6 @@
   --golden-ratio: 1.61803398875;
   --greater-padding: 0.5rem;
   --lesser-padding: 0.3rem;
-  --icon-color: #eee;
   --num-of-deleted: 0;
   --header-height: calc(var(--block-height) + var(--lesser-padding) * 2);
   --thumb-height: 0;
@@ -32,32 +31,6 @@
   color: var(--color-one);
   background-color: var(--color-one);
   height: 100%;
-  // width: 36rem;
-  // background: green;
-
-  // &::after {
-  //   content: "";
-  //   position: absolute;
-  //   top: 0;
-  //   left: 0;
-  //   width: 68rem;
-  //   height: 68rem;
-  //   z-index: -1;
-  //   opacity: 0;
-  //   background: radial-gradient(circle at center, #3d1452, transparent 50%);
-  //   transform: translate(calc(var(--pointer-x-pos) - 50%), calc(var(--pointer-y-pos) - 50%));
-  //   // transition: none;
-  //   transition: opacity 1000ms ease-out;
-  // }
-
-  // &:hover {
-  //   &::after {
-  //     content: "";
-  //     opacity: 1;
-  //     transition: opacity 1000ms ease-in;
-  //   }
-  // }
-
 }
 
 *:focus {
@@ -93,8 +66,6 @@ button {
 
   &__thumb {
     z-index: 1;
-    --x-pos: 0;
-    --y-pos: 0;
     --ratio: 1;
     --thumb-height: 0;
     --thumb-offset: 0;
@@ -119,9 +90,7 @@ button {
       z-index: -1;
       opacity: 0;
       background: radial-gradient(circle at center, var(--color-two-hover), transparent 50%);
-      // transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%));
       transform: translate(calc(calc(var(--pointer-x-pos) - var(--bounds-left)) - 50%), calc(calc(var(--pointer-y-pos) - var(--bounds-top)) - 50%));
-      // transition: none;
       transition: opacity 100ms ease-out;
     }
 
@@ -136,9 +105,7 @@ button {
     &--transforming {
       transform-origin: top;
       transform: translateY(var(--thumb-offset)) scaleY(var(--ratio));
-      // transition: transform var(--below-deleted-animation-duration) var(--animation-delay) ease-out;
       background-color: var(--color-accent-two);
-      // transition: transform var(--animation-duration) var(--animation-delay) ease-out, background-color var(--animation-duration) var(--animation-delay) ease-out;
       transition: transform var(--animation-duration) ease-out, background-color var(--animation-duration) ease-out;
 
       &:hover {
@@ -154,6 +121,5 @@ button {
   &--hidden {
     visibility: hidden;
     transition: none;
-    // display: none;
   }
 }

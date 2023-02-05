@@ -277,6 +277,9 @@ document.addEventListener("pointerdown", e => {
   if (e.pointerType === "mouse" && e.buttons !== 1) return;
   if (e.target.classList.contains("tab__tab-button")) {
     const tabButton = e.target;
+    if (e.pointerType === "touch") {
+      tabButton.focus();
+    }
     const tab = tabButton.parentElement;
     const pointerId = e.pointerId;
     tabButton.setPointerCapture(pointerId);

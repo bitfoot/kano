@@ -1,7 +1,5 @@
 "use strict";
 
-// const adjustMenu = require("./adjustMenu");
-// const adjustScrollbar = require("./util").adjustScrollbar;
 import { resetTabCSSVariables } from "./util";
 import { disableHeaderControls } from "./util";
 
@@ -134,9 +132,7 @@ function deleteTabs(options = {}) {
           tab.classList.add("tab--moved-out");
         } else {
           tab.classList.add("tab--deleted");
-          // tab.style.setProperty("--opacity", 0);
         }
-        // tab.classList.add("tab--deleted");
         delete this.tabIndices[obj.id];
       });
     }
