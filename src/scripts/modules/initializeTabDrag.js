@@ -55,9 +55,9 @@ function initializeTabDrag(event) {
 
   resetTabCSSVariables(listedTabs);
 
+  const numUnpinnedTabs = this.visibleTabIds.length - numPinnedTabs;
   const heightOfPinnedTabs = numPinnedTabs * tabRowHeight;
-  const heightOfUnpinnedTabs =
-    (this.visibleTabIds.length - numPinnedTabs) * tabRowHeight;
+  const heightOfUnpinnedTabs = numUnpinnedTabs * tabRowHeight;
   const maxScrollTop = this.scrollState.maxScrollTop;
   const tabVisibleIndex = this.tabIndices[draggedTab.id][1];
   const tabsAbove = listedTabs.slice(0, tabVisibleIndex);
@@ -91,14 +91,17 @@ function initializeTabDrag(event) {
   };
 
   window.requestAnimationFrame(() => {
-    tabList.style.setProperty(
-      "--pinned-tabs-height",
-      heightOfPinnedTabs - margin + "px"
-    );
-    tabList.classList.add("tab-list--moving");
     draggedTab.style.setProperty("--scale", 1.01);
     draggedTab.classList.add("tab--draggable");
     draggedTab.classList.remove("tab--held-down");
+
+    if (numPinnedTabs && numUnpinnedTabs) {
+      tabList.style.setProperty(
+        "--pinned-tabs-height",
+        heightOfPinnedTabs - margin + "px"
+      );
+      tabList.classList.add("tab-list--moving");
+    }
   });
 
   if (tabIsPinned === false) {

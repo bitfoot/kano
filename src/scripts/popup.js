@@ -126,17 +126,6 @@ document.addEventListener("orderoftabschange", () => {
 
 document.addEventListener("click", e => {
   if (e.target.id === "close-duplicates-btn") {
-    // const idsByURL = state.visibleTabIds.reduce((a, id) => {
-    //   const browserIndex = state.tabIndices[id][0];
-    //   const URL = state.orderedTabObjects[browserIndex].url;
-    //   if (!a[URL]) {
-    //     a[URL] = [id];
-    //   } else {
-    //     a[URL].push(id);
-    //   }
-    //   return a;
-    // }, {});
-
     const unluckyTabIds = Object.values(state.tabIdsByURL).reduce(
       (a, idsArr) => {
         if (idsArr.length > 1) {

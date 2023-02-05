@@ -62,13 +62,15 @@ function moveTabs(destinaton) {
 
   const heightOfPinnedTabs = numPinned * tabRowHeight;
 
-  window.requestAnimationFrame(() => {
-    this.tabList.style.setProperty(
-      "--pinned-tabs-height",
-      heightOfPinnedTabs - margin + "px"
-    );
-    this.tabList.classList.add("tab-list--moving");
-  });
+  if (numPinned && numUnpinned) {
+    window.requestAnimationFrame(() => {
+      this.tabList.style.setProperty(
+        "--pinned-tabs-height",
+        heightOfPinnedTabs - margin + "px"
+      );
+      this.tabList.classList.add("tab-list--moving");
+    });
+  }
 
   const numUncheckedPinned = numPinned - numCheckedPinned;
   const numUncheckedUnpinned = numUnpinned - numCheckedUnpinned;

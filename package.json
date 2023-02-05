@@ -10,7 +10,7 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git://github.com/bitfoot/ninja.git"
+    "url": "git://github.com/bitfoot/kano.git"
   },
   "devDependencies": {
     "@types/autoprefixer": "^10.2.0",
