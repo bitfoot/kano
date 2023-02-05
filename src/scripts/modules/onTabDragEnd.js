@@ -13,6 +13,7 @@ function onTabDragEnd() {
     dragState.tabListContainer.classList.remove(
       "tab-list-container--no-scroll"
     );
+    state.tabList.classList.remove("tab-list--moving");
   });
 
   const draggedTabId = state.dragState.draggedTab.id;

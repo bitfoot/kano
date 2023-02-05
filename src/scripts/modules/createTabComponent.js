@@ -1,7 +1,6 @@
 "use strict";
 
 import { createCheckboxSvg } from "./util";
-import { createPinSvg } from "./util";
 
 function createTabComponent(tab) {
   const tabComponent = document.createElement("li");
@@ -33,7 +32,7 @@ function createTabComponent(tab) {
   // create tab Title
   const p = document.createElement("p");
   p.classList.add("tab__title");
-  p.textContent = tab.title + " " + tab.id;
+  p.textContent = tab.title;
 
   // create delete button
   const closeTabBtn = document.createElement("button");
@@ -57,10 +56,9 @@ function createTabComponent(tab) {
   tabComponent.appendChild(p);
   if (tab.isPinned === true) {
     tabComponent.classList.add("tab--pinned");
-    // const pinnedIndicator = document.createElement("img");
-    const pinnedIndicator = createPinSvg();
+    const pinnedIndicator = document.createElement("img");
     pinnedIndicator.classList.add("tab__pinned-indicator");
-    // pinnedIndicator.src = "images/pinned-indicator-icon@20x20.svg";
+    pinnedIndicator.src = "images/pinned-indicator-icon@20x20.svg";
     pinnedIndicator.alt = "Pinned tab";
     tabComponent.appendChild(pinnedIndicator);
   }

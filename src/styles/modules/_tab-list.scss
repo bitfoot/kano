@@ -1,5 +1,6 @@
 .tab-list {
   --y-offset: 0px;
+  --pinned-tabs-height: 0;
   position: relative;
   margin: 0;
   width: 36rem;
@@ -7,14 +8,37 @@
   padding: 0 var(--lesser-padding);
   overflow: hidden;
 
+  &::before {
+    content: "";
+    position: absolute;
+    left: var(--lesser-padding);
+    top: calc(var(--pinned-tabs-height) + 1px);
+    height: 4px;
+    width: calc(36rem - var(--lesser-padding) * 2);
+    background: var(--color-accent-two);
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+  }
+
   &--scrollable {
     overflow: auto;
     width: calc(36rem - var(--lesser-padding) * 2);
+
+    &::before {
+      content: "";
+      width: calc(36rem - var(--lesser-padding) * 4);
+    }
+
   }
 
   &--scroll {
     transform: translateY(var(--y-offset));
     transition: none;
+  }
+
+  &--moving::before {
+    opacity: 1;
+    transition: opacity 200ms ease-out;
   }
 
 }

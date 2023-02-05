@@ -1,7 +1,7 @@
 {
-  "name": "kano",
+  "name": "Kano",
   "version": "0.0.1",
-  "description": "Manage tabs with ease",
+  "description": "Simple tab manager",
   "permissions": [
     "tabs",
     "favicon"
@@ -11,7 +11,7 @@
       "32": "images/kano32.png"
     },
     "default_popup": "index.html",
-    "default_title": "kano"
+    "default_title": "Kano"
   },
   "icons": {
     "16": "/images/kano16.png",

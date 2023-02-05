@@ -1,7 +1,7 @@
 {
-  "name": "ninja",
-  "version": "1.0.0",
-  "description": "Manage tabs with ease",
+  "name": "kano",
+  "version": "0.0.1",
+  "description": "Simple tab manager",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

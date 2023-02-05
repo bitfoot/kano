@@ -1,6 +1,6 @@
 "use strict";
 
-import { onTabDragPointerMove } from "./onTabDragPointerMove";
+import { onTabDrag } from "./onTabDrag";
 import { onTabDragEnd } from "./onTabDragEnd";
 import { resetTabCSSVariables } from "./util";
 import { disableHeaderControls } from "./util";
@@ -35,6 +35,7 @@ function initializeTabDrag(event) {
   let wholeContentHeight = this.visibleTabIds.length * tabRowHeight;
   let firstUnpinnedVisibleIndex = null;
   let numPinnedTabs = 0;
+  // let lastPinnedVisibleIndex = null;
   for (let index = 0; index < this.visibleTabIds.length; index++) {
     const id = this.visibleTabIds[index];
     const browserIndex = this.tabIndices[id][0];
@@ -90,6 +91,11 @@ function initializeTabDrag(event) {
   };
 
   window.requestAnimationFrame(() => {
+    tabList.style.setProperty(
+      "--pinned-tabs-height",
+      heightOfPinnedTabs - margin + "px"
+    );
+    tabList.classList.add("tab-list--moving");
     draggedTab.style.setProperty("--scale", 1.01);
     draggedTab.classList.add("tab--draggable");
     draggedTab.classList.remove("tab--held-down");
@@ -97,11 +103,10 @@ function initializeTabDrag(event) {
 
   if (tabIsPinned === false) {
     listedTabs.forEach((tab, index) => {
-      if (index < numPinnedTabs) {
-        window.requestAnimationFrame(() => {
-          tab.classList.add("tab--tethered");
-        });
-      } else if (tab.id !== draggedTab.id) {
+      window.requestAnimationFrame(() => {
+        tab.classList.add("tab--tethered");
+      });
+      if (index >= numPinnedTabs && tab.id !== draggedTab.id) {
         window.requestAnimationFrame(() => {
           tab.style.setProperty("--scale", 0.99);
           tab.classList.add("tab--floating");
@@ -109,16 +114,14 @@ function initializeTabDrag(event) {
       }
     });
   } else {
-    listedTabs.slice(0, numPinnedTabs).forEach(tab => {
-      if (tab.id !== draggedTab.id) {
+    listedTabs.forEach((tab, index) => {
+      window.requestAnimationFrame(() => {
+        tab.classList.add("tab--tethered");
+      });
+      if (index < numPinnedTabs && tab.id !== draggedTab.id) {
         window.requestAnimationFrame(() => {
           tab.style.setProperty("--scale", 0.99);
-          tab.classList.add("tab--tethered");
           tab.classList.add("tab--floating");
-        });
-      } else {
-        window.requestAnimationFrame(() => {
-          tab.classList.add("tab--tethered");
         });
       }
     });
@@ -376,12 +379,12 @@ function initializeTabDrag(event) {
   };
 
   if (eventType == "pointerdown") {
-    draggedTab.onpointermove = onTabDragPointerMove.bind(this);
+    draggedTab.onpointermove = onTabDrag.bind(this);
     draggedTab.onpointerup = onTabDragEnd.bind(this);
   } else {
     draggedTab.onkeydown = e => {
       if (e.code === "ArrowDown" || e.code === "ArrowUp") {
-        onTabDragPointerMove.call(this, e);
+        onTabDrag.call(this, e);
       }
     };
     draggedTab.onkeyup = e => {

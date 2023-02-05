@@ -112,6 +112,7 @@
     top: var(--greater-padding);
     left: var(--greater-padding);
     pointer-events: none;
+    user-select: none;
   }
 
   &__remove-text-icon {
@@ -120,6 +121,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
+    user-select: none;
   }
 
   &__remove-text-btn {

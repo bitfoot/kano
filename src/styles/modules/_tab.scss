@@ -20,8 +20,6 @@
   --sign: 0;
   --opacity: 1;
   --backdrop-filter: none;
-  // --x-pos: 18rem;
-  // --y-pos: 1rem;
   --bounds-left: var(--lesser-padding);
   --bounds-top: 0;
   --animation-iteration-count: 0;
@@ -30,6 +28,7 @@
   touch-action: none;
   stroke: transparent;
   backdrop-filter: var(--backdrop-filter);
+  transform-origin: center;
   transition: background-color 100ms ease-out, padding 0ms 400ms;
   animation: returnToNormal 80ms ease-out var(--animation-iteration-count);
   font-family: 'Open Sans', sans-serif;
@@ -61,7 +60,6 @@
   &--filtered {
     opacity: 1;
     transform: translateY(var(--filter-offset));
-    // animation: backwards;
     transition: transform var(--trans-duration) var(--trans-delay) ease-in-out, opacity var(--opacity-duration) var(--opacity-delay) ease-in-out, stroke 200ms ease-out;
 
 
@@ -284,6 +282,7 @@
     animation: 80ms ease-out forwards draggable;
     cursor: grabbing;
     background: transparent;
+    // transform-origin: center;
     transform: translateY(calc(var(--filter-offset) + var(--drag-offset)));
     transition: none;
     box-shadow: none;
@@ -300,7 +299,6 @@
       }
 
       &::after {
-        // z-index: -100;
         content: "";
         position: absolute;
         transform: none;
@@ -311,7 +309,6 @@
   }
 
   &--moving {
-    pointer-events: none;
     opacity: var(--opacity);
     transform: translateY(var(--filter-offset)) scale(var(--scale));
     animation: var(--animation-duration) 80ms ease-in forwards moving;
@@ -319,12 +316,11 @@
     z-index: -1;
   }
 
-  &--peach {
+  &--moving-above {
     animation: calc(var(--animation-duration) + 80ms) ease-in forwards moving;
   }
 
   &--floating {
-    pointer-events: none;
     opacity: var(--opacity);
     background: var(--color-two-hover);
     transform: translateY(calc(var(--filter-offset) + var(--drag-offset))) scale(var(--scale));
@@ -333,48 +329,9 @@
     z-index: -1000;
   }
 
-  &--pinned {
-    & .tab__pinned-indicator {
-      & path {
-        // stroke: var(--color-three);
-        transition: stroke 100ms ease-out;
-        animation: pinCoolDown 100ms ease-out var(--animation-iteration-count);
-      }
-    }
-  }
-
-  &--pinned.tab--tethered {
+  &--tethered {
     pointer-events: none;
-
-    & .tab__pinned-indicator {
-      & path {
-        // stroke: var(--color-accent-two);
-        // transition: stroke 3000ms ease-out;
-        animation: pinHeatUp 100ms ease-out forwards;
-      }
-    }
   }
-
-  // &--pinned.tab--draggable {
-
-  //   & .tab__pinned-indicator {
-  //     & path {
-  //       stroke: var(--color-accent-two);
-  //       transition: stroke 100ms ease-out;
-  //       animation: pinHeatUp 100ms ease-out;
-  //     }
-  //   }
-  // }
-
-  // &--pinned.tab--moving {
-
-  //   & .tab__pinned-indicator {
-  //     & path {
-  //       stroke: var(--color-accent-two);
-  //       transition: stroke 100ms ease-out;
-  //     }
-  //   }
-  // }
 
   &__duplicate-indicator {
     pointer-events: none;
@@ -390,11 +347,6 @@
     position: absolute;
     right: var(--block-height);
     transition: transform 200ms 200ms ease-out;
-
-    // & path {
-    //   stroke: var(--color-three);
-    //   transition: stroke 3000ms ease-out;
-    // }
   }
 
   &--duplicate {
@@ -411,13 +363,6 @@
 
   &--pinned {
     padding-right: calc(calc(var(--block-height) * 2) - var(--greater-padding));
-
-    // & .tab__pinned-indicator {
-    //   & path {
-    //     // stroke: lime;
-    //     transition: stroke 3000ms ease-out;
-    //   }
-    // }
   }
 
   &--pinned.tab--duplicate {
@@ -510,32 +455,12 @@
   }
 }
 
-@keyframes pinCoolDown {
-
-  from {
-    stroke: var(--color-accent-two);
-  }
-
-  to {
-    stroke: var(--color-three);
-  }
-}
-
-@keyframes pinHeatUp {
-
-  to {
-    stroke: var(--color-accent-two);
-  }
-}
-
 @keyframes heldDown {
   from {
-    // transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%)) scale(0.1);
     transform: translate(calc(calc(var(--pointer-x-pos) - var(--bounds-left)) - 50%), calc(calc(var(--pointer-y-pos) - var(--bounds-top)) - 50%)) scale(0.1);
   }
 
   to {
-    // transform: translate(calc(var(--x-pos) - 50%), calc(var(--y-pos) - 50%)) scale(14);
     transform: translate(calc(calc(var(--pointer-x-pos) - var(--bounds-left)) - 50%), calc(calc(var(--pointer-y-pos) - var(--bounds-top)) - 50%)) scale(14);
   }
 }

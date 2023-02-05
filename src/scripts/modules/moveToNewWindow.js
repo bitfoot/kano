@@ -62,17 +62,6 @@ function moveToNewWindow() {
     };
 
     deleteTabs.call(this, options);
-
-    // chrome.windows.create(createData).then(windowData => {
-    //   const windowId = windowData.id;
-    //   const remainingTabIds = browserTabIds.slice(1);
-    //   if (remainingTabIds.length > 0) {
-    //     chrome.tabs.move(remainingTabIds, {
-    //       windowId,
-    //       index: 1
-    //     });
-    //   }
-    // });
   });
 }
 
