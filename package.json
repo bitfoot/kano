@@ -1,7 +1,7 @@
 {
   "name": "kano",
   "version": "0.0.1",
-  "description": "Simple tab manager",
+  "description": "Sleek and simple tab manager",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
