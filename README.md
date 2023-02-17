@@ -13,17 +13,21 @@ Features
 - Close individual tabs or multiple tabs at once
 
 Privacy Policy
+
 Kano collects information about the URLs, titles, and favicons of the user's open tabs in Google Chrome. This information is used solely for the purpose of providing our services and is not transmitted to any external applications or services. The information is stored locally on the user's device and is accessible only by the Kano Tab Manager Extension. For more information, please refer to our privacy policy.
 
 Installation
+
 To install Kano Tab Manager Extension, follow these steps:
 
-Download the extension from the Chrome Web Store: https://chrome.google.com/webstore/detail/kano/cpmghfcgeaogkliflkopcepgpbfpcmhn.
-Click the "Add to Chrome" button to install the extension.
-Once installed, click the Kano icon in the toolbar to access the tab manager.
+1. Download the extension from the Chrome Web Store: https://chrome.google.com/webstore/detail/kano/cpmghfcgeaogkliflkopcepgpbfpcmhn.
+2. Click the "Add to Chrome" button to install the extension.
+3. Once installed, click the Kano icon in the toolbar to access the tab manager.
 
 License
+
 Kano Tab Manager Extension is licensed under the ISC license. See LICENSE for more information.
 
 Credits
+
 Kano was created by Artem Petrov. 
