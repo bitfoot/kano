@@ -18,7 +18,7 @@ Kano collects information about the URLs, titles, and favicons of the user's ope
 
 ## Installation
 
-To install Kano Tab Manager Extension, follow these steps:
+To install Kano, follow these steps:
 
 1. Download the extension from the Chrome Web Store: https://chrome.google.com/webstore/detail/kano/cpmghfcgeaogkliflkopcepgpbfpcmhn.
 2. Click the "Add to Chrome" button to install the extension.
