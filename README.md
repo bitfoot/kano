@@ -26,7 +26,7 @@ To install Kano Tab Manager Extension, follow these steps:
 
 ## License
 
-Kano Tab Manager Extension is licensed under the ISC license. See LICENSE for more information.
+Kano is licensed under the ISC license. See LICENSE for more information.
 
 ## Credits
 
