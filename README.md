@@ -1,4 +1,4 @@
-# kano
+# Kano
 
 Kano is a Chromium browser extension that provides users with an easy way to view, switch between, filter, remove, and reorder their open tabs. It allows users to manage their tabs efficiently and makes it easier to stay organized while browsing.
 
