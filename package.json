@@ -28,7 +28,7 @@
     "postcss": "^8.4.21",
     "prettier": "1.17.0",
     "sass": "^1.57.1",
-    "webpack": "^5.75.0",
+    "webpack": "^5.76.0",
     "webpack-stream": "^7.0.0"
   },
   "dependencies": {}
